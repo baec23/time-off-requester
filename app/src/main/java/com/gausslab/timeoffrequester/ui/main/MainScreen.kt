@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -19,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.baec23.ludwig.component.inputfield.InputField
 
 const val mainScreenRoute = "main_screen_route"
 
@@ -36,13 +38,14 @@ fun NavController.navigateToMainScreen(navOptions: NavOptions? = null) {
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
+    val startDateState by viewModel.startDateState
 
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
         Column {
             RemainingTimeOffRequestsBox()
-            TimeOffRequestForm()
+            TimeOffRequestForm(startDate = startDateState)
         }
 
 //        Column(modifier = Modifier
@@ -71,14 +74,27 @@ fun RemainingTimeOffRequestsBox(
 @Composable
 fun TimeOffRequestForm(
     modifier: Modifier = Modifier,
-
+    startDate: String,
+    startDateInputFieldHasError: Boolean = true
     ) {
     Surface(modifier = modifier) {
         Column {
             Row() {
                 Text(text = "시작날짜")
-                //캘린더
-
+                InputField(
+                    value = startDate,
+                    onValueChange = {
+//                        if (it.length!=6){
+//                            startDateInputFieldHasError = true
+//                        }
+//                        viewmodel.on
+                    },
+                    hasError = startDateInputFieldHasError
+                )
+//                InputField(
+//                    value = ,
+//                    onValueChange =
+//                )
             }
         }
     }
