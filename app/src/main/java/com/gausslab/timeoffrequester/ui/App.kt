@@ -25,6 +25,7 @@ fun App(
         },
         bottomBar = {
             //TODO: BottomBar
+
         }
     ) {
         Column(modifier = Modifier.padding(it)) {

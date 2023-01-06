@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui.login
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -49,6 +52,7 @@ fun LoginScreen(
     val userEmail = formState.userEmail
     val password = formState.password
     val isFormValid by viewModel.isFormValid
+    val autoLoginChecked by viewModel.autoLoginChecked
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -61,34 +65,42 @@ fun LoginScreen(
             OutlinedTextField(
                 modifier = Modifier,
                 value = userEmail,
-                onValueChange = {viewModel.onEvent(LoginUiEvent.UserEmailChanged(it))},
-                label = { Text(text = "Email")},
+                onValueChange = { viewModel.onEvent(LoginUiEvent.UserEmailChanged(it)) },
+                label = { Text(text = "Email") },
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 modifier = Modifier,
                 value = password,
-                onValueChange = {viewModel.onEvent(LoginUiEvent.PasswordChanged(it))},
-                label = { Text(text = "Password")},
+                onValueChange = { viewModel.onEvent(LoginUiEvent.PasswordChanged(it)) },
+                label = { Text(text = "Password") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 visualTransformation = PasswordVisualTransformation()
             )
             Spacer(modifier = Modifier.height(5.dp))
-            Row() {
-//                Checkbox(
-//                    checked = ,
-//                    onCheckedChange =
-//                )
+            Row(
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(start = 38.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = autoLoginChecked,
+                    onCheckedChange = { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
+                )
                 Text(text = "자동 로그인")
             }
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "password찾기")
             Spacer(modifier = Modifier.height(30.dp))
             Button(
+                modifier = Modifier.scale(1.2f),
                 onClick = { viewModel.onEvent(LoginUiEvent.LoginButtonPressed) },
-            enabled = isFormValid) {
+                enabled = isFormValid,
+            ) {
                 Text("Login")
             }
+
         }
     }
 
