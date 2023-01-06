@@ -1,37 +1,24 @@
 package com.gausslab.timeoffrequester.ui.main
 
-import android.app.DatePickerDialog
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.baec23.ludwig.component.inputfield.InputField
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 const val mainScreenRoute = "main_screen_route"
 
@@ -41,7 +28,7 @@ fun NavGraphBuilder.mainScreen() {
     }
 }
 
-fun NavController.navigateToMainScreen(navOptions: NavOptions? = null){
+fun NavController.navigateToMainScreen(navOptions: NavOptions? = null) {
     this.navigate(route = mainScreenRoute, navOptions = navOptions)
 }
 
@@ -50,9 +37,9 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Column {
             RemainingTimeOffRequestsBox()
             TimeOffRequestForm()
@@ -71,7 +58,7 @@ fun MainScreen(
 @Composable
 fun RemainingTimeOffRequestsBox(
     modifier: Modifier = Modifier
-){
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -85,7 +72,7 @@ fun RemainingTimeOffRequestsBox(
 fun TimeOffRequestForm(
     modifier: Modifier = Modifier,
 
-){
+    ) {
     Surface(modifier = modifier) {
         Column {
             Row() {
