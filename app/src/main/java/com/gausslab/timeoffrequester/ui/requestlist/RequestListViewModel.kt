@@ -10,4 +10,14 @@ class RequestListViewModel @Inject constructor(
     private val navController: NavHostController
 ) : ViewModel() {
 
+    fun onEvent(event: RequestListUiEvent){
+//        when(event){
+//
+//        }
+    }
+
+}
+
+sealed class RequestListUiEvent{
+
 }

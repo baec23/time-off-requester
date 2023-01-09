@@ -15,11 +15,6 @@ import com.gausslab.timeoffrequester.ui.requestlist.requestListScreenRoute
 
 val bottomNavBarItems = listOf(
     BottomNavBarItem(
-        route = loginScreenRoute,
-        iconImageVector = Icons.Default.AccountBox,
-        label = "Login"
-    ),
-    BottomNavBarItem(
         route = mainScreenRoute,
         iconImageVector = Icons.Default.Home,
         label = "Home"

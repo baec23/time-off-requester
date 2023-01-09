@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -86,7 +88,8 @@ fun MainScreen(
     val emergencyNumber =formState.emergencyNumber
 
     Surface(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(16.dp)
     ) {
         Column {
@@ -347,7 +350,6 @@ fun ClassificationOfTimeOffDropDownMenu(
                 .fillMaxSize()
                 .wrapContentSize(Alignment.TopStart),
         ) {
-
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -376,7 +378,7 @@ fun ClassificationOfTimeOffDropDownMenu(
                             selectedIndex = index
                             onUiEvent(MainUiEvent.ClassificationOfTimeOffExpanded(false))
                         },
-                        colors = MenuDefaults.itemColors(textColor = Color.Black)
+//                        colors = MenuDefaults.itemColors(textColor = Color.Black)
                     )
                 }
             }
