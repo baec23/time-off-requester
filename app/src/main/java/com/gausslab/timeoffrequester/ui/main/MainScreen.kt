@@ -1,6 +1,5 @@
 package com.gausslab.timeoffrequester.ui.main
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,12 +38,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.inputfield.InputField
+import com.gausslab.timeoffrequester.model.TimeOffRequestType
+import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 
 const val mainScreenRoute = "main_screen_route"
 
@@ -81,8 +81,8 @@ fun MainScreen(
     val endTimeInputFieldHasError by viewModel.endTimeInputFieldHasError
     val endTimeInputFieldErrorMessage by viewModel.endTimeInputFieldErrorMessage
 
-    val classificationOfTimeOffExpanded by viewModel.classificationOfTimeOff
-    val classificationOfTimeOffDetailsExpanded by viewModel.classificationOfTimeOffDetails
+    val isTimeOffRequestTypeExpanded by viewModel.timeOffRequestType
+    val isTimeOffRequestTypeDetailsExpanded by viewModel.timeOffRequestTypeDetails
 
     val requestReason = formState.requestReason
     val agentName =formState.agentName
@@ -109,8 +109,8 @@ fun MainScreen(
                 endTime = endTime,
                 endTimeInputFieldHasError = endTimeInputFieldHasError,
                 endTimeInputFieldErrorMessage = endTimeInputFieldErrorMessage,
-                classificationOfTimeOffExpanded = classificationOfTimeOffExpanded,
-                classificationOfTimeOffDetailsExpanded = classificationOfTimeOffDetailsExpanded,
+                isTimeOffRequestTypeExpanded = isTimeOffRequestTypeExpanded,
+                isTimeOffRequestTypeDetailsExpanded = isTimeOffRequestTypeDetailsExpanded,
                 requestReason = requestReason,
                 agentName = agentName,
                 emergencyNumber = emergencyNumber,
@@ -149,8 +149,8 @@ fun TimeOffRequestForm(
     endTime: String,
     endTimeInputFieldHasError: Boolean,
     endTimeInputFieldErrorMessage: String?,
-    classificationOfTimeOffExpanded: Boolean,
-    classificationOfTimeOffDetailsExpanded: Boolean,
+    isTimeOffRequestTypeExpanded: Boolean,
+    isTimeOffRequestTypeDetailsExpanded: Boolean,
     requestReason: String,
     agentName: String,
     emergencyNumber: String,
@@ -179,16 +179,31 @@ fun TimeOffRequestForm(
                 endTimeInputFieldErrorMessage = endTimeInputFieldErrorMessage,
                 onUiEvent = onUiEvent
             )
-            ClassificationOfTimeOffDropDownMenu(
+            TimeOffRequestTypeDropDownMenu(
                 title = "휴가구분",
-                expanded = classificationOfTimeOffExpanded,
-                items = listOf("연차휴가", "반차", "병가", "출산전후휴가", "경조휴가", "생리휴가", "배우자출산휴가", "공가"),
+                expanded = isTimeOffRequestTypeExpanded,
+                items = listOf(
+                    TimeOffRequestType.ANNUAL_LEAVE.name,
+                    TimeOffRequestType.HALF_LEAVE.name,
+                    TimeOffRequestType.SICK_LEAVE.name,
+                    TimeOffRequestType.MATERNITY_LEAVE.name,
+                    TimeOffRequestType.CC_LEAVE.name,
+                    TimeOffRequestType.MENSTRUATION_LEAVE.name,
+                    TimeOffRequestType.PATERNITY_LEAVE.name,
+                    TimeOffRequestType.PUBLIC_LEAVE.name
+                ),
+//                items = listOf("연차휴가", "반차", "병가", "출산전후휴가", "경조휴가", "생리휴가", "배우자출산휴가", "공가"),
                 onUiEvent = onUiEvent
             )
-            ClassificationOfTimeOffDetailsDropDownMenu(
+            TimeOffRequestTypeDetailsDropDownMenu(
                 title = "경조구분",
-                expanded = classificationOfTimeOffDetailsExpanded,
-                items = listOf("결혼", "조의", "기타"),
+                expanded = isTimeOffRequestTypeDetailsExpanded,
+                items = listOf(
+                    TimeOffRequestTypeDetail.FUNERAL_LEAVE.name,
+                    TimeOffRequestTypeDetail.MARRIAGE_LEAVE.name,
+                    TimeOffRequestTypeDetail.OTHER.name
+                ),
+//                items = listOf("결혼", "조의", "기타"),
                 onUiEvent = onUiEvent
             )
             TimeOffRequestReasonBox(
@@ -211,7 +226,8 @@ fun TimeOffRequestForm(
                     .align(
                         Alignment.CenterHorizontally,
                     ),
-                isFormValid
+                isFormValid,
+                onUiEvent = onUiEvent
             )
         }
     }
@@ -239,12 +255,6 @@ fun StartDateTimeTextField(
             value = startDate,
             onValueChange = {
                 onUiEvent(MainUiEvent.StartDateChanged(it))
-                if (it.length == 6) {
-                    onUiEvent(MainUiEvent.StartDateInputFieldHasError(false))
-                }
-                if (startDateInputFieldHasError) {
-                    onUiEvent(MainUiEvent.StartDateInputFieldErrorMessage)
-                }
             },
             hasError = startDateInputFieldHasError,
             errorMessage = startDateInputFieldErrorMessage,
@@ -258,12 +268,6 @@ fun StartDateTimeTextField(
             value = startTime,
             onValueChange = {
                 onUiEvent(MainUiEvent.StartTimeChanged(it))
-                if (it.length == 4) {
-                    onUiEvent(MainUiEvent.StartTimeInputFieldHasError(false))
-                }
-                if (startTimeInputFieldHasError) {
-                    onUiEvent(MainUiEvent.StartTimeInputFieldErrorMessage)
-                }
             },
             hasError = startTimeInputFieldHasError,
             errorMessage = startTimeInputFieldErrorMessage,
@@ -296,12 +300,6 @@ fun EndDateTimeTextField(
             value = endDate,
             onValueChange = {
                 onUiEvent(MainUiEvent.EndDateChanged(it))
-                if (it.length == 6) {
-                    onUiEvent(MainUiEvent.EndDateInputFieldHasError(false))
-                }
-                if (endDateInputFieldHasError) {
-                    onUiEvent(MainUiEvent.EndDateInputFieldErrorMessage)
-                }
             },
             hasError = endDateInputFieldHasError,
             errorMessage = endDateInputFieldErrorMessage,
@@ -314,12 +312,6 @@ fun EndDateTimeTextField(
             value = endTime,
             onValueChange = {
                 onUiEvent(MainUiEvent.EndTimeChanged(it))
-                if (it.length == 4) {
-                    onUiEvent(MainUiEvent.EndTimeInputFieldHasError(false))
-                }
-                if (endTimeInputFieldHasError) {
-                    onUiEvent(MainUiEvent.EndTimeInputFieldErrorMessage)
-                }
             },
             hasError = endTimeInputFieldHasError,
             errorMessage = endTimeInputFieldErrorMessage,
@@ -331,7 +323,7 @@ fun EndDateTimeTextField(
 
 
 @Composable
-fun ClassificationOfTimeOffDropDownMenu(
+fun TimeOffRequestTypeDropDownMenu(
     modifier: Modifier = Modifier,
     title: String,
     items: List<String>,
@@ -356,7 +348,7 @@ fun ClassificationOfTimeOffDropDownMenu(
                     .fillMaxWidth()
                     .clickable(onClick = {
                         onUiEvent(
-                            MainUiEvent.ClassificationOfTimeOffExpanded(true)
+                            MainUiEvent.TimeOffRequestTypeExpanded(true)
                         )
                     })
                     .background(Color.LightGray),
@@ -369,7 +361,7 @@ fun ClassificationOfTimeOffDropDownMenu(
                 expanded = expanded,
                 onDismissRequest = {
                     onUiEvent(
-                        MainUiEvent.ClassificationOfTimeOffExpanded(false)
+                        MainUiEvent.TimeOffRequestTypeExpanded(false)
                     )
                 },
             ) {
@@ -381,7 +373,7 @@ fun ClassificationOfTimeOffDropDownMenu(
                         },
                         onClick = {
                             selectedIndex = index
-                            onUiEvent(MainUiEvent.ClassificationOfTimeOffExpanded(false))
+                            onUiEvent(MainUiEvent.TimeOffRequestTypeExpanded(false))
                         },
                         colors = MenuDefaults.itemColors(textColor = Color.Black)
                     )
@@ -392,7 +384,7 @@ fun ClassificationOfTimeOffDropDownMenu(
 }
 
 @Composable
-fun ClassificationOfTimeOffDetailsDropDownMenu(
+fun TimeOffRequestTypeDetailsDropDownMenu(
     modifier: Modifier = Modifier,
     title: String,
     items: List<String>,
@@ -418,7 +410,7 @@ fun ClassificationOfTimeOffDetailsDropDownMenu(
                     .fillMaxWidth()
                     .clickable(onClick = {
                         onUiEvent(
-                            MainUiEvent.ClassificationOfTimeOffDetailsExpanded(true)
+                            MainUiEvent.TimeOffRequestTypeDetailsExpanded(true)
                         )
                     })
                     .background(Color.LightGray),
@@ -431,7 +423,7 @@ fun ClassificationOfTimeOffDetailsDropDownMenu(
                 expanded = expanded,
                 onDismissRequest = {
                     onUiEvent(
-                        MainUiEvent.ClassificationOfTimeOffDetailsExpanded(false)
+                        MainUiEvent.TimeOffRequestTypeDetailsExpanded(false)
                     )
                 },
             ) {
@@ -443,7 +435,7 @@ fun ClassificationOfTimeOffDetailsDropDownMenu(
                         },
                         onClick = {
                             selectedIndex = index
-                            onUiEvent(MainUiEvent.ClassificationOfTimeOffDetailsExpanded(false))
+                            onUiEvent(MainUiEvent.TimeOffRequestTypeDetailsExpanded(false))
                         },
                         colors = MenuDefaults.itemColors(textColor = Color.Black)
                     )
@@ -536,12 +528,13 @@ fun EmergencyNumberBox(
 fun SubmitButton(
     modifier: Modifier = Modifier,
     isFormValid: Boolean,
+    onUiEvent: (MainUiEvent) -> Unit,
 ) {
     Column(
         modifier = modifier,
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onUiEvent(MainUiEvent.SubmitButtonPressed) },
             enabled = isFormValid
         ) {
             Text(text = "SUBMIT!")

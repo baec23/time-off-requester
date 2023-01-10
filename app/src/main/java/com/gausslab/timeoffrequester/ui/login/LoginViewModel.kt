@@ -1,17 +1,22 @@
 package com.gausslab.timeoffrequester.ui.login
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.ui.main.navigateToMainScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val navController: NavHostController
 ) : ViewModel() {
     private val _formState: MutableState<LoginFormState> = mutableStateOf(LoginFormState())
@@ -47,7 +52,27 @@ class LoginViewModel @Inject constructor(
                 checkIfFormIsValid()
             }
 
-            LoginUiEvent.LoginButtonPressed -> navController.navigateToMainScreen()
+            LoginUiEvent.LoginButtonPressed ->{
+                viewModelScope.launch {
+                    val result = userRepository.tryLogin(
+                        _formState.value.userEmail,
+                        _formState.value.password
+                    )
+
+                    val myUser = result.getOrElse { exception ->
+                        exception.message?.let {
+                            //
+                        }
+                        _formState.value = _formState.value.copy(
+                            userEmail = "",
+                            password = ""
+                        )
+                        return@launch
+                    }
+                    Log.d("asdfasdfasdf", "onEvent: ${_formState.value.userEmail} ${_formState.value.password} $result")
+                    navController.navigateToMainScreen()
+                }
+            }
             LoginUiEvent.AutoLoginPressed -> {
                 autoLoginChecked.value = !autoLoginChecked.value
             }
