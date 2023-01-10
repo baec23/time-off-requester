@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "142965077486",
+    "project_id": "timeoffrequest-5e97a",
+    "storage_bucket": "timeoffrequest-5e97a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142965077486:android:a6ac143fb5db4649ee8aff",
+        "android_client_info": {
+          "package_name": "com.gausslab.timeoffrequester"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142965077486-oaalbdosqbg0t7rj0r49r84q68vls1c4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf76nY-EiX3kG1a7jXsCkrBYx7dYa7zWQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142965077486-oaalbdosqbg0t7rj0r49r84q68vls1c4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
