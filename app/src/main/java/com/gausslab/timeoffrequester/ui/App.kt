@@ -18,6 +18,9 @@ import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItems
 import com.gausslab.timeoffrequester.ui.login.loginScreen
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreen
+import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
+import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.requestlist.requestListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,15 +36,18 @@ fun App(
             //TODO: TopBar
         },
         bottomBar = {
-            BottomNavBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                currNavScreenRoute = currNavScreenRoute,
-                items = bottomNavBarItems,
-                onBottomNavBarButtonPressed = {
-                    viewModel.onEvent(AppUiEvent.BottomNavBarButtonPressed(it))
-                })
+            if (!currNavScreenRoute.equals("login_screen_route")) {
+                BottomNavBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp),
+                    currNavScreenRoute = currNavScreenRoute,
+                    items = bottomNavBarItems,
+                    onBottomNavBarButtonPressed = {
+                        viewModel.onEvent(AppUiEvent.BottomNavBarButtonPressed(it))
+                    })
+            }
+
         }
     ) {
         Column(
@@ -56,6 +62,8 @@ fun App(
                 loginScreen()
                 mainScreen()
                 requestListScreen()
+                requestDetailsScreen()
+                myProfileScreen()
             }
         }
     }

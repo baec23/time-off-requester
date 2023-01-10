@@ -16,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -38,7 +40,9 @@ fun NavController.navigateToRequestListScreen(navOptions: NavOptions? = null) {
 }
 
 @Composable
-fun RequestListScreen() {
+fun RequestListScreen(
+    viewModel: RequestListViewModel = hiltViewModel()
+) {
     Surface(
         modifier = Modifier
             .padding(16.dp)
@@ -56,10 +60,9 @@ fun RequestListScreen() {
                     ) {
                         LabelledValueButton(
                             label =it.toString(),
-                            value ="상태(승인대기중)"
-                        ) {
-
-                        }
+                            value ="상태(승인대기중)",
+                            onClick = { viewModel.onEvent(RequestListUiEvent.RequestDetailClicked)}
+                        )
                     }
                 }
             }

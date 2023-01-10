@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,18 +12,24 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.baec23.ludwig.core.togglable.ToggleableIcon
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreenRoute
+import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
 import com.gausslab.timeoffrequester.ui.requestlist.requestListScreenRoute
 
 val bottomNavBarItems = listOf(
     BottomNavBarItem(
         route = mainScreenRoute,
         iconImageVector = Icons.Default.Home,
-        label = "Home"
+        label = "Home",
     ),
     BottomNavBarItem(
         route = requestListScreenRoute,
         iconImageVector = Icons.Default.Info,
         label = "RequestList"
+    ),
+    BottomNavBarItem(
+        route = myProfileScreenRoute,
+        iconImageVector = Icons.Default.Person,
+        label = "MyProfile"
     )
 )
 

@@ -52,7 +52,6 @@ class MainViewModel @Inject constructor(
 
     fun onEvent(event: MainUiEvent) {
         when (event) {
-            MainUiEvent.GoToLoginScreenPressed -> navController.navigateToLoginScreen()
 
             is MainUiEvent.StartDateChanged -> {
                 _formState.value = _formState.value.copy(
@@ -184,5 +183,4 @@ sealed class MainUiEvent {
     object StartTimeInputFieldErrorMessage : MainUiEvent()
     object EndDateInputFieldErrorMessage : MainUiEvent()
     object EndTimeInputFieldErrorMessage : MainUiEvent()
-    object GoToLoginScreenPressed : MainUiEvent()
 }

@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -363,7 +364,8 @@ fun ClassificationOfTimeOffDropDownMenu(
             )
             DropdownMenu(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary),
                 expanded = expanded,
                 onDismissRequest = {
                     onUiEvent(
@@ -373,12 +375,15 @@ fun ClassificationOfTimeOffDropDownMenu(
             ) {
                 items.forEachIndexed { index, s ->
                     DropdownMenuItem(
-                        text = { s },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
+                        text = {
+                               Text(text = s)
+                        },
                         onClick = {
                             selectedIndex = index
                             onUiEvent(MainUiEvent.ClassificationOfTimeOffExpanded(false))
                         },
-//                        colors = MenuDefaults.itemColors(textColor = Color.Black)
+                        colors = MenuDefaults.itemColors(textColor = Color.Black)
                     )
                 }
             }
@@ -421,7 +426,8 @@ fun ClassificationOfTimeOffDetailsDropDownMenu(
             )
             DropdownMenu(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary),
                 expanded = expanded,
                 onDismissRequest = {
                     onUiEvent(
@@ -431,7 +437,10 @@ fun ClassificationOfTimeOffDetailsDropDownMenu(
             ) {
                 items.forEachIndexed { index, s ->
                     DropdownMenuItem(
-                        text = { s },
+                        modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
+                        text = { 
+                               Text(text = s)
+                        },
                         onClick = {
                             selectedIndex = index
                             onUiEvent(MainUiEvent.ClassificationOfTimeOffDetailsExpanded(false))
