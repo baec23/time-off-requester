@@ -194,7 +194,6 @@ fun TimeOffRequestForm(
                     TimeOffRequestType.PATERNITY_LEAVE,
                     TimeOffRequestType.PUBLIC_LEAVE
                 ),
-//                items = listOf("연차휴가", "반차", "병가", "출산전후휴가", "경조휴가", "생리휴가", "배우자출산휴가", "공가"),
                 onUiEvent = onUiEvent
             )
             TimeOffRequestTypeDetailsDropDownMenu(
@@ -205,7 +204,6 @@ fun TimeOffRequestForm(
                     TimeOffRequestTypeDetail.MARRIAGE_LEAVE,
                     TimeOffRequestTypeDetail.OTHER
                 ),
-//                items = listOf("결혼", "조의", "기타"),
                 onUiEvent = onUiEvent
             )
             TimeOffRequestReasonBox(

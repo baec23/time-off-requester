@@ -165,6 +165,7 @@ class MainViewModel @Inject constructor(
                     val form by _formState
                     val timeOffRequest = TimeOffRequest(
                         status = "",
+                        userId = userRepository.currUser!!.id,
                         username = userRepository.currUser!!.username,
                         position = userRepository.currUser!!.position,
                         userStartDate = userRepository.currUser!!.startDate,

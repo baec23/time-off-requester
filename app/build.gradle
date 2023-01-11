@@ -92,5 +92,5 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     //Ludwig
-    implementation 'com.github.baec23:ludwig:0.0.9'
+    implementation 'com.github.baec23:ludwig:0.0.10'
 }
