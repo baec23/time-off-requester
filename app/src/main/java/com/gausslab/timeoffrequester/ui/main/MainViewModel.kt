@@ -169,6 +169,7 @@ class MainViewModel @Inject constructor(
                         username = userRepository.currUser!!.username,
                         position = userRepository.currUser!!.position,
                         userStartDate = userRepository.currUser!!.startDate,
+                        timeOffRequestId=0,
                         startDate = form.startDate,
                         startTime = form.startTime,
                         endDate = form.endDate,

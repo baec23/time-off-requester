@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,17 +37,17 @@ fun NavGraphBuilder.requestDetailsScreen() {
     composable(
         route = "$requestDetailsScreenRoute/{timeOffRequestId}", arguments = listOf(
             navArgument("timeOffRequestId") {
-                type = NavType.StringType
+                type = NavType.IntType
                 nullable = false
             }
         )
     ) {
-        val timeOffRequestId = it.arguments?.getString("timeOffRequestId")
+        val timeOffRequestId = it.arguments?.getInt("timeOffRequestId")
         timeOffRequestId?.let { RequestDetailsScreen(timeOffRequestId = timeOffRequestId) }
     }
 }
 
-fun NavController.navigateToRequestDetailsScreen(timeOffRequestId: String, navOptions: NavOptions? = null) {
+fun NavController.navigateToRequestDetailsScreen(timeOffRequestId: Int, navOptions: NavOptions? = null) {
     val routeWithArguments = "$requestDetailsScreenRoute/$timeOffRequestId"
     this.navigate(route = routeWithArguments, navOptions = navOptions)
 }
@@ -54,8 +55,9 @@ fun NavController.navigateToRequestDetailsScreen(timeOffRequestId: String, navOp
 @Composable
 fun RequestDetailsScreen(
     viewModel: RequestDetailsViewModel = hiltViewModel(),
-    timeOffRequestId: String,
+    timeOffRequestId: Int,
 ) {
+    val currTimeOffRequest by viewModel.currTimeOffRequest.collectAsState()
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -63,41 +65,37 @@ fun RequestDetailsScreen(
     ) {
         Column {
 
-            Text(timeOffRequestId, style=MaterialTheme.typography.displayLarge)
-
-
-
             RequestStatusSection()
             Spacer(modifier = Modifier.height(20.dp))
             DateTimeSection(
                 sectionName = "시작",
-                date = "220101",
-                time = "0900"
+                date = currTimeOffRequest.startDate,
+                time = currTimeOffRequest.startTime
             )
             DateTimeSection(
                 sectionName = "종료",
-                date = "220101",
-                time = "1830"
+                date = currTimeOffRequest.endDate,
+                time = currTimeOffRequest.endTime
             )
             LabelValueSection(
                 sectionName = "휴가구분: ",
-                content = "연차휴가"
+                content = currTimeOffRequest.timeOffRequestType.toString()
             )
             LabelValueSection(
                 sectionName = "경조구분: ",
-                content = "기타"
+                content = currTimeOffRequest.timeOffRequestTypeDetails.toString()
             )
             TimeOffRequestReasonSection(
                 sectionName = "신청사유: ",
-                requestReason = "개인사유"
+                requestReason = currTimeOffRequest.requestReason
             )
             LabelValueSection(
                 sectionName = "대리업무자: ",
-                content = "홍길동"
+                content = currTimeOffRequest.agentName!!
             )
             LabelValueSection(
                 sectionName = "비상연락망: ",
-                content = "01012345678"
+                content = currTimeOffRequest.emergencyNumber!!
             )
             ConfirmButton(
                 onUiEvent = { viewModel.onEvent(it) }

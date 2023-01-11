@@ -15,9 +15,22 @@ import java.lang.Exception
 
 class TimeOffRequestRepository {
     private val collectionRef = Firebase.firestore.collection("TimeOffRequests")
+    private var currTimeOffRequestId: Int=0
+
+    private fun getKey(): Int{
+        var currKey:Int=0
+        val docRef = Firebase.firestore.collection("TimeOffRequestKey").document("TimeOffRequestKey")
+        Firebase.firestore.runTransaction {
+            currKey = it.get(docRef).getDouble("key")!!.toInt()
+            it.update(docRef, "key", currKey + 1)
+            return@runTransaction currKey
+        }
+        return currKey
+    }
 
     suspend fun saveTimeOffRequest(timeOffRequest: TimeOffRequest): Result<TimeOffRequest>{
         return try {
+            timeOffRequest.timeOffRequestId=getKey()
             val savedTimeOffRequest = collectionRef.add(timeOffRequest).await()
             Result.success(savedTimeOffRequest.get().await().toObject(TimeOffRequest::class.java)!!)
         }catch (e: Exception){
@@ -33,21 +46,12 @@ class TimeOffRequestRepository {
         }
     }
 
-//    suspend fun getTimeOffRequestsForUser(userId: String) : Result<List<TimeOffRequest>>{
-//        val timeOffRequestList: MutableList<TimeOffRequest> = mutableListOf()
-//        val queryResult =
-//            collectionRef
-//                .whereEqualTo("userId", userId)
-//                .get().await().documents
-//        if (queryResult.isNotEmpty()){
-//            for (i:Int in 1..queryResult.size){
-//                val toAdd = queryResult[i].toObject<TimeOffRequest>()?.copy()
-//                timeOffRequestList.add(toAdd!!)
-//            }
-//            return Result.success(timeOffRequestList)
-//        }
-//        return Result.failure(Exception("id랑 맞는 db가 없음"))
-//    }
+    fun setTimeOffRequestId(id: Int){
+        currTimeOffRequestId=id
+    }
+    fun getTimeOffRequestId(): Int{
+        return currTimeOffRequestId
+    }
 }
 
 fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {

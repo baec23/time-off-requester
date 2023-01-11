@@ -7,6 +7,7 @@ data class TimeOffRequest(
     val position: String ="",
     val userStartDate: String ="",
 
+    var timeOffRequestId: Int =0,
     val startDate: String ="",
     val startTime: String = "",
     val endDate : String ="",
