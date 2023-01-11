@@ -13,6 +13,7 @@ import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +24,7 @@ class MainViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val navController: NavHostController
 ) : ViewModel() {
+
     val startDateInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
     val startDateInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
 
@@ -45,6 +47,8 @@ class MainViewModel @Inject constructor(
 
     private val _isFormValid: MutableState<Boolean> = mutableStateOf(false)
     val isFormValid: State<Boolean> = _isFormValid
+
+    val remainingTimeOffRequest: Int = userRepository.currUser!!.remainingTimeOffRequests
 
     private fun updateIsFormValid() {
         val form by _formState
@@ -122,8 +126,20 @@ class MainViewModel @Inject constructor(
                 timeOffRequestType.value = event.expanded
             }
 
+            is MainUiEvent.TimeOffRequestType -> {
+                _formState.value = _formState.value.copy(
+                    timeOffRequestType = event.type
+                )
+            }
+
             is MainUiEvent.TimeOffRequestTypeDetailsExpanded -> {
                 timeOffRequestTypeDetails.value = event.expanded
+            }
+
+            is MainUiEvent.TimeOffRequestTypeDetails -> {
+                _formState.value = _formState.value.copy(
+                    timeOffRequestTypeDetails = event.type
+                )
             }
 
             is MainUiEvent.TimeOffRequestReasonChanged -> {
@@ -149,9 +165,9 @@ class MainViewModel @Inject constructor(
                     val form by _formState
                     val timeOffRequest = TimeOffRequest(
                         status = "",
-                        username =userRepository.currUser!!.username,
-                        position =userRepository.currUser!!.position,
-                        userStartDate =userRepository.currUser!!.startDate,
+                        username = userRepository.currUser!!.username,
+                        position = userRepository.currUser!!.position,
+                        userStartDate = userRepository.currUser!!.startDate,
                         startDate = form.startDate,
                         startTime = form.startTime,
                         endDate = form.endDate,
@@ -163,15 +179,11 @@ class MainViewModel @Inject constructor(
                         emergencyNumber = form.emergencyNumber
 
                     )
-                    val result = timeOffRequestRepository.saveTimeOffRequest(timeOffRequest).getOrElse {
-
-                    }
-                    Log.d("asdfasdfasdfasd", "onEvent: $result")
+                    timeOffRequestRepository.saveTimeOffRequest(timeOffRequest)
+                    userRepository.reduceRemainingTimeOffRequests(userRepository.currUser!!.id)
+                    navController.navigateToRequestListScreen()
                 }
             }
-
-            is MainUiEvent.TimeOffRequestType -> TODO()
-            is MainUiEvent.TimeOffRequestTypeDetails -> TODO()
         }
         updateIsFormValid()
     }
@@ -195,9 +207,11 @@ sealed class MainUiEvent {
     data class EndDateChanged(val endDate: String) : MainUiEvent()
     data class EndTimeChanged(val endTime: String) : MainUiEvent()
     data class TimeOffRequestTypeExpanded(val expanded: Boolean) : MainUiEvent()
-    data class TimeOffRequestType(val type: com.gausslab.timeoffrequester.model.TimeOffRequestType) : MainUiEvent()
+    data class TimeOffRequestType(val type: com.gausslab.timeoffrequester.model.TimeOffRequestType) :
+        MainUiEvent()
+
     data class TimeOffRequestTypeDetailsExpanded(val expanded: Boolean) : MainUiEvent()
-    data class TimeOffRequestTypeDetails(val type: TimeOffRequestTypeDetail): MainUiEvent()
+    data class TimeOffRequestTypeDetails(val type: TimeOffRequestTypeDetail) : MainUiEvent()
     data class TimeOffRequestReasonChanged(val reason: String) : MainUiEvent()
     data class AgentNameChanged(val agentName: String) : MainUiEvent()
     data class EmergencyNumberChanged(val emergencyNumber: String) : MainUiEvent()

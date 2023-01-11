@@ -87,6 +87,7 @@ fun MainScreen(
     val requestReason = formState.requestReason
     val agentName =formState.agentName
     val emergencyNumber =formState.emergencyNumber
+    val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
 
     Surface(
         modifier = Modifier
@@ -94,7 +95,7 @@ fun MainScreen(
             .padding(16.dp)
     ) {
         Column {
-            RemainingTimeOffRequestsBox()
+            RemainingTimeOffRequestsBox(remainingTimeOffRequest = remainingTimeOffRequest)
             Spacer(modifier = Modifier.height(30.dp))
             TimeOffRequestForm(
                 startDate = startDate,
@@ -123,14 +124,15 @@ fun MainScreen(
 
 @Composable
 fun RemainingTimeOffRequestsBox(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    remainingTimeOffRequest: Int,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .border(width = 1.dp, color = Color.DarkGray, shape = RectangleShape),
     ) {
-        Text(modifier = Modifier.padding(5.dp), text = "남은 연차 수 : ${5}")
+        Text(modifier = Modifier.padding(5.dp), text = "남은 연차 수 : $remainingTimeOffRequest")
     }
 }
 
@@ -183,14 +185,14 @@ fun TimeOffRequestForm(
                 title = "휴가구분",
                 expanded = isTimeOffRequestTypeExpanded,
                 items = listOf(
-                    TimeOffRequestType.ANNUAL_LEAVE.name,
-                    TimeOffRequestType.HALF_LEAVE.name,
-                    TimeOffRequestType.SICK_LEAVE.name,
-                    TimeOffRequestType.MATERNITY_LEAVE.name,
-                    TimeOffRequestType.CC_LEAVE.name,
-                    TimeOffRequestType.MENSTRUATION_LEAVE.name,
-                    TimeOffRequestType.PATERNITY_LEAVE.name,
-                    TimeOffRequestType.PUBLIC_LEAVE.name
+                    TimeOffRequestType.ANNUAL_LEAVE,
+                    TimeOffRequestType.HALF_LEAVE,
+                    TimeOffRequestType.SICK_LEAVE,
+                    TimeOffRequestType.MATERNITY_LEAVE,
+                    TimeOffRequestType.CC_LEAVE,
+                    TimeOffRequestType.MENSTRUATION_LEAVE,
+                    TimeOffRequestType.PATERNITY_LEAVE,
+                    TimeOffRequestType.PUBLIC_LEAVE
                 ),
 //                items = listOf("연차휴가", "반차", "병가", "출산전후휴가", "경조휴가", "생리휴가", "배우자출산휴가", "공가"),
                 onUiEvent = onUiEvent
@@ -199,9 +201,9 @@ fun TimeOffRequestForm(
                 title = "경조구분",
                 expanded = isTimeOffRequestTypeDetailsExpanded,
                 items = listOf(
-                    TimeOffRequestTypeDetail.FUNERAL_LEAVE.name,
-                    TimeOffRequestTypeDetail.MARRIAGE_LEAVE.name,
-                    TimeOffRequestTypeDetail.OTHER.name
+                    TimeOffRequestTypeDetail.FUNERAL_LEAVE,
+                    TimeOffRequestTypeDetail.MARRIAGE_LEAVE,
+                    TimeOffRequestTypeDetail.OTHER
                 ),
 //                items = listOf("결혼", "조의", "기타"),
                 onUiEvent = onUiEvent
@@ -326,7 +328,7 @@ fun EndDateTimeTextField(
 fun TimeOffRequestTypeDropDownMenu(
     modifier: Modifier = Modifier,
     title: String,
-    items: List<String>,
+    items: List<TimeOffRequestType>,
     expanded: Boolean,
     onUiEvent: (MainUiEvent) -> Unit
 ) {
@@ -352,7 +354,7 @@ fun TimeOffRequestTypeDropDownMenu(
                         )
                     })
                     .background(Color.LightGray),
-                text = items[selectedIndex],
+                text = items[selectedIndex].name,
             )
             DropdownMenu(
                 modifier = Modifier
@@ -369,11 +371,12 @@ fun TimeOffRequestTypeDropDownMenu(
                     DropdownMenuItem(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
                         text = {
-                               Text(text = s)
+                               Text(text = s.name)
                         },
                         onClick = {
                             selectedIndex = index
                             onUiEvent(MainUiEvent.TimeOffRequestTypeExpanded(false))
+                            onUiEvent(MainUiEvent.TimeOffRequestType(items[selectedIndex]))
                         },
                         colors = MenuDefaults.itemColors(textColor = Color.Black)
                     )
@@ -387,7 +390,7 @@ fun TimeOffRequestTypeDropDownMenu(
 fun TimeOffRequestTypeDetailsDropDownMenu(
     modifier: Modifier = Modifier,
     title: String,
-    items: List<String>,
+    items: List<TimeOffRequestTypeDetail>,
     expanded: Boolean,
     onUiEvent: (MainUiEvent) -> Unit
 ) {
@@ -414,7 +417,7 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
                         )
                     })
                     .background(Color.LightGray),
-                text = items[selectedIndex],
+                text = items[selectedIndex].name,
             )
             DropdownMenu(
                 modifier = Modifier
@@ -431,13 +434,14 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
                     DropdownMenuItem(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
                         text = { 
-                               Text(text = s)
+                               Text(text = s.name)
                         },
                         onClick = {
                             selectedIndex = index
                             onUiEvent(MainUiEvent.TimeOffRequestTypeDetailsExpanded(false))
+                            onUiEvent(MainUiEvent.TimeOffRequestTypeDetails(items[selectedIndex]))
                         },
-                        colors = MenuDefaults.itemColors(textColor = Color.Black)
+                        colors = MenuDefaults.itemColors(textColor = Color.Black),
                     )
                 }
             }

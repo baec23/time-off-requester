@@ -10,26 +10,48 @@ import java.lang.Exception
 
 @ActivityScoped
 class UserRepository {
-    var currUser: User?=null
+    var currUser: User? = null
         private set
     private val collectionRef = Firebase.firestore.collection("users")
 
-    suspend fun tryLogin(id: String, password: String) : Result<User>{
+    suspend fun tryLogin(id: String, password: String): Result<User> {
         val queryResult =
             collectionRef
                 .whereEqualTo("id", id)
                 .whereEqualTo("password", password)
                 .get().await().documents
-        if (queryResult.isNotEmpty()){
+        if (queryResult.isNotEmpty()) {
             val doc = queryResult.first()
             val user = doc.toObject<User>()?.copy()
-            return if(user != null){
+            return if (user != null) {
                 currUser = user
                 Result.success(user)
-            }else{
+            } else {
                 Result.failure(Exception("response 온 데이터 user로 바꾸는데 에러"))
             }
         }
         return Result.failure(Exception("id or password 잘못입력"))
+    }
+
+    suspend fun reduceRemainingTimeOffRequests(id: String): Result<User> {
+        val queryResult =
+            collectionRef
+                .whereEqualTo("id", id)
+                .get().await().documents
+        if (queryResult.isNotEmpty()) {
+            val doc = queryResult.first()
+            val user = doc.toObject<User>()?.copy(
+                remainingTimeOffRequests = doc.getLong("remainingTimeOffRequests")!!.toInt() - 1
+            )
+            return if (user != null) {
+                currUser = user
+                collectionRef.document(doc.id).set(currUser!!).await()
+                Result.success(user)
+
+            } else {
+                Result.failure(Exception("response 온 데이터 user로 바꾸는데 에러"))
+            }
+        }
+        return Result.failure(Exception("id랑 맞는 db가 없음"))
     }
 }
