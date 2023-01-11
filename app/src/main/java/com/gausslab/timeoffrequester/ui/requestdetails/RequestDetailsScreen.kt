@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,25 +26,35 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import com.gausslab.timeoffrequester.model.TimeOffRequest
-
+import androidx.navigation.navArgument
 
 const val requestDetailsScreenRoute = "requestDetails_screen_route"
 
 fun NavGraphBuilder.requestDetailsScreen() {
-    composable(route = requestDetailsScreenRoute) {
-        RequestDetailsScreen()
+    composable(
+        route = "$requestDetailsScreenRoute/{timeOffRequestId}", arguments = listOf(
+            navArgument("timeOffRequestId") {
+                type = NavType.StringType
+                nullable = false
+            }
+        )
+    ) {
+        val timeOffRequestId = it.arguments?.getString("timeOffRequestId")
+        timeOffRequestId?.let { RequestDetailsScreen(timeOffRequestId = timeOffRequestId) }
     }
 }
 
-fun NavController.navigateToRequestDetailsScreen(navOptions: NavOptions? = null) {
-    this.navigate(route = requestDetailsScreenRoute, navOptions = navOptions)
+fun NavController.navigateToRequestDetailsScreen(timeOffRequestId: String, navOptions: NavOptions? = null) {
+    val routeWithArguments = "$requestDetailsScreenRoute/$timeOffRequestId"
+    this.navigate(route = routeWithArguments, navOptions = navOptions)
 }
 
 @Composable
 fun RequestDetailsScreen(
-    viewModel: RequestDetailsViewModel = hiltViewModel()
+    viewModel: RequestDetailsViewModel = hiltViewModel(),
+    timeOffRequestId: String,
 ) {
     Surface(
         modifier = Modifier
@@ -51,6 +62,11 @@ fun RequestDetailsScreen(
             .padding(16.dp)
     ) {
         Column {
+
+            Text(timeOffRequestId, style=MaterialTheme.typography.displayLarge)
+
+
+
             RequestStatusSection()
             Spacer(modifier = Modifier.height(20.dp))
             DateTimeSection(

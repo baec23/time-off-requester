@@ -27,7 +27,7 @@ class RequestListViewModel @Inject constructor(
         when (event) {
             is RequestListUiEvent.RequestDetailClicked -> {
 
-//                navController.navigateToRequestDetailsScreen(event.timeOffRequest)
+                navController.navigateToRequestDetailsScreen(timeOffRequestId = "12345")
             }
         }
     }
