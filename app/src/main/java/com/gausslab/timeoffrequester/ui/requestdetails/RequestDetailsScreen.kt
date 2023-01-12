@@ -43,7 +43,11 @@ fun NavGraphBuilder.requestDetailsScreen() {
         )
     ) {
         val timeOffRequestId = it.arguments?.getInt("timeOffRequestId")
-        timeOffRequestId?.let { RequestDetailsScreen(timeOffRequestId = timeOffRequestId) }
+        timeOffRequestId?.let {
+            val viewModel: RequestDetailsViewModel = hiltViewModel()
+            viewModel.setCurrTimeOffRequest(timeOffRequestId = timeOffRequestId.toString())
+            RequestDetailsScreen(viewModel = viewModel, timeOffRequestId = timeOffRequestId)
+        }
     }
 }
 

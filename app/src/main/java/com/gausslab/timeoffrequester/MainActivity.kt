@@ -12,11 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gausslab.timeoffrequester.ui.App
 import com.gausslab.timeoffrequester.ui.theme.TimeOffRequesterTheme
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        Firebase.firestore.clearPersistence()
         super.onCreate(savedInstanceState)
         setContent {
             TimeOffRequesterTheme {

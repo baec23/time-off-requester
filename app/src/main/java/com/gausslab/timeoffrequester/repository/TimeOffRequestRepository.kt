@@ -2,7 +2,6 @@ package com.gausslab.timeoffrequester.repository
 
 import android.util.Log
 import com.gausslab.timeoffrequester.model.TimeOffRequest
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -13,57 +12,38 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
+import java.lang.Integer.parseInt
 
 class TimeOffRequestRepository {
     private val collectionRef = Firebase.firestore.collection("TimeOffRequests")
-    private var currTimeOffRequestId: Int=0
 
-    private suspend fun getKey(): Int{
-        var currKey = 0
-        val docRef = Firebase.firestore.collection("TimeOffRequestKey").document("TimeOffRequestKey")
+    fun saveNewTimeOffRequest(timeOffRequest: TimeOffRequest) {
+        val docRef =
+            Firebase.firestore.collection("TimeOffRequestKey").document("TimeOffRequestKey")
+
         Firebase.firestore.runTransaction { transaction ->
-            transaction.get(docRef).
-
-
-
-
-
-
-            currKey = transaction.get(docRef).getDouble("key")!!.toInt()
+            val currKey = transaction.get(docRef).getLong("key")!!
             transaction.update(docRef, "key", currKey + 1)
-            return@runTransaction currKey
-        }
-        return currKey
-    }
-
-    suspend fun saveTimeOffRequest(timeOffRequest: TimeOffRequest): Result<TimeOffRequest>{
-        return try {
-            timeOffRequest.timeOffRequestId=getKey()
-            Log.d("asdfasfdfasdfasdf", "saveTimeOffRequest: " + getKey())
-            val savedTimeOffRequest = collectionRef.add(timeOffRequest).await()
-            Result.success(savedTimeOffRequest.get().await().toObject(TimeOffRequest::class.java)!!)
-        }catch (e: Exception){
-            Result.failure(Exception("failed to save timeOffRequest info"))
+            currKey
+        }.addOnSuccessListener { updatedKey ->
+            collectionRef.add(timeOffRequest.copy(timeOffRequestId = updatedKey.toInt()))
         }
     }
 
     fun getAllTimeOffRequests(): Flow<List<TimeOffRequest>> {
         return collectionRef.snapshotFlow().map {
-            it.documents.mapNotNull { documentSnapshot->
+            it.documents.mapNotNull { documentSnapshot ->
                 documentSnapshot.toObject<TimeOffRequest>()
             }
         }
     }
-
-    fun setTimeOffRequestId(id: Int){
-        currTimeOffRequestId=id
-    }
-    fun getTimeOffRequestId(): Int{
-        return currTimeOffRequestId
+    suspend fun getTimeOffRequestById(timeOffRequestId: String): TimeOffRequest {
+        val snapshot =
+            collectionRef.whereEqualTo("timeOffRequestId", parseInt(timeOffRequestId)).get().await()
+        return snapshot.documents.first().toObject<TimeOffRequest>()
+            ?: throw NoSuchElementException()
     }
 }
-
 fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {
     val listenerRegistration = addSnapshotListener { value, error ->
         if (error != null) {

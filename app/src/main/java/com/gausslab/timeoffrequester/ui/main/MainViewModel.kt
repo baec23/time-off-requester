@@ -181,7 +181,8 @@ class MainViewModel @Inject constructor(
                         emergencyNumber = form.emergencyNumber
 
                     )
-                    timeOffRequestRepository.saveTimeOffRequest(timeOffRequest)
+//                    timeOffRequestRepository.saveTimeOffRequest(timeOffRequest)
+                    timeOffRequestRepository.saveNewTimeOffRequest(timeOffRequest)
                     userRepository.reduceRemainingTimeOffRequests(userRepository.currUser!!.id)
                     navController.navigateToRequestListScreen()
                 }

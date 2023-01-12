@@ -2,14 +2,12 @@ package com.gausslab.timeoffrequester.ui.requestdetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +17,7 @@ class RequestDetailsViewModel @Inject constructor(
     private val navController: NavHostController
 ) : ViewModel() {
 
-    private val _currTimeOffRequest = MutableStateFlow<TimeOffRequest>(TimeOffRequest())
+    private val _currTimeOffRequest = MutableStateFlow(TimeOffRequest())
     val currTimeOffRequest = _currTimeOffRequest
 
     fun onEvent(event: RequestDetailsUiEvent) {
@@ -28,14 +26,10 @@ class RequestDetailsViewModel @Inject constructor(
         }
     }
 
-    init {
+    fun setCurrTimeOffRequest(timeOffRequestId: String) {
         viewModelScope.launch {
-            timeOffRequestRepository.getAllTimeOffRequests().collect {
-                val filteredList = it.filter { timeOffRequest ->
-                    timeOffRequest.timeOffRequestId==timeOffRequestRepository.getTimeOffRequestId()
-                }
-                _currTimeOffRequest.emit(filteredList.first())
-            }
+            _currTimeOffRequest.emit(
+                timeOffRequestRepository.getTimeOffRequestById(timeOffRequestId = timeOffRequestId))
         }
     }
 }
