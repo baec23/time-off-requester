@@ -1,6 +1,8 @@
 package com.gausslab.timeoffrequester.repository
 
+import android.util.Log
 import com.gausslab.timeoffrequester.model.TimeOffRequest
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -17,12 +19,19 @@ class TimeOffRequestRepository {
     private val collectionRef = Firebase.firestore.collection("TimeOffRequests")
     private var currTimeOffRequestId: Int=0
 
-    private fun getKey(): Int{
-        var currKey:Int=0
+    private suspend fun getKey(): Int{
+        var currKey = 0
         val docRef = Firebase.firestore.collection("TimeOffRequestKey").document("TimeOffRequestKey")
-        Firebase.firestore.runTransaction {
-            currKey = it.get(docRef).getDouble("key")!!.toInt()
-            it.update(docRef, "key", currKey + 1)
+        Firebase.firestore.runTransaction { transaction ->
+            transaction.get(docRef).
+
+
+
+
+
+
+            currKey = transaction.get(docRef).getDouble("key")!!.toInt()
+            transaction.update(docRef, "key", currKey + 1)
             return@runTransaction currKey
         }
         return currKey
@@ -31,6 +40,7 @@ class TimeOffRequestRepository {
     suspend fun saveTimeOffRequest(timeOffRequest: TimeOffRequest): Result<TimeOffRequest>{
         return try {
             timeOffRequest.timeOffRequestId=getKey()
+            Log.d("asdfasfdfasdfasdf", "saveTimeOffRequest: " + getKey())
             val savedTimeOffRequest = collectionRef.add(timeOffRequest).await()
             Result.success(savedTimeOffRequest.get().await().toObject(TimeOffRequest::class.java)!!)
         }catch (e: Exception){
