@@ -72,4 +72,5 @@ class UserRepository {
         }
         return Result.failure(Exception("id랑 맞는 db가 없음"))
     }
+
 }

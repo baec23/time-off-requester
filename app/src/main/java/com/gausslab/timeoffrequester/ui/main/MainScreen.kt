@@ -470,6 +470,7 @@ fun TimeOffRequestReasonBox(
             shape = RoundedCornerShape(5.dp),
             value = requestReason,
             onValueChange = { onUiEvent(MainUiEvent.TimeOffRequestReasonChanged(it)) },
+            minLines = 1,
             maxLines = 3,
             placeholder = { Text(text = "예시> 개인사유") }
         )

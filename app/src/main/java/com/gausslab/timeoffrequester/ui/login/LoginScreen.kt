@@ -72,7 +72,7 @@ fun LoginScreen(
                 label = "Email",
                 placeholder = "Email",
                 singleLine = true,
-                inputValidator = InputValidator { true }
+                inputValidator = InputValidator { it.isLetterOrDigit() || it == '@'|| it=='.'  }
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -84,7 +84,7 @@ fun LoginScreen(
                 placeholder = "Password",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
-                inputValidator = InputValidator { true }
+                inputValidator = InputValidator.TextNoSpaces
             )
 
             Spacer(modifier = Modifier.height(5.dp))

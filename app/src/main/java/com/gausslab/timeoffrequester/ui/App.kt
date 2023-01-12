@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import com.gausslab.timeoffrequester.ui.main.mainScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
+import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.requestlist.requestListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +38,7 @@ fun App(
             //TODO: TopBar
         },
         bottomBar = {
-            if (!currNavScreenRoute.equals("login_screen_route")) {
+            if (!(currNavScreenRoute== loginScreenRoute || currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}")) {
                 BottomNavBar(
                     modifier = Modifier
                         .fillMaxWidth()

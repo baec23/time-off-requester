@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui.myprofile
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
@@ -43,6 +45,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import coil.compose.SubcomposeAsyncImage
+import com.baec23.ludwig.component.section.DisplaySection
 
 
 const val myProfileScreenRoute = "myProfile_screen_route"
@@ -61,26 +64,36 @@ fun NavController.navigateToMyProfileScreen(navOptions: NavOptions? = null) {
 fun MyProfileScreen(
     viewModel: MyProfileViewModel = hiltViewModel()
 ) {
-    Surface(modifier = Modifier) {
-        Column() {
+
+    val currUser = viewModel.currUser
+
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Box(modifier = Modifier) {
             Logout(
                 modifier = Modifier
-                    .align(
-                        Alignment.End,
-                    ),
+                    .align(Alignment.TopEnd),
                 onUiEvent = { viewModel.onEvent(it) }
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            UserInfoCard(
-                userName = "test",
-                userImageUrl = "https://picsum.photos/1200",
-                subText = "this is subText asdfasdfasdf",
-                subTextColor = Color.DarkGray
-            )
+            DisplaySection(
+                modifier = Modifier
+                    .padding(16.dp),
+                headerText = "내 정보"
+            ) {
+                UserInfoCard(
+                    userName = currUser.username,
+                    userImageUrl = "https://picsum.photos/1200",
+                    subText = "남은 연차 수 : ${currUser.remainingTimeOffRequests}",
+                    subTextColor = Color.DarkGray
+                )
+            }
         }
 
     }
 }
+
 
 @Composable
 fun UserInfoCard(
@@ -180,14 +193,19 @@ fun UserInfoCard(
 @Composable
 fun Logout(
     modifier: Modifier = Modifier,
-    onUiEvent : (MyProfileUiEvent) -> Unit,
+    onUiEvent: (MyProfileUiEvent) -> Unit,
 ) {
     Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.End
+        modifier = modifier
     ) {
-        Button(onClick = { onUiEvent(MyProfileUiEvent.LogoutPressed)}) {
-            Icon(imageVector = Icons.Default.Clear, contentDescription = "Logout")
+        Button(
+            modifier = Modifier.scale(0.6f),
+            onClick = { onUiEvent(MyProfileUiEvent.LogoutPressed) }) {
+            Icon(
+                modifier = Modifier,
+                imageVector = Icons.Default.Clear,
+                contentDescription = "Logout"
+            )
         }
     }
 }

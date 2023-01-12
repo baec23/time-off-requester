@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
+import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.ui.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -11,9 +12,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyProfileViewModel @Inject constructor(
+    private val userRepository: UserRepository,
     private val dataStoreRepository: DataStoreRepository,
     private val navController: NavHostController
 ) : ViewModel(){
+
+    val currUser = userRepository.currUser!!
+
     fun onEvent(event: MyProfileUiEvent){
         when(event){
             MyProfileUiEvent.LogoutPressed -> {
