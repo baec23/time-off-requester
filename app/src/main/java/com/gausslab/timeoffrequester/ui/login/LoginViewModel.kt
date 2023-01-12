@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.ui.main.navigateToMainScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val dataStoreRepository: DataStoreRepository,
     private val navController: NavHostController
 ) : ViewModel() {
     private val _formState: MutableState<LoginFormState> = mutableStateOf(LoginFormState())
@@ -70,11 +72,24 @@ class LoginViewModel @Inject constructor(
                         return@launch
                     }
                     Log.d("asdfasdfasdf", "onEvent: ${_formState.value.userEmail} ${_formState.value.password} $result")
+                    if (autoLoginChecked.value){
+                        dataStoreRepository.putString("savedUserId", myUser.id)
+                    }
                     navController.navigateToMainScreen()
                 }
             }
             LoginUiEvent.AutoLoginPressed -> {
                 autoLoginChecked.value = !autoLoginChecked.value
+            }
+        }
+    }
+
+    init {
+        viewModelScope.launch {
+            val savedUserId = dataStoreRepository.getString("savedUserId")
+            if(savedUserId != null){
+                userRepository.tryAutoLogin(savedUserId)
+                navController.navigateToMainScreen()
             }
         }
     }

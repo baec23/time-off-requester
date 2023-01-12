@@ -11,12 +11,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -56,14 +62,23 @@ fun MyProfileScreen(
     viewModel: MyProfileViewModel = hiltViewModel()
 ) {
     Surface(modifier = Modifier) {
+        Column() {
+            Logout(
+                modifier = Modifier
+                    .align(
+                        Alignment.End,
+                    ),
+                onUiEvent = { viewModel.onEvent(it) }
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            UserInfoCard(
+                userName = "test",
+                userImageUrl = "https://picsum.photos/1200",
+                subText = "this is subText asdfasdfasdf",
+                subTextColor = Color.DarkGray
+            )
+        }
 
-
-        UserInfoCard(
-            userName = "test",
-            userImageUrl = "https://picsum.photos/1200",
-            subText = "this is subText asdfasdfasdf",
-            subTextColor = Color.DarkGray
-        )
     }
 }
 
@@ -158,6 +173,21 @@ fun UserInfoCard(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun Logout(
+    modifier: Modifier = Modifier,
+    onUiEvent : (MyProfileUiEvent) -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.End
+    ) {
+        Button(onClick = { onUiEvent(MyProfileUiEvent.LogoutPressed)}) {
+            Icon(imageVector = Icons.Default.Clear, contentDescription = "Logout")
         }
     }
 }

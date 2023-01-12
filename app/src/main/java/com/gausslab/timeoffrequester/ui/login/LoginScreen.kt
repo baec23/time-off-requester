@@ -24,12 +24,15 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.baec23.ludwig.component.inputfield.InputField
+import com.baec23.ludwig.component.inputfield.InputValidator
 
 const val loginScreenRoute = "login_screen_route"
 
@@ -57,30 +60,37 @@ fun LoginScreen(
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(50.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(100.dp))
-            OutlinedTextField(
+            InputField(
                 modifier = Modifier,
                 value = userEmail,
                 onValueChange = { viewModel.onEvent(LoginUiEvent.UserEmailChanged(it)) },
-                label = { Text(text = "Email") },
+                label = "Email",
+                placeholder = "Email",
+                singleLine = true,
+                inputValidator = InputValidator { true }
             )
+
             Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
+            InputField(
                 modifier = Modifier,
                 value = password,
                 onValueChange = { viewModel.onEvent(LoginUiEvent.PasswordChanged(it)) },
-                label = { Text(text = "Password") },
+                label = "Password",
+                placeholder = "Password",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                visualTransformation = PasswordVisualTransformation()
+                singleLine = true,
+                inputValidator = InputValidator { true }
             )
+
             Spacer(modifier = Modifier.height(5.dp))
             Row(
                 modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(start = 38.dp),
+                    .align(Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
