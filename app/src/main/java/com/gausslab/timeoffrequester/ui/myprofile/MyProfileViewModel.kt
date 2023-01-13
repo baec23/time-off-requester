@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.ui.editmyprofile.navigateToEditMyProfileScreen
 import com.gausslab.timeoffrequester.ui.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -27,10 +28,15 @@ class MyProfileViewModel @Inject constructor(
                     navController.navigateToLoginScreen()
                 }
             }
+
+            MyProfileUiEvent.EditMyProfilePressed -> {
+                navController.navigateToEditMyProfileScreen(userId = currUser.id)
+            }
         }
     }
 }
 
 sealed class MyProfileUiEvent{
     object LogoutPressed : MyProfileUiEvent()
+    object EditMyProfilePressed : MyProfileUiEvent()
 }

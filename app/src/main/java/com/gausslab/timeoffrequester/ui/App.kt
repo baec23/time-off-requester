@@ -16,6 +16,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBar
 import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItems
+import com.gausslab.timeoffrequester.ui.editmyprofile.editMyProfileScreen
+import com.gausslab.timeoffrequester.ui.editmyprofile.editMyProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreen
+import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreenRoute
 import com.gausslab.timeoffrequester.ui.login.loginScreen
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreen
@@ -38,7 +42,8 @@ fun App(
             //TODO: TopBar
         },
         bottomBar = {
-            if (!(currNavScreenRoute== loginScreenRoute || currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}")) {
+            if (!(currNavScreenRoute== loginScreenRoute || currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}" ||
+                        currNavScreenRoute == findPasswordScreenRoute)) {
                 BottomNavBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -62,10 +67,12 @@ fun App(
                 startDestination = loginScreenRoute
             ) {
                 loginScreen()
+                findPasswordScreen()
                 mainScreen()
                 requestListScreen()
                 requestDetailsScreen()
                 myProfileScreen()
+                editMyProfileScreen()
             }
         }
     }

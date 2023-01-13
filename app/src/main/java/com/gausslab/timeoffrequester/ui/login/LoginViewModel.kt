@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.ui.findpassword.navigateToFindPasswordScreen
 import com.gausslab.timeoffrequester.ui.main.navigateToMainScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -81,6 +82,10 @@ class LoginViewModel @Inject constructor(
             LoginUiEvent.AutoLoginPressed -> {
                 autoLoginChecked.value = !autoLoginChecked.value
             }
+
+            LoginUiEvent.FindPasswordPressed ->{
+                navController.navigateToFindPasswordScreen()
+            }
         }
     }
 
@@ -105,5 +110,6 @@ sealed class LoginUiEvent {
     data class PasswordChanged(val password: String) : LoginUiEvent()
     object LoginButtonPressed : LoginUiEvent()
     object AutoLoginPressed : LoginUiEvent()
+    object FindPasswordPressed: LoginUiEvent()
 
 }

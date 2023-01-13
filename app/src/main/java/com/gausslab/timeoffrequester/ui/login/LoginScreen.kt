@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui.login
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -46,7 +48,6 @@ fun NavController.navigateToLoginScreen(navOptions: NavOptions? = null) {
     this.navigate(route = loginScreenRoute, navOptions = navOptions)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
@@ -72,7 +73,7 @@ fun LoginScreen(
                 label = "Email",
                 placeholder = "Email",
                 singleLine = true,
-                inputValidator = InputValidator { it.isLetterOrDigit() || it == '@'|| it=='.'  }
+                inputValidator = InputValidator.Email
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -84,7 +85,8 @@ fun LoginScreen(
                 placeholder = "Password",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
-                inputValidator = InputValidator.TextNoSpaces
+                inputValidator = InputValidator.TextNoSpaces,
+                visualTransformation = PasswordVisualTransformation()
             )
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -100,7 +102,10 @@ fun LoginScreen(
                 Text(text = "자동 로그인")
             }
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "password찾기")
+            Text(
+                modifier = Modifier.clickable { viewModel.onEvent(LoginUiEvent.FindPasswordPressed) },
+                text = "password찾기"
+            )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
                 modifier = Modifier.scale(1.2f),

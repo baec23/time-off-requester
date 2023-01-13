@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -86,7 +87,8 @@ fun MyProfileScreen(
                     userName = currUser.username,
                     userImageUrl = "https://picsum.photos/1200",
                     subText = "남은 연차 수 : ${currUser.remainingTimeOffRequests}",
-                    subTextColor = Color.DarkGray
+                    subTextColor = Color.DarkGray,
+                    onCardClick = {viewModel.onEvent(it)}
                 )
             }
         }
@@ -95,6 +97,7 @@ fun MyProfileScreen(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserInfoCard(
     modifier: Modifier = Modifier,
@@ -110,13 +113,15 @@ fun UserInfoCard(
     profileImageClipShape: Shape = CircleShape,
     onProfileImageClick: (() -> Unit)? = null,
     onEditDetailsClick: (() -> Unit)? = null,
+    onCardClick:(MyProfileUiEvent) -> Unit,
 ) {
     Card(
         modifier = modifier
             .height(cardHeight),
         elevation = CardDefaults.cardElevation(defaultElevation = cardElevation),
         colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
-        shape = RoundedCornerShape(cardBorderRadius)
+        shape = RoundedCornerShape(cardBorderRadius),
+        onClick = {onCardClick(MyProfileUiEvent.EditMyProfilePressed)}
     ) {
         Row(
             modifier = Modifier

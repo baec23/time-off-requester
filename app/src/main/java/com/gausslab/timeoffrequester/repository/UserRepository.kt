@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
+import java.util.NoSuchElementException
 
 @ActivityScoped
 class UserRepository {
@@ -33,7 +34,7 @@ class UserRepository {
         return Result.failure(Exception("id or password 잘못입력"))
     }
 
-    suspend fun tryAutoLogin(id:String): Result<User>{
+    suspend fun tryAutoLogin(id: String): Result<User> {
         val queryResult =
             collectionRef
                 .whereEqualTo("id", id)
@@ -71,6 +72,13 @@ class UserRepository {
             }
         }
         return Result.failure(Exception("id랑 맞는 db가 없음"))
+    }
+
+    suspend fun getUserById(userId: String): User {
+        val snapshot =
+            collectionRef.whereEqualTo("id", userId).get().await()
+        return snapshot.documents.first().toObject<User>()
+            ?: throw NoSuchElementException()
     }
 
 }

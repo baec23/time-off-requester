@@ -9,7 +9,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.baec23.ludwig.core.togglable.ToggleableIcon
+import com.baec23.ludwig.component.toggleable.ToggleableIcon
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreenRoute
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
