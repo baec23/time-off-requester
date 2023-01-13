@@ -1,6 +1,5 @@
 package com.gausslab.timeoffrequester.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,15 +15,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBar
 import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItems
-import com.gausslab.timeoffrequester.ui.editmyprofile.editMyProfileScreen
-import com.gausslab.timeoffrequester.ui.editmyprofile.editMyProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreen
 import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreenRoute
 import com.gausslab.timeoffrequester.ui.login.loginScreen
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
-import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.requestlist.requestListScreen
@@ -72,7 +69,7 @@ fun App(
                 requestListScreen()
                 requestDetailsScreen()
                 myProfileScreen()
-                editMyProfileScreen()
+                myProfileDetailsScreen()
             }
         }
     }

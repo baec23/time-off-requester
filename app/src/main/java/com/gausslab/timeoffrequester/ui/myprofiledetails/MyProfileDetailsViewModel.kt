@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.editmyprofile
+package com.gausslab.timeoffrequester.ui.myprofiledetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditMyProfileViewModel @Inject constructor(
+class MyProfileDetailsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val navController: NavHostController
 ) : ViewModel() {
@@ -27,7 +27,7 @@ class EditMyProfileViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: EditMyProfileUiEvent){
+    fun onEvent(event: MyProfileDetailsUiEvent){
 //        when(event){
 //
 //        }
@@ -35,6 +35,6 @@ class EditMyProfileViewModel @Inject constructor(
 
 }
 
-sealed class EditMyProfileUiEvent{
+sealed class MyProfileDetailsUiEvent{
 
 }

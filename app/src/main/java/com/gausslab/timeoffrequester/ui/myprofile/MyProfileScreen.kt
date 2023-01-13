@@ -1,6 +1,5 @@
 package com.gausslab.timeoffrequester.ui.myprofile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,17 +10,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -83,16 +80,22 @@ fun MyProfileScreen(
                     .padding(16.dp),
                 headerText = "내 정보"
             ) {
-                UserInfoCard(
-                    userName = currUser.username,
-                    userImageUrl = "https://picsum.photos/1200",
-                    subText = "남은 연차 수 : ${currUser.remainingTimeOffRequests}",
-                    subTextColor = Color.DarkGray,
-                    onCardClick = {viewModel.onEvent(it)}
-                )
+                Column() {
+                    UserInfoCard(
+                        userName = currUser.username,
+                        userImageUrl = "https://picsum.photos/1200",
+                        subText = "남은 연차 수 : ${currUser.remainingTimeOffRequests}",
+                        subTextColor = Color.DarkGray,
+                        onCardClick = { viewModel.onEvent(it) }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    ChangePasswordButton(
+                        onUiEvent = {viewModel.onEvent(it)}
+                    )
+                }
+
             }
         }
-
     }
 }
 
@@ -113,7 +116,7 @@ fun UserInfoCard(
     profileImageClipShape: Shape = CircleShape,
     onProfileImageClick: (() -> Unit)? = null,
     onEditDetailsClick: (() -> Unit)? = null,
-    onCardClick:(MyProfileUiEvent) -> Unit,
+    onCardClick: (MyProfileUiEvent) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -121,7 +124,7 @@ fun UserInfoCard(
         elevation = CardDefaults.cardElevation(defaultElevation = cardElevation),
         colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
         shape = RoundedCornerShape(cardBorderRadius),
-        onClick = {onCardClick(MyProfileUiEvent.EditMyProfilePressed)}
+        onClick = { onCardClick(MyProfileUiEvent.MyProfileDetailsPressed) }
     ) {
         Row(
             modifier = Modifier
@@ -211,6 +214,21 @@ fun Logout(
                 imageVector = Icons.Default.Clear,
                 contentDescription = "Logout"
             )
+        }
+    }
+}
+
+@Composable
+fun ChangePasswordButton(
+    modifier: Modifier = Modifier,
+    onUiEvent: (MyProfileUiEvent) -> Unit
+) {
+    Surface(modifier = modifier) {
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onUiEvent(MyProfileUiEvent.ChangePasswordButtonPressed) }
+        ) {
+            Text(text = "비밀번호 수정")
         }
     }
 }
