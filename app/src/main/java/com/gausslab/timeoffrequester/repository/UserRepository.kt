@@ -81,4 +81,12 @@ class UserRepository {
             ?: throw NoSuchElementException()
     }
 
+    suspend fun saveUser(user: User) {
+        val docRef= collectionRef.whereEqualTo("id", user.id).get().await().documents.first().reference
+
+        Firebase.firestore.runTransaction{transition->
+            transition.update(docRef,"password", user.password)
+        }
+    }
 }
+

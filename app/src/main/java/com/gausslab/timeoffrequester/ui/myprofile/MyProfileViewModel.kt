@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.ui.changepassword.navigateToChangePasswordScreen
 import com.gausslab.timeoffrequester.ui.myprofiledetails.navigateToMyProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +35,7 @@ class MyProfileViewModel @Inject constructor(
             }
 
             MyProfileUiEvent.ChangePasswordButtonPressed -> {
-                //
+                navController.navigateToChangePasswordScreen()
             }
         }
     }
