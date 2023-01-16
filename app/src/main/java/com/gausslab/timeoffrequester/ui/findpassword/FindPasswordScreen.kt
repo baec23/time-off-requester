@@ -1,5 +1,8 @@
 package com.gausslab.timeoffrequester.ui.findpassword
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -44,6 +48,8 @@ fun FindPasswordScreen(
     val email = formState.email
     val isFormValid by viewModel.isFormValid
 
+//    val context = LocalContext.current
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -63,6 +69,20 @@ fun FindPasswordScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
                 onClick = {
+//                    fun Context.sendMail(to: String, subject: String){
+//                        try {
+//                            val intent = Intent(Intent.ACTION_SEND)
+//                            intent.type = "mailto:"
+//                            intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+//                            intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+//                            startActivity(intent)
+//                        }catch (e: AccessDeniedException){
+//
+//                        }catch (t: Throwable){
+//
+//                        }
+//                    }
+//                    context.sendMail(email, "12345678")
                     viewModel.onEvent(FindPasswordUiEvent.SendButtonPressed)
                 },
                 enabled = isFormValid
