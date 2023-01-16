@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -35,8 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -65,17 +64,15 @@ fun MainScreen(
     val formState by viewModel.formState
     val isFormValid by viewModel.isFormValid
 
+    val startDateDialogState by viewModel.startDateDialogState
     val startDate = formState.startDate
-    val startDateInputFieldHasError by viewModel.startDateInputFieldHasError
-    val startDateInputFieldErrorMessage by viewModel.startDateInputFieldErrorMessage
 
     val startTime = formState.startTime
     val startTimeInputFieldHasError by viewModel.startTimeInputFieldHasError
     val startTimeInputFieldErrorMessage by viewModel.startTimeInputFieldErrorMessage
 
+    val endDateDialogState by viewModel.endDateDialogState
     val endDate = formState.endDate
-    val endDateInputFieldHasError by viewModel.endDateInputFieldHasError
-    val endDateInputFieldErrorMessage by viewModel.endDateInputFieldErrorMessage
 
     val endTime = formState.endTime
     val endTimeInputFieldHasError by viewModel.endTimeInputFieldHasError
@@ -85,8 +82,8 @@ fun MainScreen(
     val isTimeOffRequestTypeDetailsExpanded by viewModel.timeOffRequestTypeDetails
 
     val requestReason = formState.requestReason
-    val agentName =formState.agentName
-    val emergencyNumber =formState.emergencyNumber
+    val agentName = formState.agentName
+    val emergencyNumber = formState.emergencyNumber
     val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
 
     Surface(
@@ -98,15 +95,13 @@ fun MainScreen(
             RemainingTimeOffRequestsBox(remainingTimeOffRequest = remainingTimeOffRequest)
             Spacer(modifier = Modifier.height(30.dp))
             TimeOffRequestForm(
+                startDateDialogState = startDateDialogState,
                 startDate = startDate,
-                startDateInputFieldHasError = startDateInputFieldHasError,
-                startDateInputFieldErrorMessage = startDateInputFieldErrorMessage,
                 startTime = startTime,
                 startTimeInputFieldHasError = startTimeInputFieldHasError,
                 startTimeInputFieldErrorMessage = startTimeInputFieldErrorMessage,
+                endDateDialogState = endDateDialogState,
                 endDate = endDate,
-                endDateInputFieldHasError = endDateInputFieldHasError,
-                endDateInputFieldErrorMessage = endDateInputFieldErrorMessage,
                 endTime = endTime,
                 endTimeInputFieldHasError = endTimeInputFieldHasError,
                 endTimeInputFieldErrorMessage = endTimeInputFieldErrorMessage,
@@ -139,15 +134,13 @@ fun RemainingTimeOffRequestsBox(
 @Composable
 fun TimeOffRequestForm(
     modifier: Modifier = Modifier,
+    startDateDialogState: Boolean,
     startDate: String,
-    startDateInputFieldHasError: Boolean,
-    startDateInputFieldErrorMessage: String?,
     startTime: String,
     startTimeInputFieldHasError: Boolean,
     startTimeInputFieldErrorMessage: String?,
+    endDateDialogState: Boolean,
     endDate: String,
-    endDateInputFieldHasError: Boolean,
-    endDateInputFieldErrorMessage: String?,
     endTime: String,
     endTimeInputFieldHasError: Boolean,
     endTimeInputFieldErrorMessage: String?,
@@ -164,18 +157,16 @@ fun TimeOffRequestForm(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             StartDateTimeTextField(
+                startDateDialogState = startDateDialogState,
                 startDate = startDate,
-                startDateInputFieldHasError = startDateInputFieldHasError,
-                startDateInputFieldErrorMessage = startDateInputFieldErrorMessage,
                 startTime = startTime,
                 startTimeInputFieldHasError = startTimeInputFieldHasError,
                 startTimeInputFieldErrorMessage = startTimeInputFieldErrorMessage,
                 onUiEvent = onUiEvent
             )
             EndDateTimeTextField(
+                endDateDialogState = endDateDialogState,
                 endDate = endDate,
-                endDateInputFieldHasError = endDateInputFieldHasError,
-                endDateInputFieldErrorMessage = endDateInputFieldErrorMessage,
                 endTime = endTime,
                 endTimeInputFieldHasError = endTimeInputFieldHasError,
                 endTimeInputFieldErrorMessage = endTimeInputFieldErrorMessage,
@@ -236,9 +227,8 @@ fun TimeOffRequestForm(
 @Composable
 fun StartDateTimeTextField(
     modifier: Modifier = Modifier,
+    startDateDialogState: Boolean,
     startDate: String,
-    startDateInputFieldHasError: Boolean,
-    startDateInputFieldErrorMessage: String?,
     startTime: String,
     startTimeInputFieldHasError: Boolean,
     startTimeInputFieldErrorMessage: String?,
@@ -250,18 +240,30 @@ fun StartDateTimeTextField(
             .height(40.dp)
     ) {
         Text(text = "시작날짜: ")
-        InputField(
-            modifier = Modifier.weight(1f),
-            value = startDate,
-            onValueChange = {
-                onUiEvent(MainUiEvent.StartDateChanged(it))
-            },
-            hasError = startDateInputFieldHasError,
-            errorMessage = startDateInputFieldErrorMessage,
-            placeholder = "예시> 220101",
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .clickable {
+                    onUiEvent(MainUiEvent.StartDateDialogPressed)
+                }
+                .background(color = Color.LightGray),
+            text = startDate,
         )
+
+        if (startDateDialogState) {
+            Dialog(onDismissRequest = { }) {
+                com.baec23.ludwig.component.datepicker.DatePicker(
+                    onDateSelectionFinalized = {
+                        onUiEvent(MainUiEvent.StartDateChanged(it.toString()))
+                        onUiEvent(MainUiEvent.StartDateDialogPressed)
+                    },
+                    onCancelled = { onUiEvent(MainUiEvent.StartDateDialogPressed) },
+                    shouldFinalizeOnSelect = false,
+                )
+            }
+        }
+
         Text(text = "시작시간: ")
         InputField(
             modifier = Modifier.weight(1f),
@@ -280,9 +282,8 @@ fun StartDateTimeTextField(
 @Composable
 fun EndDateTimeTextField(
     modifier: Modifier = Modifier,
+    endDateDialogState: Boolean,
     endDate: String,
-    endDateInputFieldHasError: Boolean,
-    endDateInputFieldErrorMessage: String?,
     endTime: String,
     endTimeInputFieldHasError: Boolean,
     endTimeInputFieldErrorMessage: String?,
@@ -295,17 +296,31 @@ fun EndDateTimeTextField(
     ) {
         Text(text = "종료날짜: ")
         Spacer(modifier = Modifier.width(3.dp))
-        InputField(
-            modifier = Modifier.weight(1f),
-            value = endDate,
-            onValueChange = {
-                onUiEvent(MainUiEvent.EndDateChanged(it))
-            },
-            hasError = endDateInputFieldHasError,
-            errorMessage = endDateInputFieldErrorMessage,
-            placeholder = "예시> 221231",
-            singleLine = true,
+
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .clickable {
+                    onUiEvent(MainUiEvent.EndDateDialogPressed)
+
+                }
+                .background(color = Color.LightGray),
+            text = endDate,
         )
+
+        if (endDateDialogState) {
+            Dialog(onDismissRequest = { /*TODO*/ }) {
+                com.baec23.ludwig.component.datepicker.DatePicker(
+                    onDateSelectionFinalized = {
+                        onUiEvent(MainUiEvent.EndDateChanged(it.toString()))
+                        onUiEvent(MainUiEvent.EndDateDialogPressed)
+                    },
+                    onCancelled = { onUiEvent(MainUiEvent.EndDateDialogPressed)},
+                    shouldFinalizeOnSelect =false,
+                )
+            }
+        }
+
         Text(text = "종료시간: ")
         InputField(
             modifier = Modifier.weight(1f),
@@ -369,7 +384,7 @@ fun TimeOffRequestTypeDropDownMenu(
                     DropdownMenuItem(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
                         text = {
-                               Text(text = s.name)
+                            Text(text = s.name)
                         },
                         onClick = {
                             selectedIndex = index
@@ -431,8 +446,8 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
                 items.forEachIndexed { index, s ->
                     DropdownMenuItem(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
-                        text = { 
-                               Text(text = s.name)
+                        text = {
+                            Text(text = s.name)
                         },
                         onClick = {
                             selectedIndex = index
@@ -467,7 +482,7 @@ fun TimeOffRequestReasonBox(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp),
-            shape = RoundedCornerShape(5.dp),
+            shape = RoundedCornerShape(1.dp),
             value = requestReason,
             onValueChange = { onUiEvent(MainUiEvent.TimeOffRequestReasonChanged(it)) },
             minLines = 1,

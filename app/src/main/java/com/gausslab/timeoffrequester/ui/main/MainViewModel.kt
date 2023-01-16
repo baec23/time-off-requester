@@ -25,14 +25,11 @@ class MainViewModel @Inject constructor(
     private val navController: NavHostController
 ) : ViewModel() {
 
-    val startDateInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
-    val startDateInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
+    val startDateDialogState: MutableState<Boolean> = mutableStateOf(false)
+    val endDateDialogState: MutableState<Boolean> = mutableStateOf(false)
 
     val startTimeInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
     val startTimeInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
-
-    val endDateInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
-    val endDateInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
 
     val endTimeInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
     val endTimeInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
@@ -53,9 +50,9 @@ class MainViewModel @Inject constructor(
     private fun updateIsFormValid() {
         val form by _formState
         var isValid = true
-        if (form.startDate.length != 6 || form.startTime.length != 4) {
+        if (form.startDate.isEmpty()|| form.startTime.length != 4) {
             isValid = false
-        } else if (form.endDate.length != 6 || form.endTime.length != 4) {
+        } else if (form.endDate.isEmpty()|| form.endTime.length != 4) {
             isValid = false
         } else if (form.requestReason.isEmpty()) {
             isValid = false
@@ -64,7 +61,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun String.isValidDate(): Boolean {
-        return this.length == 6
+        return this.length > 8
     }
 
     private fun String.isValidTime(): Boolean {
@@ -78,12 +75,6 @@ class MainViewModel @Inject constructor(
                 _formState.value = _formState.value.copy(
                     startDate = event.startDate
                 )
-                if (event.startDate.isValidDate()) {
-                    startDateInputFieldHasError.value = false
-                } else {
-                    startDateInputFieldHasError.value = true
-                    startDateInputFieldErrorMessage.value = "시작 날짜 이상함"
-                }
             }
 
             is MainUiEvent.StartTimeChanged -> {
@@ -102,12 +93,6 @@ class MainViewModel @Inject constructor(
                 _formState.value = _formState.value.copy(
                     endDate = event.endDate
                 )
-                if (event.endDate.isValidDate()) {
-                    endDateInputFieldHasError.value = false
-                } else {
-                    endDateInputFieldHasError.value = true
-                    endDateInputFieldErrorMessage.value = "종료 날짜 이상함"
-                }
             }
 
             is MainUiEvent.EndTimeChanged -> {
@@ -181,11 +166,18 @@ class MainViewModel @Inject constructor(
                         emergencyNumber = form.emergencyNumber
 
                     )
-//                    timeOffRequestRepository.saveTimeOffRequest(timeOffRequest)
                     timeOffRequestRepository.saveNewTimeOffRequest(timeOffRequest)
                     userRepository.reduceRemainingTimeOffRequests(userRepository.currUser!!.id)
                     navController.navigateToRequestListScreen()
                 }
+            }
+
+            MainUiEvent.StartDateDialogPressed -> {
+                startDateDialogState.value = !startDateDialogState.value
+            }
+
+            MainUiEvent.EndDateDialogPressed -> {
+                endDateDialogState.value = !endDateDialogState.value
             }
         }
         updateIsFormValid()
@@ -198,7 +190,7 @@ data class TimeOffRequestFormState(
     val endDate: String = "",
     val endTime: String = "",
     val timeOffRequestType: TimeOffRequestType = TimeOffRequestType.ANNUAL_LEAVE,
-    val timeOffRequestTypeDetails: TimeOffRequestTypeDetail = TimeOffRequestTypeDetail.OTHER,
+    val timeOffRequestTypeDetails: TimeOffRequestTypeDetail = TimeOffRequestTypeDetail.FUNERAL_LEAVE,
     val requestReason: String = "",
     val agentName: String = "",
     val emergencyNumber: String = ""
@@ -218,5 +210,7 @@ sealed class MainUiEvent {
     data class TimeOffRequestReasonChanged(val reason: String) : MainUiEvent()
     data class AgentNameChanged(val agentName: String) : MainUiEvent()
     data class EmergencyNumberChanged(val emergencyNumber: String) : MainUiEvent()
+    object StartDateDialogPressed : MainUiEvent()
+    object EndDateDialogPressed: MainUiEvent()
     object SubmitButtonPressed : MainUiEvent()
 }
