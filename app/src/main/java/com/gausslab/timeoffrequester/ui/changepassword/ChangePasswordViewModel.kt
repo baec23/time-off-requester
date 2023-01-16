@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.model.User
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.ui.login.LoginFormState
+import com.gausslab.timeoffrequester.ui.myprofile.navigateToMyProfileScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -80,6 +81,7 @@ class ChangePasswordViewModel @Inject constructor(
                     val user = userRepository.currUser!!.copy(password = form.newPassword)
                     userRepository.saveUser(user)
                 }
+                navController.navigateToMyProfileScreen()
             }
         }
         checkIfFormIsValid()

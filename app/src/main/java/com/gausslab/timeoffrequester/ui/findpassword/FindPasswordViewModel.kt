@@ -1,5 +1,8 @@
 package com.gausslab.timeoffrequester.ui.findpassword
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -30,7 +33,6 @@ class FindPasswordViewModel @Inject constructor(
         _isFormValid.value = isValid
     }
 
-
     fun onEvent(event: FindPasswordUiEvent){
         when(event){
             is FindPasswordUiEvent.EmailChanged -> {
@@ -39,7 +41,6 @@ class FindPasswordViewModel @Inject constructor(
                 )
                 checkIfFormIsValid()
             }
-
             FindPasswordUiEvent.SendButtonPressed -> {
                 navController.navigateToLoginScreen()
             }

@@ -56,6 +56,8 @@ class MainViewModel @Inject constructor(
             isValid = false
         } else if (form.requestReason.isEmpty()) {
             isValid = false
+        } else if (!checkDate()){
+            isValid = false
         }
         _isFormValid.value = isValid
     }
@@ -66,6 +68,13 @@ class MainViewModel @Inject constructor(
 
     private fun String.isValidTime(): Boolean {
         return this.length == 4
+    }
+
+    private fun checkDate(): Boolean{
+        val form by _formState
+        val startDate = form.startDate.split("-")[0]+form.startDate.split("-")[1]+form.startDate.split("-")[2]
+        val endDate = form.endDate.split("-")[0]+form.endDate.split("-")[1]+form.endDate.split("-")[2]
+        return startDate <= endDate
     }
 
     fun onEvent(event: MainUiEvent) {

@@ -1,5 +1,9 @@
 package com.gausslab.timeoffrequester.ui.main
 
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,16 +30,21 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -44,6 +53,7 @@ import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.inputfield.InputField
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
+import kotlin.system.exitProcess
 
 const val mainScreenRoute = "main_screen_route"
 
@@ -85,6 +95,16 @@ fun MainScreen(
     val agentName = formState.agentName
     val emergencyNumber = formState.emergencyNumber
     val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
+
+    var backPressedTime:Long =0;
+    BackHandler(
+        enabled = true, onBack = {
+            if(System.currentTimeMillis()>backPressedTime+2000){
+                backPressedTime = System.currentTimeMillis()
+            }else if(System.currentTimeMillis() <= backPressedTime+2000){
+                exitProcess(0)
+            }
+        })
 
     Surface(
         modifier = Modifier
@@ -315,8 +335,8 @@ fun EndDateTimeTextField(
                         onUiEvent(MainUiEvent.EndDateChanged(it.toString()))
                         onUiEvent(MainUiEvent.EndDateDialogPressed)
                     },
-                    onCancelled = { onUiEvent(MainUiEvent.EndDateDialogPressed)},
-                    shouldFinalizeOnSelect =false,
+                    onCancelled = { onUiEvent(MainUiEvent.EndDateDialogPressed) },
+                    shouldFinalizeOnSelect = false,
                 )
             }
         }

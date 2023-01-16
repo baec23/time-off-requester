@@ -2,6 +2,7 @@ package com.gausslab.timeoffrequester.repository
 
 import android.util.Log
 import com.gausslab.timeoffrequester.model.TimeOffRequest
+import com.gausslab.timeoffrequester.util.snapshotFlow
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
@@ -42,18 +43,5 @@ class TimeOffRequestRepository {
             collectionRef.whereEqualTo("timeOffRequestId", parseInt(timeOffRequestId)).get().await()
         return snapshot.documents.first().toObject<TimeOffRequest>()
             ?: throw NoSuchElementException()
-    }
-}
-fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {
-    val listenerRegistration = addSnapshotListener { value, error ->
-        if (error != null) {
-            close()
-            return@addSnapshotListener
-        }
-        if (value != null)
-            trySend(value)
-    }
-    awaitClose {
-        listenerRegistration.remove()
     }
 }
