@@ -1,9 +1,10 @@
 package com.gausslab.timeoffrequester.datainterface
 
 import com.gausslab.timeoffrequester.model.TimeOffRequest
+import kotlinx.coroutines.flow.Flow
 
 interface TimeOffRequestRepository {
     fun saveNewTimeOffRequest(timeOffRequest: TimeOffRequest)
-    fun getAllTimeOffRequests()
-    fun getTImeOFfRequestById(timeOffRequestId: String)
+    fun getAllTimeOffRequests(): Flow<List<TimeOffRequest>>
+    suspend fun getTimeOffRequestById(timeOffRequestId: String) : TimeOffRequest
 }

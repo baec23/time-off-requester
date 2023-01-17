@@ -1,24 +1,20 @@
 package com.gausslab.timeoffrequester.repository
 
-import android.util.Log
+import com.gausslab.timeoffrequester.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.util.snapshotFlow
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.lang.Integer.parseInt
 
-class TimeOffRequestRepository {
+class TimeOffRequestRepositoryImpl : TimeOffRequestRepository{
     private val collectionRef = Firebase.firestore.collection("TimeOffRequests")
 
-    fun saveNewTimeOffRequest(timeOffRequest: TimeOffRequest) {
+    override fun saveNewTimeOffRequest(timeOffRequest: TimeOffRequest) {
         val docRef =
             Firebase.firestore.collection("TimeOffRequestKey").document("TimeOffRequestKey")
 
@@ -31,14 +27,14 @@ class TimeOffRequestRepository {
         }
     }
 
-    fun getAllTimeOffRequests(): Flow<List<TimeOffRequest>> {
+    override fun getAllTimeOffRequests(): Flow<List<TimeOffRequest>> {
         return collectionRef.snapshotFlow().map {
             it.documents.mapNotNull { documentSnapshot ->
                 documentSnapshot.toObject<TimeOffRequest>()
             }
         }
     }
-    suspend fun getTimeOffRequestById(timeOffRequestId: String): TimeOffRequest {
+    override suspend fun getTimeOffRequestById(timeOffRequestId: String): TimeOffRequest {
         val snapshot =
             collectionRef.whereEqualTo("timeOffRequestId", parseInt(timeOffRequestId)).get().await()
         return snapshot.documents.first().toObject<TimeOffRequest>()

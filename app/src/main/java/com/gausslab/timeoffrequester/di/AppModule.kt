@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
-import com.gausslab.timeoffrequester.model.User
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
-import com.gausslab.timeoffrequester.repository.TimeOffRequestRepository
+import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -24,7 +23,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTimeOffRequestRepository() = TimeOffRequestRepository()
+    fun provideTimeOffRequestRepository() = TimeOffRequestRepositoryImpl()
 
     @Singleton
     @Provides

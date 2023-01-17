@@ -3,8 +3,8 @@ package com.gausslab.timeoffrequester.ui.requestdetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.gausslab.timeoffrequester.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.model.TimeOffRequest
-import com.gausslab.timeoffrequester.repository.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,8 @@ class RequestDetailsViewModel @Inject constructor(
     fun setCurrTimeOffRequest(timeOffRequestId: String) {
         viewModelScope.launch {
             _currTimeOffRequest.emit(
-                timeOffRequestRepository.getTimeOffRequestById(timeOffRequestId = timeOffRequestId))
+                timeOffRequestRepository.getTimeOffRequestById(timeOffRequestId = timeOffRequestId)
+            )
         }
     }
 }
