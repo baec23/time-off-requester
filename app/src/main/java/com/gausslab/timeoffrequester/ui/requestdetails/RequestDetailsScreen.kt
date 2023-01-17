@@ -30,6 +30,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.gausslab.timeoffrequester.model.toKorean
 
 const val requestDetailsScreenRoute = "requestDetails_screen_route"
 
@@ -83,11 +84,11 @@ fun RequestDetailsScreen(
             )
             LabelValueSection(
                 sectionName = "휴가구분: ",
-                content = currTimeOffRequest.timeOffRequestType.toString()
+                content = currTimeOffRequest.timeOffRequestType.toKorean()
             )
             LabelValueSection(
                 sectionName = "경조구분: ",
-                content = currTimeOffRequest.timeOffRequestTypeDetails.toString()
+                content = currTimeOffRequest.timeOffRequestTypeDetails.toKorean()
             )
             TimeOffRequestReasonSection(
                 sectionName = "신청사유: ",

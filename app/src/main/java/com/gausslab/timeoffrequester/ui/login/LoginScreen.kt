@@ -99,7 +99,10 @@ fun LoginScreen(
                     checked = autoLoginChecked,
                     onCheckedChange = { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
                 )
-                Text(text = "자동 로그인")
+                Text(
+                    modifier = Modifier.clickable { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
+                    text = "자동 로그인"
+                )
             }
             Spacer(modifier = Modifier.height(20.dp))
             Text(

@@ -53,6 +53,7 @@ import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.inputfield.InputField
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
+import com.gausslab.timeoffrequester.model.toKorean
 import kotlin.system.exitProcess
 
 const val mainScreenRoute = "main_screen_route"
@@ -96,12 +97,12 @@ fun MainScreen(
     val emergencyNumber = formState.emergencyNumber
     val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
 
-    var backPressedTime:Long =0;
+    var backPressedTime: Long = 0;
     BackHandler(
         enabled = true, onBack = {
-            if(System.currentTimeMillis()>backPressedTime+2000){
+            if (System.currentTimeMillis() > backPressedTime + 2000) {
                 backPressedTime = System.currentTimeMillis()
-            }else if(System.currentTimeMillis() <= backPressedTime+2000){
+            } else if (System.currentTimeMillis() <= backPressedTime + 2000) {
                 exitProcess(0)
             }
         })
@@ -260,15 +261,22 @@ fun StartDateTimeTextField(
             .height(40.dp)
     ) {
         Text(text = "시작날짜: ")
-
         Text(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
                     onUiEvent(MainUiEvent.StartDateDialogPressed)
-                }
-                .background(color = Color.LightGray),
-            text = startDate,
+                },
+            text = if (startDate == "") {
+                " -> 선택(클릭)"
+            } else {
+                startDate
+            },
+            color = if (startDate == "") {
+                Color.Blue
+            } else {
+                Color.Black
+            }
         )
 
         if (startDateDialogState) {
@@ -315,17 +323,23 @@ fun EndDateTimeTextField(
             .height(40.dp)
     ) {
         Text(text = "종료날짜: ")
-        Spacer(modifier = Modifier.width(3.dp))
-
         Text(
             modifier = Modifier
                 .weight(1f)
                 .clickable {
                     onUiEvent(MainUiEvent.EndDateDialogPressed)
 
-                }
-                .background(color = Color.LightGray),
-            text = endDate,
+                },
+            text = if (endDate == "") {
+                " -> 선택(클릭)"
+            } else {
+                endDate
+            },
+            color = if (endDate == "") {
+                Color.Blue
+            } else {
+                Color.Black
+            }
         )
 
         if (endDateDialogState) {
@@ -387,7 +401,7 @@ fun TimeOffRequestTypeDropDownMenu(
                         )
                     })
                     .background(Color.LightGray),
-                text = items[selectedIndex].name,
+                text = items[selectedIndex].toKorean(),
             )
             DropdownMenu(
                 modifier = Modifier
@@ -404,7 +418,7 @@ fun TimeOffRequestTypeDropDownMenu(
                     DropdownMenuItem(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
                         text = {
-                            Text(text = s.name)
+                            Text(text = s.toKorean())
                         },
                         onClick = {
                             selectedIndex = index
@@ -450,7 +464,7 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
                         )
                     })
                     .background(Color.LightGray),
-                text = items[selectedIndex].name,
+                text = items[selectedIndex].toKorean(),
             )
             DropdownMenu(
                 modifier = Modifier
@@ -467,7 +481,7 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
                     DropdownMenuItem(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onPrimary),
                         text = {
-                            Text(text = s.name)
+                            Text(text = s.toKorean())
                         },
                         onClick = {
                             selectedIndex = index
