@@ -44,4 +44,5 @@ class TimeOffRequestRepository {
         return snapshot.documents.first().toObject<TimeOffRequest>()
             ?: throw NoSuchElementException()
     }
+
 }
