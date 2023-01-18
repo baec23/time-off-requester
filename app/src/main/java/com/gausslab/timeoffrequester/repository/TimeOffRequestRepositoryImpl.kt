@@ -1,6 +1,6 @@
 package com.gausslab.timeoffrequester.repository
 
-import com.gausslab.timeoffrequester.datainterface.TimeOffRequestRepository
+import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.util.snapshotFlow
 import com.google.firebase.firestore.ktx.firestore
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import java.lang.Integer.parseInt
 
-class TimeOffRequestRepositoryImpl : TimeOffRequestRepository{
+class TimeOffRequestRepositoryImpl : TimeOffRequestRepository {
     private val collectionRef = Firebase.firestore.collection("TimeOffRequests")
 
     override fun saveNewTimeOffRequest(timeOffRequest: TimeOffRequest) {

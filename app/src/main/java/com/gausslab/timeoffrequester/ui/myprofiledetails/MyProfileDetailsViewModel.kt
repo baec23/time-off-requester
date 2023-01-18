@@ -3,7 +3,7 @@ package com.gausslab.timeoffrequester.ui.myprofiledetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.gausslab.timeoffrequester.datainterface.UserRepository
+import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.model.User
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel

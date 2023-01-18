@@ -79,9 +79,10 @@ dependencies {
         exclude module: 'guava-jdk5'
     }
 
-    //Excel
-//    implementation 'org.apache.poi:poi:4.1.2'
-//    implementation 'org.apache.poi:poi-oomxl:4.1.2'
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
 
     //Navigation
     implementation"androidx.navigation:navigation-compose"
@@ -107,5 +108,5 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     //Ludwig
-    implementation 'com.github.baec23:ludwig:0.0.14'
+    implementation 'com.github.baec23:ludwig:0.0.15'
 }

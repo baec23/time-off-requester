@@ -3,8 +3,8 @@ package com.gausslab.timeoffrequester.ui.requestlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.gausslab.timeoffrequester.datainterface.TimeOffRequestRepository
-import com.gausslab.timeoffrequester.datainterface.UserRepository
+import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
+import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import com.gausslab.timeoffrequester.ui.requestdetails.navigateToRequestDetailsScreen

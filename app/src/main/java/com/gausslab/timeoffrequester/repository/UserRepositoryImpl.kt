@@ -1,6 +1,6 @@
 package com.gausslab.timeoffrequester.repository
 
-import com.gausslab.timeoffrequester.datainterface.UserRepository
+import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.model.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject

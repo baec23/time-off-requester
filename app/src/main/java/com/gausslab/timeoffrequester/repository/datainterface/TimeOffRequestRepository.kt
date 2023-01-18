@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.datainterface
+package com.gausslab.timeoffrequester.repository.datainterface
 
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import kotlinx.coroutines.flow.Flow
