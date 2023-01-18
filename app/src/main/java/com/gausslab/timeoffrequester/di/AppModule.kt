@@ -6,7 +6,7 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
-import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideUserRepository() = UserRepository()
+    fun provideUserRepository() = UserRepositoryImpl()
 
     @Singleton
     @Provides

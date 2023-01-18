@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.repository
 
+import com.gausslab.timeoffrequester.datainterface.UserRepository
 import com.gausslab.timeoffrequester.model.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -9,13 +10,11 @@ import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import java.util.NoSuchElementException
 
-@ActivityScoped
-class UserRepository {
-    var currUser: User? = null
-        private set
+class UserRepositoryImpl: UserRepository {
+    override var currUser: User? = null
     private val collectionRef = Firebase.firestore.collection("users")
 
-    suspend fun tryLogin(id: String, password: String): Result<User> {
+    override suspend fun tryLogin(id: String, password: String): Result<User> {
         val queryResult =
             collectionRef
                 .whereEqualTo("id", id)
@@ -34,7 +33,7 @@ class UserRepository {
         return Result.failure(Exception("id or password 잘못입력"))
     }
 
-    suspend fun tryAutoLogin(id: String): Result<User> {
+    override suspend fun tryAutoLogin(id: String): Result<User> {
         val queryResult =
             collectionRef
                 .whereEqualTo("id", id)
@@ -52,7 +51,7 @@ class UserRepository {
         return Result.failure(Exception("id or password 잘못입력"))
     }
 
-    suspend fun reduceRemainingTimeOffRequests(id: String): Result<User> {
+    override suspend fun reduceRemainingTimeOffRequests(id: String): Result<User> {
         val queryResult =
             collectionRef
                 .whereEqualTo("id", id)
@@ -74,14 +73,14 @@ class UserRepository {
         return Result.failure(Exception("id랑 맞는 db가 없음"))
     }
 
-    suspend fun getUserById(userId: String): User {
+    override suspend fun getUserById(userId: String): User {
         val snapshot =
             collectionRef.whereEqualTo("id", userId).get().await()
         return snapshot.documents.first().toObject<User>()
             ?: throw NoSuchElementException()
     }
 
-    suspend fun saveUser(user: User) {
+    override suspend fun saveUser(user: User) {
         val docRef= collectionRef.whereEqualTo("id", user.id).get().await().documents.first().reference
 
         Firebase.firestore.runTransaction{transition->
