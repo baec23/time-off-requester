@@ -14,7 +14,7 @@ interface RetrofitInterface {
 //    @GET(API.SEARCH_PHOTOS)
 //    fun searchPhotos(@Query("query")searchTerm: String) : Call<JsonElement>
 
-    @GET(API.SEARCH_PHOTOS)
+    @GET(API.READ_SHEET)
     fun getGoogleSheet(): Call<JsonElement>
 
 
