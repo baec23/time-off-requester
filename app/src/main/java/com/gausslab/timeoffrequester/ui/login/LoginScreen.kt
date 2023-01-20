@@ -1,7 +1,6 @@
 package com.gausslab.timeoffrequester.ui.login
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,25 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -70,55 +66,63 @@ fun LoginScreen(
                 modifier = Modifier,
                 value = userEmail,
                 onValueChange = { viewModel.onEvent(LoginUiEvent.UserEmailChanged(it)) },
-                label = "Email",
-                placeholder = "Email",
+                label = "이메일",
+                placeholder = "이메일을 입력하세요.",
                 singleLine = true,
                 inputValidator = InputValidator.Email
             )
-
             Spacer(modifier = Modifier.height(10.dp))
             InputField(
                 modifier = Modifier,
                 value = password,
                 onValueChange = { viewModel.onEvent(LoginUiEvent.PasswordChanged(it)) },
-                label = "Password",
-                placeholder = "Password",
+                label = "비밀번호",
+                placeholder = "비밀번호를 입력하세요.",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
                 inputValidator = InputValidator.TextNoSpaces,
                 visualTransformation = PasswordVisualTransformation()
             )
-
-            Spacer(modifier = Modifier.height(5.dp))
             Row(
                 modifier = Modifier
                     .align(Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
+                    modifier = Modifier,
                     checked = autoLoginChecked,
                     onCheckedChange = { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
                 )
                 Text(
-                    modifier = Modifier.clickable { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
+                    modifier = Modifier
+                        .scale(0.9f)
+                        .clickable { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
                     text = "자동 로그인"
                 )
             }
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                modifier = Modifier.clickable { viewModel.onEvent(LoginUiEvent.FindPasswordPressed) },
-                text = "password찾기"
-            )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
-                modifier = Modifier.scale(1.2f),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 onClick = { viewModel.onEvent(LoginUiEvent.LoginButtonPressed) },
                 enabled = isFormValid,
             ) {
-                Text("Login")
+                Text("로그인")
             }
-
+            Spacer(modifier = Modifier.height(5.dp))
+            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                Text(
+                    fontSize = 11.sp,
+                    text = "비밀번호를 잊어버렸습니까?"
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    modifier = Modifier.clickable { viewModel.onEvent(LoginUiEvent.FindPasswordPressed) },
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    text = "비밀번호 찾기"
+                )
+            }
         }
     }
-
 }

@@ -1,11 +1,7 @@
 package com.gausslab.timeoffrequester.ui.main
 
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,28 +26,22 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.inputfield.InputField
-import com.baec23.ludwig.component.timepicker.TimePicker
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
@@ -114,7 +104,7 @@ fun MainScreen(
             .padding(16.dp)
     ) {
         Column {
-            RemainingTimeOffRequestsBox(remainingTimeOffRequest = remainingTimeOffRequest)
+            Text(modifier = Modifier.padding(5.dp).align(Alignment.CenterHorizontally), text = "< 남은 연차 수 : $remainingTimeOffRequest >", fontSize = 30.sp)
             Spacer(modifier = Modifier.height(30.dp))
             TimeOffRequestForm(
                 startDateDialogState = startDateDialogState,
@@ -135,21 +125,16 @@ fun MainScreen(
                 isFormValid = isFormValid,
                 onUiEvent = { viewModel.onEvent(it) }
             )
-        }
-    }
-}
+            Button(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                onClick = { viewModel.onEvent(MainUiEvent.SubmitButtonPressed) },
+                enabled = isFormValid
+            ) {
+                Text(text = "SUBMIT!")
+            }
 
-@Composable
-fun RemainingTimeOffRequestsBox(
-    modifier: Modifier = Modifier,
-    remainingTimeOffRequest: Int,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .border(width = 1.dp, color = Color.DarkGray, shape = RectangleShape),
-    ) {
-        Text(modifier = Modifier.padding(5.dp), text = "남은 연차 수 : $remainingTimeOffRequest")
+        }
     }
 }
 
@@ -232,14 +217,6 @@ fun TimeOffRequestForm(
             EmergencyNumberBox(
                 title = "비상연락망",
                 emergencyNumber = emergencyNumber,
-                onUiEvent = onUiEvent
-            )
-            SubmitButton(
-                modifier = Modifier
-                    .align(
-                        Alignment.CenterHorizontally,
-                    ),
-                isFormValid,
                 onUiEvent = onUiEvent
             )
         }
@@ -576,23 +553,5 @@ fun EmergencyNumberBox(
             singleLine = true,
             placeholder = "예시> 01012345678",
         )
-    }
-}
-
-@Composable
-fun SubmitButton(
-    modifier: Modifier = Modifier,
-    isFormValid: Boolean,
-    onUiEvent: (MainUiEvent) -> Unit,
-) {
-    Column(
-        modifier = modifier,
-    ) {
-        Button(
-            onClick = { onUiEvent(MainUiEvent.SubmitButtonPressed) },
-            enabled = isFormValid
-        ) {
-            Text(text = "SUBMIT!")
-        }
     }
 }

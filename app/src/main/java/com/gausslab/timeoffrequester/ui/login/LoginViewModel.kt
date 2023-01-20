@@ -1,6 +1,5 @@
 package com.gausslab.timeoffrequester.ui.login
 
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -10,9 +9,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
-import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import com.gausslab.timeoffrequester.ui.findpassword.navigateToFindPasswordScreen
 import com.gausslab.timeoffrequester.ui.main.navigateToMainScreen
+import com.gausslab.timeoffrequester.util.STRING.SAVED_USERID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +22,7 @@ class LoginViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val navController: NavHostController
 ) : ViewModel() {
+
     private val _formState: MutableState<LoginFormState> = mutableStateOf(LoginFormState())
     val formState: State<LoginFormState> = _formState
     private val _isFormValid: MutableState<Boolean> = mutableStateOf(false)
@@ -56,7 +56,7 @@ class LoginViewModel @Inject constructor(
                 checkIfFormIsValid()
             }
 
-            LoginUiEvent.LoginButtonPressed ->{
+            LoginUiEvent.LoginButtonPressed -> {
                 viewModelScope.launch {
                     val result = userRepository.tryLogin(
                         _formState.value.userEmail,
@@ -65,7 +65,7 @@ class LoginViewModel @Inject constructor(
 
                     val myUser = result.getOrElse { exception ->
                         exception.message?.let {
-                            //
+                            it
                         }
                         _formState.value = _formState.value.copy(
                             userEmail = "",
@@ -73,18 +73,18 @@ class LoginViewModel @Inject constructor(
                         )
                         return@launch
                     }
-                    Log.d("asdfasdfasdf", "onEvent: ${_formState.value.userEmail} ${_formState.value.password} $result")
-                    if (autoLoginChecked.value){
-                        dataStoreRepository.putString("savedUserId", myUser.id)
+                    if (autoLoginChecked.value) {
+                        dataStoreRepository.putString(SAVED_USERID, myUser.id)
                     }
                     navController.navigateToMainScreen()
                 }
             }
+
             LoginUiEvent.AutoLoginPressed -> {
                 autoLoginChecked.value = !autoLoginChecked.value
             }
 
-            LoginUiEvent.FindPasswordPressed ->{
+            LoginUiEvent.FindPasswordPressed -> {
                 navController.navigateToFindPasswordScreen()
             }
         }
@@ -92,8 +92,8 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val savedUserId = dataStoreRepository.getString("savedUserId")
-            if(savedUserId != null){
+            val savedUserId = dataStoreRepository.getString(SAVED_USERID)
+            if (savedUserId != null) {
                 userRepository.tryAutoLogin(savedUserId)
                 navController.navigateToMainScreen()
             }
@@ -111,6 +111,6 @@ sealed class LoginUiEvent {
     data class PasswordChanged(val password: String) : LoginUiEvent()
     object LoginButtonPressed : LoginUiEvent()
     object AutoLoginPressed : LoginUiEvent()
-    object FindPasswordPressed: LoginUiEvent()
+    object FindPasswordPressed : LoginUiEvent()
 
 }
