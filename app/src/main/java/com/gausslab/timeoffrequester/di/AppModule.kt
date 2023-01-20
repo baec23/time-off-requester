@@ -9,6 +9,7 @@ import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
+import com.gausslab.timeoffrequester.server.ServerUserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,4 +40,8 @@ object AppModule {
             navigatorProvider.addNavigator(ComposeNavigator())
             navigatorProvider.addNavigator(DialogNavigator())
         }
+
+    @Singleton
+    @Provides
+    fun provideTestUserRepository(): ServerUserRepository = ServerUserRepository()
 }

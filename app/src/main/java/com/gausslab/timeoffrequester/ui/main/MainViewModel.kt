@@ -190,30 +190,6 @@ class MainViewModel @Inject constructor(
 
             MainUiEvent.StartDateDialogPressed -> {
                 startDateDialogState.value = !startDateDialogState.value
-
-
-//                RetrofitManager.instance.searchPhotos(searchTerm = "cat", completion = {
-//                    responseState, responseBody ->
-//                    when(responseState){
-//                        RESPONSE_STATE.OK ->{
-//                            Log.d("MainViewModel", "onEvent: api 호출 성공 $responseBody")}
-//                        RESPONSE_STATE.FAIL ->{ Log.d("MainViewModel", "onEvent: api 호출 실패 $responseBody")}
-//                    }
-//                })
-
-                RetrofitManager.instance.getGoogleSheet(completion = {
-                    responseState, responseBody ->
-                    when(responseState){
-                        RESPONSE_STATE.OK ->{
-                            Log.d("MainViewModel", "onEvent: api 호출 성공 $responseBody")}
-                        RESPONSE_STATE.FAIL ->{ Log.d("MainViewModel", "onEvent: api 호출 실패 $responseBody")}
-                    }
-                })
-
-
-
-
-
             }
 
             MainUiEvent.EndDateDialogPressed -> {
