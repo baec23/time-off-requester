@@ -3,6 +3,7 @@ package com.gausslab.timeoffrequester.ui.main
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.SyncAlt
 import androidx.compose.material.icons.filled.Timer
@@ -40,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -110,17 +113,16 @@ fun MainScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         Column {
             Text(
                 modifier = Modifier
-                    .padding(5.dp)
                     .align(Alignment.CenterHorizontally),
                 text = "< 남은 연차 수 : $remainingTimeOffRequest >",
-                fontSize = 30.sp
+                fontSize = 20.sp,
             )
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             TimeOffRequestForm(
                 startDateDialogState = startDateDialogState,
                 startDate = startDate,
@@ -135,7 +137,6 @@ fun MainScreen(
                 requestReason = requestReason,
                 agentName = agentName,
                 emergencyNumber = emergencyNumber,
-                isFormValid = isFormValid,
                 onUiEvent = { viewModel.onEvent(it) }
             )
             Button(
@@ -166,13 +167,10 @@ fun TimeOffRequestForm(
     requestReason: String,
     agentName: String,
     emergencyNumber: String,
-    isFormValid: Boolean,
     onUiEvent: (MainUiEvent) -> Unit,
 ) {
     Surface(modifier = modifier) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
+        Column() {
             DateTimeSection(
                 startDateDialogState = startDateDialogState,
                 startDate = startDate,
@@ -184,8 +182,11 @@ fun TimeOffRequestForm(
                 endTime = endTime,
                 onUiEvent = onUiEvent
             )
+            TimeOffRequestReasonBox(
+                requestReason = requestReason,
+                onUiEvent = onUiEvent
+            )
             TimeOffRequestTypeDropDownMenu(
-                title = "휴가구분",
                 expanded = isTimeOffRequestTypeExpanded,
                 items = listOf(
                     TimeOffRequestType.ANNUAL_LEAVE,
@@ -209,11 +210,7 @@ fun TimeOffRequestForm(
                 ),
                 onUiEvent = onUiEvent
             )
-            TimeOffRequestReasonBox(
-                title = "신청사유",
-                requestReason = requestReason,
-                onUiEvent = onUiEvent
-            )
+
             AgentNameBox(
                 title = "대리업무자",
                 agentName = agentName,
@@ -243,7 +240,7 @@ fun DateTimeSection(
 ) {
     DisplaySection(
         modifier = modifier
-            .height(150.dp),
+            .height(135.dp),
         headerText = "날짜/시간"
     ) {
         Row(
@@ -416,37 +413,64 @@ fun DateTimeSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimeOffRequestReasonBox(
+    modifier: Modifier = Modifier,
+    requestReason: String,
+    onUiEvent: (MainUiEvent) -> Unit,
+) {
+    DisplaySection(
+        modifier = modifier, headerText = "신청사유") {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            shape = RoundedCornerShape(10.dp),
+            value = requestReason,
+            onValueChange = {
+                onUiEvent(MainUiEvent.TimeOffRequestReasonChanged(it))
+            },
+            maxLines = 3,
+            placeholder = { Text(text = "예시> 개인사유") }
+        )
+    }
+}
+
 @Composable
 fun TimeOffRequestTypeDropDownMenu(
     modifier: Modifier = Modifier,
-    title: String,
     items: List<TimeOffRequestType>,
     expanded: Boolean,
     onUiEvent: (MainUiEvent) -> Unit
 ) {
     var selectedIndex by remember { mutableStateOf(0) }
 
-    Row(
-        modifier = modifier
-            .fillMaxHeight(0.1f)
-    ) {
-        Text(text = title)
-        Spacer(modifier = Modifier.width(10.dp))
+    DisplaySection(
+        modifier = modifier.height(80.dp),
+        headerText = "휴가구분") {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .wrapContentSize(Alignment.TopStart),
+                .wrapContentSize(Alignment.TopStart)
+                .border(1.dp, color = MaterialTheme.colorScheme.primary, shape = RectangleShape),
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(start = 5.dp)
                     .clickable(onClick = {
                         onUiEvent(
                             MainUiEvent.TimeOffRequestTypeExpanded(true)
                         )
-                    })
-                    .background(Color.LightGray),
+                    }),
                 text = items[selectedIndex].toKorean(),
+            )
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd),
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "DropDown Icon"
             )
             DropdownMenu(
                 modifier = Modifier
@@ -541,37 +565,6 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimeOffRequestReasonBox(
-    modifier: Modifier = Modifier,
-    title: String,
-    requestReason: String,
-    onUiEvent: (MainUiEvent) -> Unit,
-) {
-    Row(
-        modifier = modifier
-            .padding(bottom = 5.dp)
-    ) {
-        Text(
-            modifier = Modifier.fillMaxWidth(0.2f),
-            text = title
-        )
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            shape = RoundedCornerShape(1.dp),
-            value = requestReason,
-            onValueChange = {
-                onUiEvent(MainUiEvent.TimeOffRequestReasonChanged(it))
-            },
-            maxLines = 4,
-            placeholder = { Text(text = "예시> 개인사유") }
-        )
-
-    }
-}
 
 @Composable
 fun AgentNameBox(
