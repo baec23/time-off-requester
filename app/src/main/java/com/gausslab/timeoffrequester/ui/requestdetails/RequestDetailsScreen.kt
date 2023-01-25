@@ -74,13 +74,13 @@ fun RequestDetailsScreen(
             Spacer(modifier = Modifier.height(20.dp))
             DateTimeSection(
                 sectionName = "시작",
-                date = currTimeOffRequest.startDate,
-                time = currTimeOffRequest.startTime
+                date = currTimeOffRequest.startDate.toString(),
+                time = currTimeOffRequest.startTime.toString()
             )
             DateTimeSection(
                 sectionName = "종료",
-                date = currTimeOffRequest.endDate,
-                time = currTimeOffRequest.endTime
+                date = currTimeOffRequest.endDate.toString(),
+                time = currTimeOffRequest.endTime.toString()
             )
             LabelValueSection(
                 sectionName = "휴가구분: ",

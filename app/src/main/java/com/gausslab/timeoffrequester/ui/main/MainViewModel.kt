@@ -15,6 +15,9 @@ import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,11 +30,8 @@ class MainViewModel @Inject constructor(
     val startDateDialogState: MutableState<Boolean> = mutableStateOf(false)
     val endDateDialogState: MutableState<Boolean> = mutableStateOf(false)
 
-    val startTimeInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
-    val startTimeInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
-
-    val endTimeInputFieldHasError: MutableState<Boolean> = mutableStateOf(true)
-    val endTimeInputFieldErrorMessage: MutableState<String?> = mutableStateOf("")
+    val startTimeDialogState: MutableState<Boolean> = mutableStateOf(false)
+    val endTimeDialogState: MutableState<Boolean> = mutableStateOf(false)
 
     val timeOffRequestType: MutableState<Boolean> = mutableStateOf(false)
     val timeOffRequestTypeDetails: MutableState<Boolean> = mutableStateOf(false)
@@ -45,37 +45,19 @@ class MainViewModel @Inject constructor(
     val isFormValid: State<Boolean> = _isFormValid
 
     val remainingTimeOffRequest: Int = userRepository.currUser!!.remainingTimeOffRequests
-
-    private fun updateIsFormValid() {
+    private fun checkDate() {
         val form by _formState
-        var isValid = true
-        if (form.startDate.isEmpty() || form.startTime.length != 4) {
-            isValid = false
-        } else if (form.endDate.isEmpty() || form.endTime.length != 4) {
-            isValid = false
-        } else if (form.requestReason.isEmpty()) {
-            isValid = false
-        } else if (!checkDate()) {
+        var isValid = false
+        if (form.startDate < form.endDate) {
+            isValid = true
+        } else if (form.startDate == form.endDate) {
+            if (form.startTime < form.endTime) {
+                isValid = true
+            }
+        } else {
             isValid = false
         }
         _isFormValid.value = isValid
-    }
-
-    private fun String.isValidDate(): Boolean {
-        return this.length > 8
-    }
-
-    private fun String.isValidTime(): Boolean {
-        return this.length == 4
-    }
-
-    private fun checkDate(): Boolean {
-        val form by _formState
-        val startDate =
-            form.startDate.split("-")[0] + form.startDate.split("-")[1] + form.startDate.split("-")[2]
-        val endDate =
-            form.endDate.split("-")[0] + form.endDate.split("-")[1] + form.endDate.split("-")[2]
-        return startDate <= endDate
     }
 
     fun onEvent(event: MainUiEvent) {
@@ -91,12 +73,6 @@ class MainViewModel @Inject constructor(
                 _formState.value = _formState.value.copy(
                     startTime = event.startTime
                 )
-                if (event.startTime.isValidTime()) {
-                    startTimeInputFieldHasError.value = false
-                } else {
-                    startTimeInputFieldHasError.value = true
-                    startTimeInputFieldErrorMessage.value = "시작 시간 이상함"
-                }
             }
 
             is MainUiEvent.EndDateChanged -> {
@@ -109,12 +85,6 @@ class MainViewModel @Inject constructor(
                 _formState.value = _formState.value.copy(
                     endTime = event.endTime
                 )
-                if (event.endTime.isValidTime()) {
-                    endTimeInputFieldHasError.value = false
-                } else {
-                    endTimeInputFieldHasError.value = true
-                    endTimeInputFieldErrorMessage.value = "종료 시간 이상함"
-                }
             }
 
             is MainUiEvent.TimeOffRequestTypeExpanded -> {
@@ -165,20 +135,20 @@ class MainViewModel @Inject constructor(
                         position = userRepository.currUser!!.position,
                         userStartDate = userRepository.currUser!!.startDate,
                         timeOffRequestId = 0,
-                        startDate = form.startDate,
-                        startTime = form.startTime,
-                        endDate = form.endDate,
-                        endTime = form.endTime,
+                        startDate = form.startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        startTime = form.startTime.format(DateTimeFormatter.ofPattern("HH:mm")),
+                        endDate = form.endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                        endTime = form.endTime.format(DateTimeFormatter.ofPattern("HH:mm")),
                         timeOffRequestType = form.timeOffRequestType,
                         timeOffRequestTypeDetails = form.timeOffRequestTypeDetails,
                         requestReason = form.requestReason,
                         agentName = form.agentName,
                         emergencyNumber = form.emergencyNumber
-
                     )
                     timeOffRequestRepository.saveNewTimeOffRequest(timeOffRequest)
                     userRepository.reduceRemainingTimeOffRequests(userRepository.currUser!!.id)
                     navController.navigateToRequestListScreen()
+
                 }
             }
 
@@ -189,16 +159,24 @@ class MainViewModel @Inject constructor(
             MainUiEvent.EndDateDialogPressed -> {
                 endDateDialogState.value = !endDateDialogState.value
             }
+
+            MainUiEvent.StartTimeDialogPressed -> {
+                startTimeDialogState.value = !startTimeDialogState.value
+            }
+
+            MainUiEvent.EndTimeDialogPressed -> {
+                endTimeDialogState.value = !endTimeDialogState.value
+            }
         }
-        updateIsFormValid()
+        checkDate()
     }
 }
 
 data class TimeOffRequestFormState(
-    val startDate: String = "",
-    val startTime: String = "",
-    val endDate: String = "",
-    val endTime: String = "",
+    val startDate: LocalDate = LocalDate.now(),
+    val startTime: LocalTime = LocalTime.now(),
+    val endDate: LocalDate = LocalDate.now(),
+    val endTime: LocalTime = LocalTime.now(),
     val timeOffRequestType: TimeOffRequestType = TimeOffRequestType.ANNUAL_LEAVE,
     val timeOffRequestTypeDetails: TimeOffRequestTypeDetail = TimeOffRequestTypeDetail.FUNERAL_LEAVE,
     val requestReason: String = "",
@@ -207,10 +185,10 @@ data class TimeOffRequestFormState(
 )
 
 sealed class MainUiEvent {
-    data class StartDateChanged(val startDate: String) : MainUiEvent()
-    data class StartTimeChanged(val startTime: String) : MainUiEvent()
-    data class EndDateChanged(val endDate: String) : MainUiEvent()
-    data class EndTimeChanged(val endTime: String) : MainUiEvent()
+    data class StartDateChanged(val startDate: LocalDate) : MainUiEvent()
+    data class StartTimeChanged(val startTime: LocalTime) : MainUiEvent()
+    data class EndDateChanged(val endDate: LocalDate) : MainUiEvent()
+    data class EndTimeChanged(val endTime: LocalTime) : MainUiEvent()
     data class TimeOffRequestTypeExpanded(val expanded: Boolean) : MainUiEvent()
     data class TimeOffRequestType(val type: com.gausslab.timeoffrequester.model.TimeOffRequestType) :
         MainUiEvent()
@@ -222,5 +200,7 @@ sealed class MainUiEvent {
     data class EmergencyNumberChanged(val emergencyNumber: String) : MainUiEvent()
     object StartDateDialogPressed : MainUiEvent()
     object EndDateDialogPressed : MainUiEvent()
+    object StartTimeDialogPressed : MainUiEvent()
+    object EndTimeDialogPressed : MainUiEvent()
     object SubmitButtonPressed : MainUiEvent()
 }

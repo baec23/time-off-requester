@@ -1,6 +1,7 @@
 package com.gausslab.timeoffrequester.ui.main
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,9 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.SyncAlt
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -25,6 +31,7 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,10 +48,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.baec23.ludwig.component.datepicker.DatePicker
 import com.baec23.ludwig.component.inputfield.InputField
+import com.baec23.ludwig.component.section.DisplaySection
+import com.baec23.ludwig.component.timepicker.TimePicker
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import kotlin.system.exitProcess
 
 const val mainScreenRoute = "main_screen_route"
@@ -68,17 +81,13 @@ fun MainScreen(
 
     val startDateDialogState by viewModel.startDateDialogState
     val startDate = formState.startDate
-
+    val startTimeDialogState by viewModel.startTimeDialogState
     val startTime = formState.startTime
-    val startTimeInputFieldHasError by viewModel.startTimeInputFieldHasError
-    val startTimeInputFieldErrorMessage by viewModel.startTimeInputFieldErrorMessage
 
     val endDateDialogState by viewModel.endDateDialogState
     val endDate = formState.endDate
-
+    val endTimeDialogState by viewModel.endTimeDialogState
     val endTime = formState.endTime
-    val endTimeInputFieldHasError by viewModel.endTimeInputFieldHasError
-    val endTimeInputFieldErrorMessage by viewModel.endTimeInputFieldErrorMessage
 
     val isTimeOffRequestTypeExpanded by viewModel.timeOffRequestType
     val isTimeOffRequestTypeDetailsExpanded by viewModel.timeOffRequestTypeDetails
@@ -104,19 +113,23 @@ fun MainScreen(
             .padding(16.dp)
     ) {
         Column {
-            Text(modifier = Modifier.padding(5.dp).align(Alignment.CenterHorizontally), text = "< 남은 연차 수 : $remainingTimeOffRequest >", fontSize = 30.sp)
+            Text(
+                modifier = Modifier
+                    .padding(5.dp)
+                    .align(Alignment.CenterHorizontally),
+                text = "< 남은 연차 수 : $remainingTimeOffRequest >",
+                fontSize = 30.sp
+            )
             Spacer(modifier = Modifier.height(30.dp))
             TimeOffRequestForm(
                 startDateDialogState = startDateDialogState,
                 startDate = startDate,
+                startTimeDialogState = startTimeDialogState,
                 startTime = startTime,
-                startTimeInputFieldHasError = startTimeInputFieldHasError,
-                startTimeInputFieldErrorMessage = startTimeInputFieldErrorMessage,
                 endDateDialogState = endDateDialogState,
                 endDate = endDate,
+                endTimeDialogState = endTimeDialogState,
                 endTime = endTime,
-                endTimeInputFieldHasError = endTimeInputFieldHasError,
-                endTimeInputFieldErrorMessage = endTimeInputFieldErrorMessage,
                 isTimeOffRequestTypeExpanded = isTimeOffRequestTypeExpanded,
                 isTimeOffRequestTypeDetailsExpanded = isTimeOffRequestTypeDetailsExpanded,
                 requestReason = requestReason,
@@ -133,7 +146,6 @@ fun MainScreen(
             ) {
                 Text(text = "SUBMIT!")
             }
-
         }
     }
 }
@@ -142,15 +154,13 @@ fun MainScreen(
 fun TimeOffRequestForm(
     modifier: Modifier = Modifier,
     startDateDialogState: Boolean,
-    startDate: String,
-    startTime: String,
-    startTimeInputFieldHasError: Boolean,
-    startTimeInputFieldErrorMessage: String?,
+    startTimeDialogState: Boolean,
+    startDate: LocalDate,
+    startTime: LocalTime,
     endDateDialogState: Boolean,
-    endDate: String,
-    endTime: String,
-    endTimeInputFieldHasError: Boolean,
-    endTimeInputFieldErrorMessage: String?,
+    endTimeDialogState: Boolean,
+    endDate: LocalDate,
+    endTime: LocalTime,
     isTimeOffRequestTypeExpanded: Boolean,
     isTimeOffRequestTypeDetailsExpanded: Boolean,
     requestReason: String,
@@ -163,20 +173,15 @@ fun TimeOffRequestForm(
         Column(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            StartDateTimeTextField(
+            DateTimeSection(
                 startDateDialogState = startDateDialogState,
                 startDate = startDate,
+                startTimeDialogState = startTimeDialogState,
                 startTime = startTime,
-                startTimeInputFieldHasError = startTimeInputFieldHasError,
-                startTimeInputFieldErrorMessage = startTimeInputFieldErrorMessage,
-                onUiEvent = onUiEvent
-            )
-            EndDateTimeTextField(
                 endDateDialogState = endDateDialogState,
                 endDate = endDate,
+                endTimeDialogState = endTimeDialogState,
                 endTime = endTime,
-                endTimeInputFieldHasError = endTimeInputFieldHasError,
-                endTimeInputFieldErrorMessage = endTimeInputFieldErrorMessage,
                 onUiEvent = onUiEvent
             )
             TimeOffRequestTypeDropDownMenu(
@@ -224,130 +229,192 @@ fun TimeOffRequestForm(
 }
 
 @Composable
-fun StartDateTimeTextField(
+fun DateTimeSection(
     modifier: Modifier = Modifier,
     startDateDialogState: Boolean,
-    startDate: String,
-    startTime: String,
-    startTimeInputFieldHasError: Boolean,
-    startTimeInputFieldErrorMessage: String?,
+    startTimeDialogState: Boolean,
+    startDate: LocalDate,
+    startTime: LocalTime,
+    endDateDialogState: Boolean,
+    endTimeDialogState: Boolean,
+    endDate: LocalDate,
+    endTime: LocalTime,
     onUiEvent: (MainUiEvent) -> Unit
 ) {
-    Row(
+    DisplaySection(
         modifier = modifier
-            .fillMaxWidth()
-            .height(40.dp)
+            .height(150.dp),
+        headerText = "날짜/시간"
     ) {
-        Text(text = "시작날짜: ")
-        Text(
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .clickable {
-                    onUiEvent(MainUiEvent.StartDateDialogPressed)
-                },
-            text = if (startDate == "") {
-                " -> 선택(클릭)"
-            } else {
-                startDate
-            },
-            color = if (startDate == "") {
-                Color.Blue
-            } else {
-                Color.Black
-            }
-        )
-
-        if (startDateDialogState) {
-            Dialog(onDismissRequest = { }) {
-                com.baec23.ludwig.component.datepicker.DatePicker(
-                    onDateSelectionFinalized = {
-                        onUiEvent(MainUiEvent.StartDateChanged(it.toString()))
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Image(
+                modifier = Modifier
+                    .clickable {
                         onUiEvent(MainUiEvent.StartDateDialogPressed)
                     },
-                    onCancelled = { onUiEvent(MainUiEvent.StartDateDialogPressed) },
-                    shouldFinalizeOnSelect = false,
-                )
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = "Calendar Icon",
+            )
+            Text(
+                modifier = Modifier.clickable { onUiEvent(MainUiEvent.StartDateDialogPressed) },
+                text = startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            )
+            if (startDateDialogState) {
+                Dialog(onDismissRequest = { }) {
+                    DatePicker(
+                        onDateSelectionFinalized = {
+                            onUiEvent(MainUiEvent.StartDateChanged(it))
+                            onUiEvent(MainUiEvent.StartDateDialogPressed)
+                        },
+                        onCancelled = { onUiEvent(MainUiEvent.StartDateDialogPressed) },
+                        shouldFinalizeOnSelect = false,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Image(
+                modifier = Modifier.clickable { onUiEvent(MainUiEvent.StartTimeDialogPressed) },
+                imageVector = Icons.Default.Timer,
+                contentDescription = "Time Icon"
+            )
+            Text(
+                modifier = Modifier
+                    .clickable {
+                        onUiEvent(MainUiEvent.StartTimeDialogPressed)
+                    },
+                text = startTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+            )
+            if (startTimeDialogState) {
+                Dialog(onDismissRequest = { }) {
+                    var currTime: LocalTime = LocalTime.now()
+                    Column() {
+                        TimePicker(
+                            modifier = Modifier.weight(1f),
+                            onTimeChanged = {
+                                currTime = it
+                            },
+                            initialTime = startTime
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(36.dp), horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(modifier = Modifier.background(color = Color.White),
+                                onClick = { onUiEvent(MainUiEvent.StartTimeDialogPressed) }
+                            ) {
+                                Text("Cancel", color = Color.Black)
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            TextButton(
+                                modifier = Modifier.background(color = Color.White),
+                                onClick = {
+                                    onUiEvent(MainUiEvent.StartTimeChanged(currTime))
+                                    onUiEvent(MainUiEvent.StartTimeDialogPressed)
+                                }
+                            ) {
+                                Text("OK", color = Color.Black)
+                            }
+                        }
+                    }
+
+                }
             }
         }
-
-        Text(text = "시작시간: ")
-        InputField(
-            modifier = Modifier.weight(1f),
-            value = startTime,
-            onValueChange = {
-                onUiEvent(MainUiEvent.StartTimeChanged(it))
-            },
-            hasError = startTimeInputFieldHasError,
-            errorMessage = startTimeInputFieldErrorMessage,
-            placeholder = "예시> 0900",
-            singleLine = true,
-        )
-    }
-}
-
-@Composable
-fun EndDateTimeTextField(
-    modifier: Modifier = Modifier,
-    endDateDialogState: Boolean,
-    endDate: String,
-    endTime: String,
-    endTimeInputFieldHasError: Boolean,
-    endTimeInputFieldErrorMessage: String?,
-    onUiEvent: (MainUiEvent) -> Unit
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(40.dp)
-    ) {
-        Text(text = "종료날짜: ")
-        Text(
+        Image(
             modifier = Modifier
-                .weight(1f)
-                .clickable {
-                    onUiEvent(MainUiEvent.EndDateDialogPressed)
-
-                },
-            text = if (endDate == "") {
-                " -> 선택(클릭)"
-            } else {
-                endDate
-            },
-            color = if (endDate == "") {
-                Color.Blue
-            } else {
-                Color.Black
-            }
+                .size(20.dp)
+                .align(Alignment.CenterHorizontally),
+            imageVector = Icons.Default.SyncAlt,
+            contentDescription = null
         )
-
-        if (endDateDialogState) {
-            Dialog(onDismissRequest = { /*TODO*/ }) {
-                com.baec23.ludwig.component.datepicker.DatePicker(
-                    onDateSelectionFinalized = {
-                        onUiEvent(MainUiEvent.EndDateChanged(it.toString()))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Image(
+                modifier = Modifier
+                    .clickable {
                         onUiEvent(MainUiEvent.EndDateDialogPressed)
                     },
-                    onCancelled = { onUiEvent(MainUiEvent.EndDateDialogPressed) },
-                    shouldFinalizeOnSelect = false,
-                )
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = "Calendar Icon",
+            )
+            Text(
+                modifier = Modifier.clickable { onUiEvent(MainUiEvent.EndDateDialogPressed) },
+                text = endDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            )
+            if (endDateDialogState) {
+                Dialog(onDismissRequest = { }) {
+                    DatePicker(
+                        onDateSelectionFinalized = {
+                            onUiEvent(MainUiEvent.EndDateChanged(it))
+                            onUiEvent(MainUiEvent.EndDateDialogPressed)
+                        },
+                        onCancelled = { onUiEvent(MainUiEvent.EndDateDialogPressed) },
+                        shouldFinalizeOnSelect = false,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Image(
+                modifier = Modifier.clickable { onUiEvent(MainUiEvent.EndTimeDialogPressed) },
+                imageVector = Icons.Default.Timer,
+                contentDescription = "Time Icon"
+            )
+            Text(
+                modifier = Modifier
+                    .clickable {
+                        onUiEvent(MainUiEvent.EndTimeDialogPressed)
+                    },
+                text = endTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+            )
+            if (endTimeDialogState) {
+                Dialog(onDismissRequest = { }) {
+                    var currTime: LocalTime = LocalTime.now()
+                    Column() {
+                        TimePicker(
+                            modifier = Modifier.weight(1f),
+                            onTimeChanged = {
+                                currTime = it
+                            },
+                            initialTime = endTime
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(36.dp), horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(modifier = Modifier.background(color = Color.White),
+                                onClick = { onUiEvent(MainUiEvent.EndTimeDialogPressed) }
+                            ) {
+                                Text("Cancel", color = Color.Black)
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            TextButton(
+                                modifier = Modifier.background(color = Color.White),
+                                onClick = {
+                                    onUiEvent(MainUiEvent.EndTimeChanged(currTime))
+                                    onUiEvent(MainUiEvent.EndTimeDialogPressed)
+                                }
+                            ) {
+                                Text("OK", color = Color.Black)
+                            }
+                        }
+                    }
+
+                }
             }
         }
-
-        Text(text = "종료시간: ")
-        InputField(
-            modifier = Modifier.weight(1f),
-            value = endTime,
-            onValueChange = {
-                onUiEvent(MainUiEvent.EndTimeChanged(it))
-            },
-            hasError = endTimeInputFieldHasError,
-            errorMessage = endTimeInputFieldErrorMessage,
-            placeholder = "예시> 0900",
-            singleLine = true,
-        )
     }
 }
-
 
 @Composable
 fun TimeOffRequestTypeDropDownMenu(

@@ -56,7 +56,7 @@ fun RequestListScreen(
                     ) {
                         val timeOffRequest = myTimeOffRequests[it]
                         LabelledValueButton(
-                            label = timeOffRequest.startDate + " - " + timeOffRequest.endDate,
+                            label = timeOffRequest.startDate.toString() + " - " + timeOffRequest.endDate,
                             value = timeOffRequest.status,
                             onClick = {
                                 viewModel.onEvent(
