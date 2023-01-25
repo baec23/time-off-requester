@@ -1,14 +1,10 @@
 package com.gausslab.timeoffrequester.ui.main
 
-import android.provider.ContactsContract.CommonDataKinds.Phone
-import android.telephony.PhoneNumberUtils
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +47,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -66,7 +61,6 @@ import com.baec23.ludwig.component.inputfield.InputValidator
 import com.baec23.ludwig.component.section.DisplaySection
 import com.baec23.ludwig.component.section.ExpandableDisplaySection
 import com.baec23.ludwig.component.timepicker.TimePicker
-import com.baec23.ludwig.component.toggleable.ToggleableIconColumn
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
@@ -129,7 +123,7 @@ fun MainScreen(
             .padding(start = 16.dp, end = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Column {
+        Column() {
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
@@ -157,11 +151,12 @@ fun MainScreen(
             Spacer(modifier = Modifier.height(15.dp))
             Button(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .align(Alignment.CenterHorizontally),
                 onClick = { viewModel.onEvent(MainUiEvent.SubmitButtonPressed) },
                 enabled = isFormValid
             ) {
-                Text(text = "SUBMIT!")
+                Text(text = "제출하기!")
             }
         }
     }
@@ -269,7 +264,7 @@ fun DateTimeSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            horizontalArrangement = Arrangement.Start
+            horizontalArrangement = Arrangement.Start,
         ) {
             Image(
                 modifier = Modifier

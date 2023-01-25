@@ -14,8 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.gausslab.timeoffrequester.ui.changepassword.changePasswordScreen
+import com.gausslab.timeoffrequester.ui.changepassword.changePasswordScreenRoute
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBar
+import com.gausslab.timeoffrequester.ui.comp.TopBar
 import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItems
+import com.gausslab.timeoffrequester.ui.comp.topBarItem
 import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreen
 import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreenRoute
@@ -23,6 +26,7 @@ import com.gausslab.timeoffrequester.ui.login.loginScreen
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
+import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.requestlist.requestListScreen
@@ -38,6 +42,18 @@ fun App(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             //TODO: TopBar
+                 if(currNavScreenRoute== requestDetailsScreenRoute || currNavScreenRoute == myProfileDetailsScreenRoute || currNavScreenRoute== changePasswordScreenRoute){
+                     TopBar(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .height(50.dp),
+                         items = topBarItem,
+                         currNavScreenRoute = currNavScreenRoute,
+                         onTopBarButtonPressed = {
+                             viewModel.onEvent(AppUiEvent.TopBarButtonPressed(it))
+                         }
+                     )
+                 }
         },
         bottomBar = {
             if (!(currNavScreenRoute== loginScreenRoute || currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}" ||

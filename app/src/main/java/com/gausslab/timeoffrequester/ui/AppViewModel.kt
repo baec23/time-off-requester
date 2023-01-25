@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBarItem
+import com.gausslab.timeoffrequester.ui.comp.TopBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collect
@@ -22,6 +23,7 @@ class AppViewModel @Inject constructor(
     fun onEvent(event: AppUiEvent) {
         when(event){
             is AppUiEvent.BottomNavBarButtonPressed -> navController.navigate(event.pressedItem.route)
+            is AppUiEvent.TopBarButtonPressed -> navController.navigate(event.pressedItem.route)
         }
     }
     init {
@@ -35,4 +37,5 @@ class AppViewModel @Inject constructor(
 
 sealed class AppUiEvent {
     data class BottomNavBarButtonPressed(val pressedItem: BottomNavBarItem) : AppUiEvent()
+    data class TopBarButtonPressed(val pressedItem: TopBarItem) : AppUiEvent()
 }
