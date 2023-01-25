@@ -34,6 +34,8 @@ class MainViewModel @Inject constructor(
     val endTimeDialogState: MutableState<Boolean> = mutableStateOf(false)
 
     val timeOffRequestType: MutableState<Boolean> = mutableStateOf(false)
+
+    val expandableSessionState: MutableState<Boolean> = mutableStateOf(false)
     val timeOffRequestTypeDetails: MutableState<Boolean> = mutableStateOf(false)
 
     private val _formState: MutableState<TimeOffRequestFormState> = mutableStateOf(
@@ -45,12 +47,12 @@ class MainViewModel @Inject constructor(
     val isFormValid: State<Boolean> = _isFormValid
 
     val remainingTimeOffRequest: Int = userRepository.currUser!!.remainingTimeOffRequests
-    private fun checkDate() {
+    private fun checkFormValid() {
         val form by _formState
         var isValid = false
-        if (form.startDate < form.endDate) {
+        if (form.startDate < form.endDate&&form.requestReason.length>=2) {
             isValid = true
-        } else if (form.startDate == form.endDate) {
+        } else if (form.startDate == form.endDate&&form.requestReason.length>=2) {
             if (form.startTime < form.endTime) {
                 isValid = true
             }
@@ -167,8 +169,12 @@ class MainViewModel @Inject constructor(
             MainUiEvent.EndTimeDialogPressed -> {
                 endTimeDialogState.value = !endTimeDialogState.value
             }
+
+            MainUiEvent.ExpandableSessionPressed->{
+                expandableSessionState.value = !expandableSessionState.value
+            }
         }
-        checkDate()
+        checkFormValid()
     }
 }
 
@@ -178,7 +184,7 @@ data class TimeOffRequestFormState(
     val endDate: LocalDate = LocalDate.now(),
     val endTime: LocalTime = LocalTime.now(),
     val timeOffRequestType: TimeOffRequestType = TimeOffRequestType.ANNUAL_LEAVE,
-    val timeOffRequestTypeDetails: TimeOffRequestTypeDetail = TimeOffRequestTypeDetail.FUNERAL_LEAVE,
+    val timeOffRequestTypeDetails: TimeOffRequestTypeDetail = TimeOffRequestTypeDetail.OTHER,
     val requestReason: String = "",
     val agentName: String = "",
     val emergencyNumber: String = ""
@@ -202,5 +208,6 @@ sealed class MainUiEvent {
     object EndDateDialogPressed : MainUiEvent()
     object StartTimeDialogPressed : MainUiEvent()
     object EndTimeDialogPressed : MainUiEvent()
+    object ExpandableSessionPressed: MainUiEvent()
     object SubmitButtonPressed : MainUiEvent()
 }

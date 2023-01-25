@@ -1,10 +1,14 @@
 package com.gausslab.timeoffrequester.ui.main
 
+import android.provider.ContactsContract.CommonDataKinds.Phone
+import android.telephony.PhoneNumberUtils
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +22,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -43,6 +50,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -53,8 +62,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.datepicker.DatePicker
 import com.baec23.ludwig.component.inputfield.InputField
+import com.baec23.ludwig.component.inputfield.InputValidator
 import com.baec23.ludwig.component.section.DisplaySection
+import com.baec23.ludwig.component.section.ExpandableDisplaySection
 import com.baec23.ludwig.component.timepicker.TimePicker
+import com.baec23.ludwig.component.toggleable.ToggleableIconColumn
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
@@ -92,6 +104,7 @@ fun MainScreen(
     val endTimeDialogState by viewModel.endTimeDialogState
     val endTime = formState.endTime
 
+    val isAdditionalInformationExpanded by viewModel.expandableSessionState
     val isTimeOffRequestTypeExpanded by viewModel.timeOffRequestType
     val isTimeOffRequestTypeDetailsExpanded by viewModel.timeOffRequestTypeDetails
 
@@ -114,6 +127,7 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Column {
             Text(
@@ -132,6 +146,7 @@ fun MainScreen(
                 endDate = endDate,
                 endTimeDialogState = endTimeDialogState,
                 endTime = endTime,
+                isAdditionalInformationExpanded = isAdditionalInformationExpanded,
                 isTimeOffRequestTypeExpanded = isTimeOffRequestTypeExpanded,
                 isTimeOffRequestTypeDetailsExpanded = isTimeOffRequestTypeDetailsExpanded,
                 requestReason = requestReason,
@@ -139,6 +154,7 @@ fun MainScreen(
                 emergencyNumber = emergencyNumber,
                 onUiEvent = { viewModel.onEvent(it) }
             )
+            Spacer(modifier = Modifier.height(15.dp))
             Button(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
@@ -162,6 +178,7 @@ fun TimeOffRequestForm(
     endTimeDialogState: Boolean,
     endDate: LocalDate,
     endTime: LocalTime,
+    isAdditionalInformationExpanded: Boolean,
     isTimeOffRequestTypeExpanded: Boolean,
     isTimeOffRequestTypeDetailsExpanded: Boolean,
     requestReason: String,
@@ -200,27 +217,32 @@ fun TimeOffRequestForm(
                 ),
                 onUiEvent = onUiEvent
             )
-            TimeOffRequestTypeDetailsDropDownMenu(
-                title = "경조구분",
-                expanded = isTimeOffRequestTypeDetailsExpanded,
-                items = listOf(
-                    TimeOffRequestTypeDetail.FUNERAL_LEAVE,
-                    TimeOffRequestTypeDetail.MARRIAGE_LEAVE,
-                    TimeOffRequestTypeDetail.OTHER
-                ),
-                onUiEvent = onUiEvent
-            )
-
-            AgentNameBox(
-                title = "대리업무자",
-                agentName = agentName,
-                onUiEvent = onUiEvent
-            )
-            EmergencyNumberBox(
-                title = "비상연락망",
-                emergencyNumber = emergencyNumber,
-                onUiEvent = onUiEvent
-            )
+            ExpandableDisplaySection(
+                isExpanded = isAdditionalInformationExpanded,
+                headerText = "추가 세부 입력",
+                onExpand = { onUiEvent(MainUiEvent.ExpandableSessionPressed) }
+            ) {
+                TimeOffRequestTypeDetailsDropDownMenu(
+                    title = "경조구분",
+                    expanded = isTimeOffRequestTypeDetailsExpanded,
+                    items = listOf(
+                        TimeOffRequestTypeDetail.FUNERAL_LEAVE,
+                        TimeOffRequestTypeDetail.MARRIAGE_LEAVE,
+                        TimeOffRequestTypeDetail.OTHER
+                    ),
+                    onUiEvent = onUiEvent
+                )
+                AgentNameBox(
+                    title = "대리업무자",
+                    agentName = agentName,
+                    onUiEvent = onUiEvent
+                )
+                EmergencyNumberBox(
+                    title = "비상연락망",
+                    emergencyNumber = emergencyNumber,
+                    onUiEvent = onUiEvent
+                )
+            }
         }
     }
 }
@@ -241,7 +263,7 @@ fun DateTimeSection(
     DisplaySection(
         modifier = modifier
             .height(135.dp),
-        headerText = "날짜/시간"
+        headerText = "* 날짜/시간"
     ) {
         Row(
             modifier = Modifier
@@ -421,7 +443,8 @@ fun TimeOffRequestReasonBox(
     onUiEvent: (MainUiEvent) -> Unit,
 ) {
     DisplaySection(
-        modifier = modifier, headerText = "신청사유") {
+        modifier = modifier, headerText = "* 신청사유"
+    ) {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -448,7 +471,8 @@ fun TimeOffRequestTypeDropDownMenu(
 
     DisplaySection(
         modifier = modifier.height(80.dp),
-        headerText = "휴가구분") {
+        headerText = "* 휴가구분"
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -510,30 +534,36 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
     expanded: Boolean,
     onUiEvent: (MainUiEvent) -> Unit
 ) {
-    var selectedIndex by remember { mutableStateOf(0) }
+    var selectedIndex by remember { mutableStateOf(2) }
 
     Row(
         modifier = modifier
-            .fillMaxHeight(0.1f)
+            .fillMaxHeight(0.2f)
     ) {
         Text(text = title)
         Spacer(modifier = Modifier.width(10.dp))
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .wrapContentSize(Alignment.TopStart),
+                .wrapContentSize(Alignment.TopStart)
+                .border(1.dp, color = MaterialTheme.colorScheme.primary, shape = RectangleShape),
         ) {
-
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(start = 5.dp)
                     .clickable(onClick = {
                         onUiEvent(
                             MainUiEvent.TimeOffRequestTypeDetailsExpanded(true)
                         )
-                    })
-                    .background(Color.LightGray),
+                    }),
                 text = items[selectedIndex].toKorean(),
+            )
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd),
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "DropDown Icon"
             )
             DropdownMenu(
                 modifier = Modifier
@@ -581,7 +611,7 @@ fun AgentNameBox(
         InputField(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(30.dp),
             value = agentName,
             onValueChange = { onUiEvent(MainUiEvent.AgentNameChanged(it)) },
             singleLine = true,
@@ -607,11 +637,13 @@ fun EmergencyNumberBox(
         InputField(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .height(30.dp),
             value = emergencyNumber,
             onValueChange = { onUiEvent(MainUiEvent.EmergencyNumberChanged(it)) },
             singleLine = true,
             placeholder = "예시> 01012345678",
+            inputValidator = InputValidator.Number,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
     }
 }
