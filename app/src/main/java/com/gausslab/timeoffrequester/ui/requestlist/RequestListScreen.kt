@@ -41,7 +41,7 @@ fun RequestListScreen(
 
     Surface(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         Column() {
             DisplaySection(headerText = "연차사용내역") {

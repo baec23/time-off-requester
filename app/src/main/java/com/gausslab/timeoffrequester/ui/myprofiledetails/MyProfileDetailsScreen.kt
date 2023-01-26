@@ -59,7 +59,7 @@ fun MyProfileDetailsScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         DisplaySection(headerText = "내 정보 확인") {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {

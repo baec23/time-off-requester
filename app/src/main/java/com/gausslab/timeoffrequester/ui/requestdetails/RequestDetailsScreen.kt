@@ -1,18 +1,17 @@
 package com.gausslab.timeoffrequester.ui.requestdetails
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -30,6 +28,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.baec23.ludwig.component.section.DisplaySection
+import com.baec23.ludwig.component.section.ExpandableDisplaySection
 import com.gausslab.timeoffrequester.model.toKorean
 
 const val requestDetailsScreenRoute = "requestDetails_screen_route"
@@ -52,7 +52,10 @@ fun NavGraphBuilder.requestDetailsScreen() {
     }
 }
 
-fun NavController.navigateToRequestDetailsScreen(timeOffRequestId: Int, navOptions: NavOptions? = null) {
+fun NavController.navigateToRequestDetailsScreen(
+    timeOffRequestId: Int,
+    navOptions: NavOptions? = null
+) {
     val routeWithArguments = "$requestDetailsScreenRoute/$timeOffRequestId"
     this.navigate(route = routeWithArguments, navOptions = navOptions)
 }
@@ -63,84 +66,106 @@ fun RequestDetailsScreen(
     timeOffRequestId: Int,
 ) {
     val currTimeOffRequest by viewModel.currTimeOffRequest.collectAsState()
+    val isAdditionalInformationExpanded by viewModel.expandableSessionState
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start=16.dp, end = 16.dp)
+            .padding(16.dp)
     ) {
         Column {
-
-            RequestStatusSection()
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+                text = "< 상태 : ${"승인대기중"} >",
+                fontSize = 20.sp,
+            )
             Spacer(modifier = Modifier.height(20.dp))
             DateTimeSection(
-                sectionName = "시작",
-                date = currTimeOffRequest.startDate.toString(),
-                time = currTimeOffRequest.startTime.toString()
-            )
-            DateTimeSection(
-                sectionName = "종료",
-                date = currTimeOffRequest.endDate.toString(),
-                time = currTimeOffRequest.endTime.toString()
-            )
-            LabelValueSection(
-                sectionName = "휴가구분: ",
-                content = currTimeOffRequest.timeOffRequestType.toKorean()
-            )
-            LabelValueSection(
-                sectionName = "경조구분: ",
-                content = currTimeOffRequest.timeOffRequestTypeDetails.toKorean()
+                startDate = currTimeOffRequest.startDate,
+                startTime = currTimeOffRequest.startTime,
+                endDate = currTimeOffRequest.endDate,
+                endTime = currTimeOffRequest.endTime,
             )
             TimeOffRequestReasonSection(
-                sectionName = "신청사유: ",
-                requestReason = currTimeOffRequest.requestReason
+                content = currTimeOffRequest.requestReason,
+                title = "신청사유"
             )
-            LabelValueSection(
-                sectionName = "대리업무자: ",
-                content = currTimeOffRequest.agentName!!
+            TimeOffRequestReasonSection(
+                content = currTimeOffRequest.timeOffRequestType.toKorean(),
+                title = "휴가구분"
             )
-            LabelValueSection(
-                sectionName = "비상연락망: ",
-                content = currTimeOffRequest.emergencyNumber!!
-            )
-            ConfirmButton(
-                onUiEvent = { viewModel.onEvent(it) }
-            )
-        }
-    }
-}
+            ExpandableDisplaySection(
+                isExpanded = isAdditionalInformationExpanded,
+                headerText = "추가 세부 입력",
+                onExpand = { viewModel.onEvent(RequestDetailsUiEvent.ExpandableSessionPressed) }
+            ) {
+                LabelValueSection(
+                    sectionName = "경조구분: ",
+                    content = currTimeOffRequest.timeOffRequestTypeDetails.toKorean()
+                )
 
-@Composable
-fun RequestStatusSection(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .border(width = 1.dp, color = Color.DarkGray, shape = RectangleShape),
-    ) {
-        Text(modifier = Modifier.padding(5.dp), text = "상태 : ${"승인대기중"}")
+                LabelValueSection(
+                    sectionName = "대리업무자: ",
+                    content = currTimeOffRequest.agentName!!
+                )
+                LabelValueSection(
+                    sectionName = "비상연락망: ",
+                    content = currTimeOffRequest.emergencyNumber!!
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun DateTimeSection(
     modifier: Modifier = Modifier,
-    sectionName: String,
-    date: String,
-    time: String,
+    startDate: String,
+    startTime: String,
+    endDate: String,
+    endTime: String,
 ) {
-    Row(
+    DisplaySection(
         modifier = modifier
-            .fillMaxWidth()
-            .height(40.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+            .height(135.dp),
+        headerText = "날짜/시간"
     ) {
-        Text(text = "${sectionName}날짜: ")
-        Text(text = date)
-        Spacer(modifier = Modifier.width(40.dp))
-        Text(text = "${sectionName}시간: ")
-        Text(text = time)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Image(
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = "Calendar Icon",
+            )
+            Text(text = startDate)
+            Image(
+                imageVector = Icons.Default.Timer,
+                contentDescription = "Time Icon"
+            )
+            Text(text = startTime)
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            Image(
+                imageVector = Icons.Default.CalendarMonth,
+                contentDescription = "Calendar Icon",
+            )
+            Text(text = endDate)
+            Image(
+                imageVector = Icons.Default.Timer,
+                contentDescription = "Time Icon"
+            )
+            Text(text = endTime)
+        }
     }
+
 }
 
 @Composable
@@ -163,40 +188,13 @@ fun LabelValueSection(
 @Composable
 fun TimeOffRequestReasonSection(
     modifier: Modifier = Modifier,
-    sectionName: String,
-    requestReason: String,
+    content: String,
+    title : String
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(150.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    DisplaySection(
+        modifier = modifier,
+        headerText = title
     ) {
-        Text(text = sectionName)
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-                .border(width = 1.dp, color = Color.DarkGray, shape = RectangleShape)
-        ) {
-            Text(modifier = Modifier.padding(start = 3.dp), text = requestReason)
-        }
-    }
-}
-
-@Composable
-fun ConfirmButton(
-    modifier: Modifier = Modifier,
-    onUiEvent: (RequestDetailsUiEvent) -> Unit
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = { onUiEvent(RequestDetailsUiEvent.ConfirmButtonPressed) }
-        ) {
-            Text(text = "CONFIRM!")
-        }
+        Text(modifier = Modifier.padding(start = 3.dp), text = content)
     }
 }

@@ -31,10 +31,12 @@ import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.myprofile.navigateToMyProfileScreen
 import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreenRoute
+import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
 import com.gausslab.timeoffrequester.ui.requestlist.requestListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,15 +65,34 @@ fun App(
                     modifier = Modifier.height(50.dp),
                     title = {
                         when (currNavScreenRoute) {
-                            "$requestDetailsScreenRoute/{timeOffRequestId}" -> Text(modifier = Modifier.padding(top = 8.dp), text = "연차내역 상세보기")
-                            "$myProfileDetailsScreenRoute/{userId}" -> Text(modifier = Modifier.padding(top = 8.dp),text = "내 정보 상세보기")
-                            changePasswordScreenRoute -> Text(modifier = Modifier.padding(top = 8.dp),text = "비밀번호 변경")
+                            "$requestDetailsScreenRoute/{timeOffRequestId}" -> Text(
+                                modifier = Modifier.padding(
+                                    top = 8.dp
+                                ), text = "연차내역 상세보기"
+                            )
+
+                            "$myProfileDetailsScreenRoute/{userId}" -> Text(
+                                modifier = Modifier.padding(
+                                    top = 8.dp
+                                ), text = "내 정보 상세보기"
+                            )
+
+                            changePasswordScreenRoute -> Text(
+                                modifier = Modifier.padding(top = 8.dp),
+                                text = "비밀번호 변경"
+                            )
                         }
                     },
                     navigationIcon = {
                         if (currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}" || currNavScreenRoute == "$myProfileDetailsScreenRoute/{userId}" || currNavScreenRoute == changePasswordScreenRoute) {
                             IconButton(
-                                onClick = {}
+                                onClick = {
+                                    when (currNavScreenRoute) {
+                                        "$requestDetailsScreenRoute/{timeOffRequestId}" -> viewModel.navController.navigateToRequestListScreen()
+                                        "$myProfileDetailsScreenRoute/{userId}" -> viewModel.navController.navigateToMyProfileScreen()
+                                        changePasswordScreenRoute -> viewModel.navController.navigateToMyProfileScreen()
+                                    }
+                                }
                             ) {
                                 Icon(Icons.Filled.ArrowBack, null)
                             }
