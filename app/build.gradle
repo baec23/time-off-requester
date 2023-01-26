@@ -69,17 +69,6 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
 
-    //google sheet
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
-    implementation('com.google.api-client:google-api-client-android:1.28.0') {
-        exclude group: 'org.apache.httpcomponents'
-        exclude module: 'guava-jdk5'
-    }
-    implementation('com.google.apis:google-api-services-sheets:v4-rev571-1.25.0') {
-        exclude group: 'org.apache.httpcomponents'
-        exclude module: 'guava-jdk5'
-    }
-
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
@@ -110,5 +99,15 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     //Ludwig
-    implementation 'com.github.baec23:ludwig:0.0.17'
+    implementation 'com.github.baec23:ludwig:0.0.22'
+
+    //Google Play Services
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation('com.google.api-client:google-api-client-android:+') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    implementation('com.google.apis:google-api-services-sheets:+') {
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.guava'
+    }
 }

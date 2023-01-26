@@ -4,12 +4,18 @@ import android.content.Context
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
-import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
-import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
+import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
+import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.server.ServerUserRepository
+import com.gausslab.timeoffrequester.service.SheetsService
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
+import com.google.api.services.sheets.v4.SheetsScopes
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,11 +28,11 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideUserRepository() : UserRepository = UserRepositoryImpl()
+    fun provideUserRepository(): UserRepository = UserRepositoryImpl()
 
     @Singleton
     @Provides
-    fun provideTimeOffRequestRepository() : TimeOffRequestRepository = TimeOffRequestRepositoryImpl()
+    fun provideTimeOffRequestRepository(): TimeOffRequestRepository = TimeOffRequestRepositoryImpl()
 
     @Singleton
     @Provides
@@ -44,4 +50,20 @@ object AppModule {
     @Singleton
     @Provides
     fun provideTestUserRepository(): ServerUserRepository = ServerUserRepository()
+
+    @Singleton
+    @Provides
+    fun provideSheetsService() = SheetsService()
+
+    @Singleton
+    @Provides
+    fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestId()
+            .requestProfile()
+            .requestScopes(Scope(SheetsScopes.SPREADSHEETS))
+            .build()
+        return GoogleSignIn.getClient(context, gso)
+    }
 }
