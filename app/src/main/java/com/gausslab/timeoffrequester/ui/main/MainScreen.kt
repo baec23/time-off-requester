@@ -156,7 +156,7 @@ fun MainScreen(
                 onClick = { viewModel.onEvent(MainUiEvent.SubmitButtonPressed) },
                 enabled = isFormValid
             ) {
-                Text(text = "제출하기!")
+                Text(text = "제출하기")
             }
         }
     }

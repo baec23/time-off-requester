@@ -3,6 +3,7 @@ package com.gausslab.timeoffrequester.ui.comp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,7 +14,7 @@ import com.baec23.ludwig.component.toggleable.ToggleableIcon
 val topBarItem = listOf(
     TopBarItem(
         iconImageVector = Icons.Default.ArrowBack,
-        route = "뒤로가야함",
+        route = "currentS",
         label = "BackButton"
     ),
     TopBarItem(
@@ -32,6 +33,7 @@ fun TopBar(
 ) {
     NavigationBar(modifier = modifier) {
         items.forEach{ item ->
+
             ToggleableIcon(
                 modifier = Modifier.weight(1f),
                 isToggled = item.route == currNavScreenRoute,

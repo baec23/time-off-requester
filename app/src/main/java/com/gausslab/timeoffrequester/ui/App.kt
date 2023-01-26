@@ -5,8 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,16 +23,15 @@ import androidx.navigation.compose.NavHost
 import com.gausslab.timeoffrequester.ui.changepassword.changePasswordScreen
 import com.gausslab.timeoffrequester.ui.changepassword.changePasswordScreenRoute
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBar
-import com.gausslab.timeoffrequester.ui.comp.TopBar
 import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItems
-import com.gausslab.timeoffrequester.ui.comp.topBarItem
-import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreen
 import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreenRoute
 import com.gausslab.timeoffrequester.ui.login.loginScreen
 import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
 import com.gausslab.timeoffrequester.ui.main.mainScreen
 import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
+import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreenRoute
@@ -42,22 +48,51 @@ fun App(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             //TODO: TopBar
-                 if(currNavScreenRoute== requestDetailsScreenRoute || currNavScreenRoute == myProfileDetailsScreenRoute || currNavScreenRoute== changePasswordScreenRoute){
-                     TopBar(
-                         modifier = Modifier
-                             .fillMaxWidth()
-                             .height(50.dp),
-                         items = topBarItem,
-                         currNavScreenRoute = currNavScreenRoute,
-                         onTopBarButtonPressed = {
-                             viewModel.onEvent(AppUiEvent.TopBarButtonPressed(it))
-                         }
-                     )
-                 }
+            if (currNavScreenRoute != loginScreenRoute) {
+//                TopBar(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(50.dp),
+//                    items = topBarItem,
+//                    currNavScreenRoute = currNavScreenRoute,
+//                    onTopBarButtonPressed = {
+//                        viewModel.onEvent(AppUiEvent.TopBarButtonPressed(it))
+//                    }
+//                )
+                TopAppBar(
+                    modifier = Modifier.height(50.dp),
+                    title = {
+                        when (currNavScreenRoute) {
+                            "$requestDetailsScreenRoute/{timeOffRequestId}" -> Text(modifier = Modifier.padding(top = 8.dp), text = "연차내역 상세보기")
+                            "$myProfileDetailsScreenRoute/{userId}" -> Text(modifier = Modifier.padding(top = 8.dp),text = "내 정보 상세보기")
+                            changePasswordScreenRoute -> Text(modifier = Modifier.padding(top = 8.dp),text = "비밀번호 변경")
+                        }
+                    },
+                    navigationIcon = {
+                        if (currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}" || currNavScreenRoute == "$myProfileDetailsScreenRoute/{userId}" || currNavScreenRoute == changePasswordScreenRoute) {
+                            IconButton(
+                                onClick = {}
+                            ) {
+                                Icon(Icons.Filled.ArrowBack, null)
+                            }
+                        }
+                    },
+                    actions = {
+                        if (currNavScreenRoute == myProfileScreenRoute) {
+                            IconButton(onClick = { viewModel.onEvent(AppUiEvent.LogoutPressed) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Logout"
+                                )
+                            }
+                        }
+                    }
+                )
+            }
         },
         bottomBar = {
-            if (!(currNavScreenRoute== loginScreenRoute || currNavScreenRoute == "$requestDetailsScreenRoute/{timeOffRequestId}" ||
-                        currNavScreenRoute == findPasswordScreenRoute)) {
+            if (!(currNavScreenRoute == loginScreenRoute || currNavScreenRoute == findPasswordScreenRoute)
+            ) {
                 BottomNavBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -74,7 +109,7 @@ fun App(
         Column(
             modifier = Modifier
                 .padding(it)
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp)
         ) {
             NavHost(
                 navController = viewModel.navController,
@@ -92,3 +127,4 @@ fun App(
         }
     }
 }
+

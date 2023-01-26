@@ -10,18 +10,14 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
@@ -44,8 +39,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import coil.compose.SubcomposeAsyncImage
 import com.baec23.ludwig.component.section.DisplaySection
-import com.baec23.ludwig.component.timepicker.TimePicker
-
 
 const val myProfileScreenRoute = "myProfile_screen_route"
 
@@ -71,14 +64,9 @@ fun MyProfileScreen(
             .fillMaxSize()
     ) {
         Box(modifier = Modifier) {
-            Logout(
-                modifier = Modifier
-                    .align(Alignment.TopEnd),
-                onUiEvent = { viewModel.onEvent(it) }
-            )
             DisplaySection(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp),
                 headerText = "내 정보"
             ) {
                 Column() {
@@ -90,9 +78,12 @@ fun MyProfileScreen(
                         onCardClick = { viewModel.onEvent(it) }
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    ChangePasswordButton(
-                        onUiEvent = {viewModel.onEvent(it)}
-                    )
+                    Button(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { viewModel.onEvent(MyProfileUiEvent.ChangePasswordButtonPressed) }
+                    ) {
+                        Text(text = "비밀번호 수정")
+                    }
                 }
 
             }
@@ -195,41 +186,6 @@ fun UserInfoCard(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun Logout(
-    modifier: Modifier = Modifier,
-    onUiEvent: (MyProfileUiEvent) -> Unit,
-) {
-    Row(
-        modifier = modifier
-    ) {
-        Button(
-            modifier = Modifier.scale(0.6f),
-            onClick = { onUiEvent(MyProfileUiEvent.LogoutPressed) }) {
-            Icon(
-                modifier = Modifier,
-                imageVector = Icons.Default.Clear,
-                contentDescription = "Logout"
-            )
-        }
-    }
-}
-
-@Composable
-fun ChangePasswordButton(
-    modifier: Modifier = Modifier,
-    onUiEvent: (MyProfileUiEvent) -> Unit
-) {
-    Surface(modifier = modifier) {
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { onUiEvent(MyProfileUiEvent.ChangePasswordButtonPressed) }
-        ) {
-            Text(text = "비밀번호 수정")
         }
     }
 }

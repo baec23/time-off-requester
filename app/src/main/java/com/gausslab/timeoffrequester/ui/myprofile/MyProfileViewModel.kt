@@ -16,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MyProfileViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val dataStoreRepository: DataStoreRepository,
     private val navController: NavHostController
 ) : ViewModel(){
 
@@ -24,13 +23,6 @@ class MyProfileViewModel @Inject constructor(
 
     fun onEvent(event: MyProfileUiEvent){
         when(event){
-            MyProfileUiEvent.LogoutPressed -> {
-                viewModelScope.launch {
-                    dataStoreRepository.remove("savedUserId")
-                    navController.navigateToLoginScreen()
-                }
-            }
-
             MyProfileUiEvent.MyProfileDetailsPressed -> {
                 navController.navigateToMyProfileDetailsScreen(userId = currUser.id)
             }
@@ -43,7 +35,6 @@ class MyProfileViewModel @Inject constructor(
 }
 
 sealed class MyProfileUiEvent{
-    object LogoutPressed : MyProfileUiEvent()
     object MyProfileDetailsPressed : MyProfileUiEvent()
     object ChangePasswordButtonPressed: MyProfileUiEvent()
 }
