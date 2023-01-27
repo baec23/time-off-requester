@@ -105,7 +105,7 @@ fun MainScreen(
     val requestReason = formState.requestReason
     val agentName = formState.agentName
     val emergencyNumber = formState.emergencyNumber
-    val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
+//    val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
 
     var backPressedTime: Long = 0;
     BackHandler(
@@ -127,7 +127,7 @@ fun MainScreen(
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
-                text = "< 남은 연차 수 : $remainingTimeOffRequest >",
+                text = "< 남은 연차 수 : 5>",
                 fontSize = 20.sp,
             )
             Spacer(modifier = Modifier.height(15.dp))
@@ -340,13 +340,6 @@ fun DateTimeSection(
                 }
             }
         }
-        Image(
-            modifier = Modifier
-                .size(20.dp)
-                .align(Alignment.CenterHorizontally),
-            imageVector = Icons.Default.SyncAlt,
-            contentDescription = null
-        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()

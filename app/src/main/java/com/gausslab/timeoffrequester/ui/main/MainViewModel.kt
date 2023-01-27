@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
     private val _isFormValid: MutableState<Boolean> = mutableStateOf(false)
     val isFormValid: State<Boolean> = _isFormValid
 
-    val remainingTimeOffRequest: Int = userRepository.currUser!!.remainingTimeOffRequests
+//    val remainingTimeOffRequest: Int = userRepository.currUser!!.remainingTimeOffRequests
     private fun checkFormValid() {
         val form by _formState
         var isValid = false
@@ -148,7 +148,7 @@ class MainViewModel @Inject constructor(
                         emergencyNumber = form.emergencyNumber
                     )
                     timeOffRequestRepository.saveNewTimeOffRequest(timeOffRequest)
-                    userRepository.reduceRemainingTimeOffRequests(userRepository.currUser!!.id)
+//                    userRepository.reduceRemainingTimeOffRequests(userRepository.currUser!!.id)
                     navController.navigateToRequestListScreen()
 
                 }

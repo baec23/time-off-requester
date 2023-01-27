@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui.login
 
+import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -7,11 +8,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.gausslab.timeoffrequester.R
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
+import com.gausslab.timeoffrequester.service.SheetsService
 import com.gausslab.timeoffrequester.ui.findpassword.navigateToFindPasswordScreen
 import com.gausslab.timeoffrequester.ui.main.navigateToMainScreen
 import com.gausslab.timeoffrequester.util.STRING.SAVED_USERID
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.sheets.v4.Sheets
+import com.google.api.services.sheets.v4.SheetsScopes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,6 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    val googleSignInClient: GoogleSignInClient,
+    private val sheetsService: SheetsService,
     private val dataStoreRepository: DataStoreRepository,
     private val navController: NavHostController
 ) : ViewModel() {
@@ -87,6 +99,22 @@ class LoginViewModel @Inject constructor(
             LoginUiEvent.FindPasswordPressed -> {
                 navController.navigateToFindPasswordScreen()
             }
+
+            is LoginUiEvent.SignedIn -> {
+                sheetsService.signedInAccount = event.account
+
+                val scopes = listOf(SheetsScopes.SPREADSHEETS)
+                val credential = GoogleAccountCredential.usingOAuth2(event.context, scopes)
+                credential.selectedAccount = event.account.account
+                val jsonFactory = GsonFactory()
+                val httpTransport = NetHttpTransport()
+                val service = Sheets.Builder(httpTransport, jsonFactory, credential)
+                    .setApplicationName(event.context.resources.getString(R.string.app_name))
+                    .build()
+                sheetsService.sheetsService = service
+                navController.navigateToMainScreen()
+
+            }
         }
     }
 
@@ -112,5 +140,9 @@ sealed class LoginUiEvent {
     object LoginButtonPressed : LoginUiEvent()
     object AutoLoginPressed : LoginUiEvent()
     object FindPasswordPressed : LoginUiEvent()
+
+
+
+    data class SignedIn(val account: GoogleSignInAccount, val context: Context) : LoginUiEvent()
 
 }
