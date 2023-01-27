@@ -65,8 +65,6 @@ fun LoginScreen(
     val isFormValid by viewModel.isFormValid
     val autoLoginChecked by viewModel.autoLoginChecked
 
-
-    val context = LocalContext.current
     val startForResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -74,7 +72,7 @@ fun LoginScreen(
                 if (result.data != null) {
                     val account =
                         GoogleSignIn.getSignedInAccountFromIntent(intent).result
-                    viewModel.onEvent(LoginUiEvent.SignedIn(account, context))
+                    viewModel.onEvent(LoginUiEvent.SignedIn(account))
                 }
             }
         }
@@ -103,7 +101,6 @@ fun LoginScreen(
                     Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
                 }
             }
-
 
             Spacer(modifier = Modifier.height(100.dp))
             InputField(
