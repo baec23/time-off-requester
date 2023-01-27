@@ -9,7 +9,9 @@ import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
+import com.gausslab.timeoffrequester.service.FormSheetService
 import com.gausslab.timeoffrequester.service.SheetsService
+import com.gausslab.timeoffrequester.service.UsageSheetService
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -48,7 +50,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSheetsService() = SheetsService()
+    fun provideSheetsService(@ApplicationContext context: Context) = SheetsService(context)
+    @Singleton
+    @Provides
+    fun provideUsageSheetService(sheetsService: SheetsService) = UsageSheetService(sheetsService)
+
+    @Singleton
+    @Provides
+    fun provideFormSheetService(sheetsService: SheetsService) = FormSheetService(sheetsService)
 
     @Singleton
     @Provides
