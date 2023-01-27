@@ -31,6 +31,7 @@ import androidx.navigation.navArgument
 import com.baec23.ludwig.component.section.DisplaySection
 import com.baec23.ludwig.component.section.ExpandableDisplaySection
 import com.gausslab.timeoffrequester.model.toKorean
+import com.gausslab.timeoffrequester.ui.screen.DetailsScreen
 
 const val requestDetailsScreenRoute = "requestDetails_screen_route"
 
@@ -67,54 +68,57 @@ fun RequestDetailsScreen(
 ) {
     val currTimeOffRequest by viewModel.currTimeOffRequest.collectAsState()
     val isAdditionalInformationExpanded by viewModel.expandableSessionState
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Column {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally),
-                text = "< 상태 : ${"승인대기중"} >",
-                fontSize = 20.sp,
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            DateTimeSection(
-                startDate = currTimeOffRequest.startDate,
-                startTime = currTimeOffRequest.startTime,
-                endDate = currTimeOffRequest.endDate,
-                endTime = currTimeOffRequest.endTime,
-            )
-            TimeOffRequestReasonSection(
-                content = currTimeOffRequest.requestReason,
-                title = "신청사유"
-            )
-            TimeOffRequestReasonSection(
-                content = currTimeOffRequest.timeOffRequestType.toKorean(),
-                title = "휴가구분"
-            )
-            ExpandableDisplaySection(
-                isExpanded = isAdditionalInformationExpanded,
-                headerText = "추가 세부 입력",
-                onExpand = { viewModel.onEvent(RequestDetailsUiEvent.ExpandableSessionPressed) }
-            ) {
-                LabelValueSection(
-                    sectionName = "경조구분: ",
-                    content = currTimeOffRequest.timeOffRequestTypeDetails.toKorean()
+    DetailsScreen {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Column {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                    text = "< 상태 : ${"승인대기중"} >",
+                    fontSize = 20.sp,
                 )
+                Spacer(modifier = Modifier.height(20.dp))
+                DateTimeSection(
+                    startDate = currTimeOffRequest.startDate,
+                    startTime = currTimeOffRequest.startTime,
+                    endDate = currTimeOffRequest.endDate,
+                    endTime = currTimeOffRequest.endTime,
+                )
+                TimeOffRequestReasonSection(
+                    content = currTimeOffRequest.requestReason,
+                    title = "신청사유"
+                )
+                TimeOffRequestReasonSection(
+                    content = currTimeOffRequest.timeOffRequestType.toKorean(),
+                    title = "휴가구분"
+                )
+                ExpandableDisplaySection(
+                    isExpanded = isAdditionalInformationExpanded,
+                    headerText = "추가 세부 입력",
+                    onExpand = { viewModel.onEvent(RequestDetailsUiEvent.ExpandableSessionPressed) }
+                ) {
+                    LabelValueSection(
+                        sectionName = "경조구분: ",
+                        content = currTimeOffRequest.timeOffRequestTypeDetails.toKorean()
+                    )
 
-                LabelValueSection(
-                    sectionName = "대리업무자: ",
-                    content = currTimeOffRequest.agentName!!
-                )
-                LabelValueSection(
-                    sectionName = "비상연락망: ",
-                    content = currTimeOffRequest.emergencyNumber!!
-                )
+                    LabelValueSection(
+                        sectionName = "대리업무자: ",
+                        content = currTimeOffRequest.agentName!!
+                    )
+                    LabelValueSection(
+                        sectionName = "비상연락망: ",
+                        content = currTimeOffRequest.emergencyNumber!!
+                    )
+                }
             }
         }
     }
+
 }
 
 @Composable
@@ -189,7 +193,7 @@ fun LabelValueSection(
 fun TimeOffRequestReasonSection(
     modifier: Modifier = Modifier,
     content: String,
-    title : String
+    title: String
 ) {
     DisplaySection(
         modifier = modifier,

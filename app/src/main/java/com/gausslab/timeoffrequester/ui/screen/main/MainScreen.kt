@@ -55,6 +55,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.baec23.ludwig.component.button.LabelledValueButton
 import com.baec23.ludwig.component.datepicker.DatePicker
 import com.baec23.ludwig.component.inputfield.InputField
 import com.baec23.ludwig.component.inputfield.InputValidator
@@ -64,6 +65,7 @@ import com.baec23.ludwig.component.timepicker.TimePicker
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
+import com.gausslab.timeoffrequester.ui.screen.requestlist.RequestListUiEvent
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -105,9 +107,10 @@ fun MainScreen(
     val requestReason = formState.requestReason
     val agentName = formState.agentName
     val emergencyNumber = formState.emergencyNumber
+    val submitButtonPressed by viewModel.submitButtonPressed
 //    val remainingTimeOffRequest = viewModel.remainingTimeOffRequest
 
-    var backPressedTime: Long = 0;
+    var backPressedTime: Long = 0
     BackHandler(
         enabled = true, onBack = {
             if (System.currentTimeMillis() > backPressedTime + 2000) {
@@ -120,10 +123,10 @@ fun MainScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Column() {
+        Column {
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
@@ -154,7 +157,7 @@ fun MainScreen(
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally),
                 onClick = { viewModel.onEvent(MainUiEvent.SubmitButtonPressed) },
-                enabled = isFormValid
+                enabled = isFormValid && !submitButtonPressed
             ) {
                 Text(text = "제출하기")
             }
@@ -182,7 +185,7 @@ fun TimeOffRequestForm(
     onUiEvent: (MainUiEvent) -> Unit,
 ) {
     Surface(modifier = modifier) {
-        Column() {
+        Column {
             DateTimeSection(
                 startDateDialogState = startDateDialogState,
                 startDate = startDate,
@@ -266,6 +269,17 @@ fun DateTimeSection(
                 .weight(1f),
             horizontalArrangement = Arrangement.Start,
         ) {
+//            LabelledValueButton(
+//                label = ,
+//                value = "asdf",
+//                onClick = {
+//                    onUiEvent(MainUiEvent.StartDateDialogPressed)
+//                }
+//            )
+
+
+
+
             Image(
                 modifier = Modifier
                     .clickable {
@@ -306,7 +320,7 @@ fun DateTimeSection(
             if (startTimeDialogState) {
                 Dialog(onDismissRequest = { }) {
                     var currTime: LocalTime = LocalTime.now()
-                    Column() {
+                    Column {
                         TimePicker(
                             modifier = Modifier.weight(1f),
                             onTimeChanged = {
@@ -386,7 +400,7 @@ fun DateTimeSection(
             if (endTimeDialogState) {
                 Dialog(onDismissRequest = { }) {
                     var currTime: LocalTime = LocalTime.now()
-                    Column() {
+                    Column {
                         TimePicker(
                             modifier = Modifier.weight(1f),
                             onTimeChanged = {
@@ -436,13 +450,13 @@ fun TimeOffRequestReasonBox(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp),
+                .height(80.dp),
             shape = RoundedCornerShape(10.dp),
             value = requestReason,
             onValueChange = {
                 onUiEvent(MainUiEvent.TimeOffRequestReasonChanged(it))
             },
-            maxLines = 3,
+            maxLines = 2,
             placeholder = { Text(text = "예시> 개인사유") }
         )
     }
@@ -458,19 +472,23 @@ fun TimeOffRequestTypeDropDownMenu(
     var selectedIndex by remember { mutableStateOf(0) }
 
     DisplaySection(
-        modifier = modifier.height(80.dp),
+        modifier = modifier.height(100.dp),
         headerText = "* 휴가구분"
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.TopStart)
-                .border(1.dp, color = MaterialTheme.colorScheme.primary, shape = RectangleShape),
+                .border(
+                    1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(5.dp)
+                ),
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 5.dp)
+                    .padding(start = 5.dp, top = 3.dp, bottom = 3.dp)
                     .clickable(onClick = {
                         onUiEvent(
                             MainUiEvent.TimeOffRequestTypeExpanded(true)
@@ -526,7 +544,7 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
 
     Row(
         modifier = modifier
-            .fillMaxHeight(0.2f)
+            .fillMaxHeight(0.23f)
     ) {
         Text(text = title)
         Spacer(modifier = Modifier.width(10.dp))
@@ -534,12 +552,16 @@ fun TimeOffRequestTypeDetailsDropDownMenu(
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.TopStart)
-                .border(1.dp, color = MaterialTheme.colorScheme.primary, shape = RectangleShape),
+                .border(
+                    1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(5.dp)
+                ),
         ) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 5.dp)
+                    .padding(start = 5.dp, top = 3.dp, bottom = 3.dp)
                     .clickable(onClick = {
                         onUiEvent(
                             MainUiEvent.TimeOffRequestTypeDetailsExpanded(true)

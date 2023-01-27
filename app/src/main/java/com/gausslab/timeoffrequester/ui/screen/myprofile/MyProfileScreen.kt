@@ -78,12 +78,7 @@ fun MyProfileScreen(
                         onCardClick = { viewModel.onEvent(it) }
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { viewModel.onEvent(MyProfileUiEvent.ChangePasswordButtonPressed) }
-                    ) {
-                        Text(text = "비밀번호 수정")
-                    }
+
                 }
 
             }

@@ -38,6 +38,8 @@ class MainViewModel @Inject constructor(
     val expandableSessionState: MutableState<Boolean> = mutableStateOf(false)
     val timeOffRequestTypeDetails: MutableState<Boolean> = mutableStateOf(false)
 
+    val submitButtonPressed : MutableState<Boolean> = mutableStateOf(false)
+
     private val _formState: MutableState<TimeOffRequestFormState> = mutableStateOf(
         TimeOffRequestFormState()
     )
@@ -129,6 +131,7 @@ class MainViewModel @Inject constructor(
 
             MainUiEvent.SubmitButtonPressed -> {
                 viewModelScope.launch {
+                    submitButtonPressed.value = true
                     val form by _formState
                     val timeOffRequest = TimeOffRequest(
                         status = "",

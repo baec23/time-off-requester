@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
+import com.gausslab.timeoffrequester.navigation.NavService
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
@@ -45,7 +46,9 @@ object AppModule {
             navigatorProvider.addNavigator(ComposeNavigator())
             navigatorProvider.addNavigator(DialogNavigator())
         }
-
+    @Singleton
+    @Provides
+    fun provideNavigationService(navController: NavHostController) = NavService(navController = navController)
     @Singleton
     @Provides
     fun provideSheetsService() = SheetsService()

@@ -59,13 +59,6 @@ fun NavController.navigateToLoginScreen(navOptions: NavOptions? = null) {
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val formState by viewModel.formState
-    val userEmail = formState.userEmail
-    val password = formState.password
-    val isFormValid by viewModel.isFormValid
-    val autoLoginChecked by viewModel.autoLoginChecked
-
-
     val context = LocalContext.current
     val startForResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -102,70 +95,6 @@ fun LoginScreen(
                 ) {
                     Text(text = "Sign in with Google", modifier = Modifier.padding(6.dp))
                 }
-            }
-
-
-            Spacer(modifier = Modifier.height(100.dp))
-            InputField(
-                modifier = Modifier,
-                value = userEmail,
-                onValueChange = { viewModel.onEvent(LoginUiEvent.UserEmailChanged(it)) },
-                label = "이메일",
-                placeholder = "이메일을 입력하세요.",
-                singleLine = true,
-                inputValidator = InputValidator.Email
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            InputField(
-                modifier = Modifier,
-                value = password,
-                onValueChange = { viewModel.onEvent(LoginUiEvent.PasswordChanged(it)) },
-                label = "비밀번호",
-                placeholder = "비밀번호를 입력하세요.",
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                singleLine = true,
-                inputValidator = InputValidator.TextNoSpaces,
-                visualTransformation = PasswordVisualTransformation()
-            )
-            Row(
-                modifier = Modifier
-                    .align(Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    modifier = Modifier,
-                    checked = autoLoginChecked,
-                    onCheckedChange = { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
-                )
-                Text(
-                    modifier = Modifier
-                        .scale(0.9f)
-                        .clickable { viewModel.onEvent(LoginUiEvent.AutoLoginPressed) },
-                    text = "자동 로그인"
-                )
-            }
-            Spacer(modifier = Modifier.height(30.dp))
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onClick = { viewModel.onEvent(LoginUiEvent.LoginButtonPressed) },
-                enabled = isFormValid,
-            ) {
-                Text("로그인")
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-                Text(
-                    fontSize = 11.sp,
-                    text = "비밀번호를 잊어버렸습니까?"
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    modifier = Modifier.clickable { viewModel.onEvent(LoginUiEvent.FindPasswordPressed) },
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    text = "비밀번호 찾기"
-                )
             }
         }
     }
