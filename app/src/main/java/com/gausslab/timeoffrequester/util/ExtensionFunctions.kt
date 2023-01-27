@@ -19,12 +19,3 @@ fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {
         listenerRegistration.remove()
     }
 }
-
-
-fun String?.isJsonObject():Boolean{
-    return this?.startsWith("{") == true && this.endsWith("}")
-}
-
-fun String?.isJsonArray(): Boolean{
-    return this?.startsWith("[") == true && this.endsWith("]")
-}

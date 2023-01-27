@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.myprofiledetails
+package com.gausslab.timeoffrequester.ui.screen.myprofiledetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

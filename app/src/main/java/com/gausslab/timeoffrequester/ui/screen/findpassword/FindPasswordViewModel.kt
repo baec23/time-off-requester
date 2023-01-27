@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.findpassword
+package com.gausslab.timeoffrequester.ui.screen.findpassword
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,7 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.gausslab.timeoffrequester.ui.login.navigateToLoginScreen
+import com.gausslab.timeoffrequester.ui.screen.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

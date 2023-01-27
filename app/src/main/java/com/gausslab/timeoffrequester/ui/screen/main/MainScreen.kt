@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.main
+package com.gausslab.timeoffrequester.ui.screen.main
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image

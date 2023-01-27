@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.myprofile
+package com.gausslab.timeoffrequester.ui.screen.myprofile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

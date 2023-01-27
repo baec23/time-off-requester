@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.requestdetails
+package com.gausslab.timeoffrequester.ui.screen.requestdetails
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

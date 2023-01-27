@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.changepassword
+package com.gausslab.timeoffrequester.ui.screen.changepassword
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +18,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.inputfield.InputField
 import com.baec23.ludwig.component.section.DisplaySection
-import com.gausslab.timeoffrequester.ui.myprofile.MyProfileViewModel
+import com.gausslab.timeoffrequester.ui.screen.myprofile.MyProfileViewModel
 
 const val changePasswordScreenRoute = "changePassword_screen_route"
 
@@ -64,7 +64,11 @@ fun ChangePasswordScreen(
                 )
                 InputField(
                     value = newPasswordCheck ,
-                    onValueChange ={viewModel.onEvent(ChangePasswordUiEvent.NewPasswordCheckChanged(it))},
+                    onValueChange ={viewModel.onEvent(
+                        ChangePasswordUiEvent.NewPasswordCheckChanged(
+                            it
+                        )
+                    )},
                     label = "새로운 비밀번호 재입력",
                     placeholder = "새로운 비밀번호를 재입력",
                     visualTransformation = PasswordVisualTransformation(),

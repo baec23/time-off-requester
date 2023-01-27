@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.main
+package com.gausslab.timeoffrequester.ui.screen.main
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -12,7 +12,7 @@ import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
-import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
+import com.gausslab.timeoffrequester.ui.screen.requestlist.navigateToRequestListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -170,7 +170,7 @@ class MainViewModel @Inject constructor(
                 endTimeDialogState.value = !endTimeDialogState.value
             }
 
-            MainUiEvent.ExpandableSessionPressed->{
+            MainUiEvent.ExpandableSessionPressed ->{
                 expandableSessionState.value = !expandableSessionState.value
             }
         }

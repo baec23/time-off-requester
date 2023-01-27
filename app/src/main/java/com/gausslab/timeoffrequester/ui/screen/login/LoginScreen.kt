@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.login
+package com.gausslab.timeoffrequester.ui.screen.login
 
 import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult

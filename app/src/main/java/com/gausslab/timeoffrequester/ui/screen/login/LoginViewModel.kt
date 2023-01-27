@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.login
+package com.gausslab.timeoffrequester.ui.screen.login
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
@@ -12,8 +12,8 @@ import com.gausslab.timeoffrequester.R
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.service.SheetsService
-import com.gausslab.timeoffrequester.ui.findpassword.navigateToFindPasswordScreen
-import com.gausslab.timeoffrequester.ui.main.navigateToMainScreen
+import com.gausslab.timeoffrequester.ui.screen.findpassword.navigateToFindPasswordScreen
+import com.gausslab.timeoffrequester.ui.screen.main.navigateToMainScreen
 import com.gausslab.timeoffrequester.util.STRING.SAVED_USERID
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient

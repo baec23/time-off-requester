@@ -7,13 +7,9 @@ enum class TimeOffRequestTypeDetail {
 }
 
 fun TimeOffRequestTypeDetail.toKorean(): String {
-    var returnValue: String = ""
-    if (this == TimeOffRequestTypeDetail.OTHER) {
-        returnValue = "기타"
-    } else if (this == TimeOffRequestTypeDetail.FUNERAL_LEAVE) {
-        returnValue = "조의"
-    } else if (this == TimeOffRequestTypeDetail.MARRIAGE_LEAVE) {
-        returnValue = "결혼"
+    return when(this){
+        TimeOffRequestTypeDetail.OTHER -> "기타"
+        TimeOffRequestTypeDetail.FUNERAL_LEAVE -> "조의"
+        TimeOffRequestTypeDetail.MARRIAGE_LEAVE -> "결혼"
     }
-    return returnValue
 }

@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.myprofile
+package com.gausslab.timeoffrequester.ui.screen.myprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,9 +6,9 @@ import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
-import com.gausslab.timeoffrequester.ui.changepassword.navigateToChangePasswordScreen
-import com.gausslab.timeoffrequester.ui.myprofiledetails.navigateToMyProfileDetailsScreen
-import com.gausslab.timeoffrequester.ui.login.navigateToLoginScreen
+import com.gausslab.timeoffrequester.ui.screen.changepassword.navigateToChangePasswordScreen
+import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.navigateToMyProfileDetailsScreen
+import com.gausslab.timeoffrequester.ui.screen.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.requestlist
+package com.gausslab.timeoffrequester.ui.screen.requestlist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

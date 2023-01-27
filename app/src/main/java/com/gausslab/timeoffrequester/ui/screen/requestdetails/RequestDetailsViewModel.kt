@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.requestdetails
+package com.gausslab.timeoffrequester.ui.screen.requestdetails
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
-import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
+import com.gausslab.timeoffrequester.ui.screen.requestlist.navigateToRequestListScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

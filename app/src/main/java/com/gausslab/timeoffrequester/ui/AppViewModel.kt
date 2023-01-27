@@ -8,11 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBarItem
-import com.gausslab.timeoffrequester.ui.comp.TopBarItem
-import com.gausslab.timeoffrequester.ui.login.navigateToLoginScreen
+import com.gausslab.timeoffrequester.ui.screen.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,18 +23,18 @@ class AppViewModel @Inject constructor(
     private val _currNavScreenRoute: MutableState<String?> = mutableStateOf(null)
     val currNavScreenRoute: State<String?> = _currNavScreenRoute
     fun onEvent(event: AppUiEvent) {
-        when(event){
+        when (event) {
             is AppUiEvent.BottomNavBarButtonPressed -> navController.navigate(event.pressedItem.route)
-            is AppUiEvent.TopBarButtonPressed -> navController.navigate(event.pressedItem.route)
             AppUiEvent.LogoutPressed -> viewModelScope.launch {
                 dataStoreRepository.remove("savedUserId")
                 navController.navigateToLoginScreen()
             }
         }
     }
+
     init {
         MainScope().launch {
-            navController.currentBackStackEntryFlow.collect{
+            navController.currentBackStackEntryFlow.collect {
                 _currNavScreenRoute.value = it.destination.route
             }
         }
@@ -45,6 +43,5 @@ class AppViewModel @Inject constructor(
 
 sealed class AppUiEvent {
     data class BottomNavBarButtonPressed(val pressedItem: BottomNavBarItem) : AppUiEvent()
-    data class TopBarButtonPressed(val pressedItem: TopBarItem) : AppUiEvent()
     object LogoutPressed : AppUiEvent()
 }

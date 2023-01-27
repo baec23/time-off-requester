@@ -1,4 +1,4 @@
-package com.gausslab.timeoffrequester.ui.myprofiledetails
+package com.gausslab.timeoffrequester.ui.screen.myprofiledetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

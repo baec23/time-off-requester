@@ -7,6 +7,7 @@ import android.os.Handler
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Card
 import com.gausslab.timeoffrequester.ui.App
 import com.gausslab.timeoffrequester.ui.theme.TimeOffRequesterTheme
 import com.google.firebase.firestore.ktx.firestore

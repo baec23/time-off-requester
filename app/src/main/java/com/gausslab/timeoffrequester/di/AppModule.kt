@@ -9,7 +9,6 @@ import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
-import com.gausslab.timeoffrequester.server.ServerUserRepository
 import com.gausslab.timeoffrequester.service.SheetsService
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -49,21 +48,13 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTestUserRepository(): ServerUserRepository = ServerUserRepository()
-
-    @Singleton
-    @Provides
     fun provideSheetsService() = SheetsService()
 
     @Singleton
     @Provides
     fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .requestId()
-            .requestProfile()
-            .requestScopes(Scope(SheetsScopes.SPREADSHEETS))
-            .build()
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
+            .requestId().requestProfile().requestScopes(Scope(SheetsScopes.SPREADSHEETS)).build()
         return GoogleSignIn.getClient(context, gso)
     }
 }

@@ -20,24 +20,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
-import com.gausslab.timeoffrequester.ui.changepassword.changePasswordScreen
-import com.gausslab.timeoffrequester.ui.changepassword.changePasswordScreenRoute
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBar
 import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItems
-import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreen
-import com.gausslab.timeoffrequester.ui.findpassword.findPasswordScreenRoute
-import com.gausslab.timeoffrequester.ui.login.loginScreen
-import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
-import com.gausslab.timeoffrequester.ui.main.mainScreen
-import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreen
-import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
-import com.gausslab.timeoffrequester.ui.myprofile.navigateToMyProfileScreen
-import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreen
-import com.gausslab.timeoffrequester.ui.myprofiledetails.myProfileDetailsScreenRoute
-import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreen
-import com.gausslab.timeoffrequester.ui.requestdetails.requestDetailsScreenRoute
-import com.gausslab.timeoffrequester.ui.requestlist.navigateToRequestListScreen
-import com.gausslab.timeoffrequester.ui.requestlist.requestListScreen
+import com.gausslab.timeoffrequester.ui.screen.changepassword.changePasswordScreen
+import com.gausslab.timeoffrequester.ui.screen.changepassword.changePasswordScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.findpassword.findPasswordScreen
+import com.gausslab.timeoffrequester.ui.screen.findpassword.findPasswordScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.login.loginScreen
+import com.gausslab.timeoffrequester.ui.screen.login.loginScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.main.mainScreen
+import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreen
+import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.myprofile.navigateToMyProfileScreen
+import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetailsScreen
+import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetailsScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.requestdetails.requestDetailsScreen
+import com.gausslab.timeoffrequester.ui.screen.requestdetails.requestDetailsScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.requestlist.navigateToRequestListScreen
+import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,18 +49,7 @@ fun App(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            //TODO: TopBar
             if (currNavScreenRoute != loginScreenRoute) {
-//                TopBar(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(50.dp),
-//                    items = topBarItem,
-//                    currNavScreenRoute = currNavScreenRoute,
-//                    onTopBarButtonPressed = {
-//                        viewModel.onEvent(AppUiEvent.TopBarButtonPressed(it))
-//                    }
-//                )
                 TopAppBar(
                     modifier = Modifier.height(50.dp),
                     title = {

@@ -10,10 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.baec23.ludwig.component.toggleable.ToggleableIcon
-import com.gausslab.timeoffrequester.ui.login.loginScreenRoute
-import com.gausslab.timeoffrequester.ui.main.mainScreenRoute
-import com.gausslab.timeoffrequester.ui.myprofile.myProfileScreenRoute
-import com.gausslab.timeoffrequester.ui.requestlist.requestListScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.login.loginScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.main.mainScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreenRoute
 
 val bottomNavBarItems = listOf(
     BottomNavBarItem(
