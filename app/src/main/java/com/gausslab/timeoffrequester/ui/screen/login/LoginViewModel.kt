@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
+import com.gausslab.timeoffrequester.service.GoogleAuthService
 import com.gausslab.timeoffrequester.service.SheetsService
 import com.gausslab.timeoffrequester.ui.screen.findpassword.navigateToFindPasswordScreen
 import com.gausslab.timeoffrequester.ui.screen.main.navigateToMainScreen
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
     val googleSignInClient: GoogleSignInClient,
-    private val sheetsService: SheetsService,
+    private val googleAuthService: GoogleAuthService,
     private val dataStoreRepository: DataStoreRepository,
     private val navController: NavHostController
 ) : ViewModel() {
@@ -95,7 +96,7 @@ class LoginViewModel @Inject constructor(
             }
 
             is LoginUiEvent.SignedIn -> {
-                sheetsService.setSignedInAccount(event.account)
+                googleAuthService.setSignedInAccount(event.account)
 //                navController.navigateToMainScreen()
                 navController.navigateToSheetsTestScreen()
             }

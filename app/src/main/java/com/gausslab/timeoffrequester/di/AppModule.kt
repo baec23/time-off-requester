@@ -10,12 +10,15 @@ import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.service.FormSheetService
+import com.gausslab.timeoffrequester.service.GmailService
+import com.gausslab.timeoffrequester.service.GoogleAuthService
 import com.gausslab.timeoffrequester.service.SheetsService
 import com.gausslab.timeoffrequester.service.UsageSheetService
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.google.api.services.gmail.GmailScopes
 import com.google.api.services.sheets.v4.SheetsScopes
 import dagger.Module
 import dagger.Provides
@@ -50,7 +53,22 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideSheetsService(@ApplicationContext context: Context) = SheetsService(context)
+    fun provideGoogleAuthService() = GoogleAuthService()
+
+    @Singleton
+    @Provides
+    fun provideGmailService(
+        @ApplicationContext context: Context,
+        googleAuthService: GoogleAuthService
+    ) = GmailService(context, googleAuthService)
+
+    @Singleton
+    @Provides
+    fun provideSheetsService(
+        @ApplicationContext context: Context,
+        googleAuthService: GoogleAuthService
+    ) = SheetsService(context, googleAuthService)
+
     @Singleton
     @Provides
     fun provideUsageSheetService(sheetsService: SheetsService) = UsageSheetService(sheetsService)
@@ -62,8 +80,12 @@ object AppModule {
     @Singleton
     @Provides
     fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-            .requestId().requestProfile().requestScopes(Scope(SheetsScopes.SPREADSHEETS)).build()
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestId()
+            .requestProfile()
+            .requestScopes(Scope(SheetsScopes.SPREADSHEETS), Scope(GmailScopes.GMAIL_SEND))
+            .build()
         return GoogleSignIn.getClient(context, gso)
     }
 }

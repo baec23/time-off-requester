@@ -1,6 +1,7 @@
 package com.gausslab.timeoffrequester.ui.screen.login
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -74,6 +75,9 @@ fun LoginScreen(
                         GoogleSignIn.getSignedInAccountFromIntent(intent).result
                     viewModel.onEvent(LoginUiEvent.SignedIn(account))
                 }
+            }
+            else{
+                Log.d("GoogleLogin", "Something went wrong: ResultCode = ${result.resultCode}")
             }
         }
 

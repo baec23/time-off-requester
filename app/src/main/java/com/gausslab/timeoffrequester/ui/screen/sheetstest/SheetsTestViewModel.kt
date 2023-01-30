@@ -4,21 +4,35 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.service.FormSheetService
+import com.gausslab.timeoffrequester.service.GmailService
 import com.gausslab.timeoffrequester.service.UsageSheetService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SheetsTestViewModel @Inject constructor(
     private val usageSheetService: UsageSheetService,
-    private val formSheetService: FormSheetService
+    private val formSheetService: FormSheetService,
+    private val gmailService: GmailService,
 ) : ViewModel() {
+    private val _recipientEmail = MutableStateFlow("")
+    val recipientEmail = _recipientEmail.asStateFlow()
+    private val _emailSectionExpanded = MutableStateFlow(false)
+    val emailSectionExpanded = _emailSectionExpanded.asStateFlow()
+
     fun onEvent(event: SheetsTestUiEvent) {
         when (event) {
             SheetsTestUiEvent.AddToUsagePressed -> addToUsage()
             SheetsTestUiEvent.AddToFormPressed -> addToForm()
             SheetsTestUiEvent.AddToBothPressed -> addToBoth()
+            SheetsTestUiEvent.DoAllPressed -> doAll()
+            SheetsTestUiEvent.EmailSectionPressed -> _emailSectionExpanded.value =
+                !_emailSectionExpanded.value
+
+            is SheetsTestUiEvent.RecipientEmailChanged -> _recipientEmail.value = event.email
         }
     }
 
@@ -33,10 +47,23 @@ class SheetsTestViewModel @Inject constructor(
             formSheetService.addTimeOffRequest(generateRandomTimeOffRequest())
         }
     }
+
     private fun addToBoth() {
         viewModelScope.launch {
             formSheetService.addTimeOffRequest(generateRandomTimeOffRequest())
             usageSheetService.addTimeOffRequest(generateRandomTimeOffRequest())
+        }
+    }
+
+    private fun doAll() {
+        viewModelScope.launch {
+            formSheetService.addTimeOffRequest(generateRandomTimeOffRequest())
+            usageSheetService.addTimeOffRequest(generateRandomTimeOffRequest())
+            gmailService.sendEmail(
+                recipientEmail = _recipientEmail.value,
+                subjectText = "TEST SUBJECT",
+                bodyText = "THIS IS THE TEST BODY"
+            )
         }
     }
 
@@ -59,6 +86,8 @@ class SheetsTestViewModel @Inject constructor(
 sealed class SheetsTestUiEvent {
     object AddToUsagePressed : SheetsTestUiEvent()
     object AddToFormPressed : SheetsTestUiEvent()
-
     object AddToBothPressed : SheetsTestUiEvent()
+    object DoAllPressed : SheetsTestUiEvent()
+    object EmailSectionPressed : SheetsTestUiEvent()
+    data class RecipientEmailChanged(val email: String) : SheetsTestUiEvent()
 }

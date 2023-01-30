@@ -2,7 +2,6 @@ package com.gausslab.timeoffrequester.service
 
 import android.content.Context
 import com.gausslab.timeoffrequester.R
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
@@ -16,31 +15,35 @@ import com.google.api.services.sheets.v4.model.UpdateSheetPropertiesRequest
 import com.google.api.services.sheets.v4.model.ValueRange
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ActivityScoped
 class SheetsService @Inject constructor(
-    private val context: Context
+    private val context: Context,
+    private val googleAuthService: GoogleAuthService
 ) {
-    private var signedInAccount: GoogleSignInAccount? = null
     private var sheetsApi: Sheets? = null
 
-    fun setSignedInAccount(account: GoogleSignInAccount) {
-        signedInAccount = account
-
-        val scopes = listOf(
-            SheetsScopes.SPREADSHEETS
-        )
-        val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
-        credential.selectedAccount = signedInAccount!!.account
-        val jsonFactory = GsonFactory()
-        val httpTransport = NetHttpTransport()
-        sheetsApi = Sheets.Builder(httpTransport, jsonFactory, credential)
-            .setApplicationName(context.resources.getString(R.string.app_name))
-            .build()
+    init {
+        MainScope().launch {
+            googleAuthService.signedInAccount.collect {
+                if (it == null)
+                    return@collect
+                val scopes = listOf(
+                    SheetsScopes.SPREADSHEETS
+                )
+                val credential = GoogleAccountCredential.usingOAuth2(context, scopes)
+                credential.selectedAccount = it.account
+                val jsonFactory = GsonFactory()
+                val httpTransport = NetHttpTransport()
+                sheetsApi = Sheets.Builder(httpTransport, jsonFactory, credential)
+                    .setApplicationName(context.resources.getString(R.string.app_name))
+                    .build()
+            }
+        }
     }
 
     suspend fun getValuesForRange(
@@ -96,7 +99,8 @@ class SheetsService @Inject constructor(
             val valueRangeList = mutableListOf<ValueRange>()
 
             cells.forEachIndexed { index, s ->
-                val rangeWithSheet = if (sheetTitle == null) cells[index] else "$sheetTitle!${cells[index]}"
+                val rangeWithSheet =
+                    if (sheetTitle == null) cells[index] else "$sheetTitle!${cells[index]}"
 
                 val currValueRange =
                     ValueRange().setMajorDimension("ROWS").setRange(rangeWithSheet)
