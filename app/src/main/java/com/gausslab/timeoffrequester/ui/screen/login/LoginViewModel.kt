@@ -13,6 +13,7 @@ import com.gausslab.timeoffrequester.service.GoogleAuthService
 import com.gausslab.timeoffrequester.service.SheetsService
 import com.gausslab.timeoffrequester.ui.screen.findpassword.navigateToFindPasswordScreen
 import com.gausslab.timeoffrequester.ui.screen.main.navigateToMainScreen
+import com.gausslab.timeoffrequester.ui.screen.requestform.navigateToRequestFormScreen
 import com.gausslab.timeoffrequester.ui.screen.sheetstest.navigateToSheetsTestScreen
 import com.gausslab.timeoffrequester.util.STRING.SAVED_USERID
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -98,7 +99,8 @@ class LoginViewModel @Inject constructor(
             is LoginUiEvent.SignedIn -> {
                 googleAuthService.setSignedInAccount(event.account)
 //                navController.navigateToMainScreen()
-                navController.navigateToSheetsTestScreen()
+//                navController.navigateToSheetsTestScreen()
+                navController.navigateToRequestFormScreen()
             }
         }
     }

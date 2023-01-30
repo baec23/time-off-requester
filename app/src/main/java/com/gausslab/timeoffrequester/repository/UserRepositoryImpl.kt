@@ -1,16 +1,13 @@
 package com.gausslab.timeoffrequester.repository
 
-import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.gausslab.timeoffrequester.model.User
+import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
-import java.util.NoSuchElementException
 
-class UserRepositoryImpl: UserRepository {
+class UserRepositoryImpl : UserRepository {
     override var currUser: User? = null
     private val collectionRef = Firebase.firestore.collection("users")
 
@@ -81,10 +78,11 @@ class UserRepositoryImpl: UserRepository {
     }
 
     override suspend fun saveUser(user: User) {
-        val docRef= collectionRef.whereEqualTo("id", user.id).get().await().documents.first().reference
+        val docRef =
+            collectionRef.whereEqualTo("id", user.id).get().await().documents.first().reference
 
-        Firebase.firestore.runTransaction{transition->
-            transition.update(docRef,"password", user.password)
+        Firebase.firestore.runTransaction { transition ->
+            transition.update(docRef, "password", user.password)
         }
     }
 }

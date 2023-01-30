@@ -36,6 +36,7 @@ import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetails
 import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetailsScreenRoute
 import com.gausslab.timeoffrequester.ui.screen.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.screen.requestdetails.requestDetailsScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
 import com.gausslab.timeoffrequester.ui.screen.requestlist.navigateToRequestListScreen
 import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreen
 import com.gausslab.timeoffrequester.ui.screen.sheetstest.sheetsTestScreen
@@ -135,6 +136,7 @@ fun App(
                 myProfileDetailsScreen()
                 changePasswordScreen()
 
+                requestFormScreen()
                 sheetsTestScreen()
             }
         }

@@ -11,7 +11,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.gausslab.timeoffrequester"
+        applicationId 'com.gausslab.timeoffrequesterbcm'
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -119,4 +119,7 @@ dependencies {
     }
     implementation 'com.sun.mail:android-mail:1.6.7'
     implementation 'com.sun.mail:android-activation:1.6.7'
+
+    //Google Calendar
+    implementation 'com.google.apis:google-api-services-calendar:v3-rev20220715-2.0.0'
 }

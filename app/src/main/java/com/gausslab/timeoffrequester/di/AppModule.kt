@@ -9,6 +9,7 @@ import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepositoryImpl
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
 import com.gausslab.timeoffrequester.repository.datainterface.UserRepository
+import com.gausslab.timeoffrequester.service.CalendarService
 import com.gausslab.timeoffrequester.service.FormSheetService
 import com.gausslab.timeoffrequester.service.GmailService
 import com.gausslab.timeoffrequester.service.GoogleAuthService
@@ -18,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
+import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.gmail.GmailScopes
 import com.google.api.services.sheets.v4.SheetsScopes
 import dagger.Module
@@ -64,6 +66,13 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideCalendarService(
+        @ApplicationContext context: Context,
+        googleAuthService: GoogleAuthService
+    ) = CalendarService(context, googleAuthService)
+
+    @Singleton
+    @Provides
     fun provideSheetsService(
         @ApplicationContext context: Context,
         googleAuthService: GoogleAuthService
@@ -84,7 +93,11 @@ object AppModule {
             .requestEmail()
             .requestId()
             .requestProfile()
-            .requestScopes(Scope(SheetsScopes.SPREADSHEETS), Scope(GmailScopes.GMAIL_SEND))
+            .requestScopes(
+                Scope(SheetsScopes.SPREADSHEETS),
+                Scope(GmailScopes.GMAIL_SEND),
+                Scope(CalendarScopes.CALENDAR)
+            )
             .build()
         return GoogleSignIn.getClient(context, gso)
     }

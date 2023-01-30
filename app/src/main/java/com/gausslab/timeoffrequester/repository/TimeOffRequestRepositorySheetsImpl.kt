@@ -7,7 +7,6 @@ import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-
 private const val timeOffRequestUsageSheetId = "1OOfHRODinFkJ5E1d77n3DAIpPS_jLCt3ODB4XMa3SS4"
 private const val timeOffRequestFormSheetId = ""
 
