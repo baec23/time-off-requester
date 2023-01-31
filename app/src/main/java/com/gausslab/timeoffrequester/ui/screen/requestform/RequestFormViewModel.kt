@@ -2,31 +2,26 @@ package com.gausslab.timeoffrequester.ui.screen.requestform
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gausslab.timeoffrequester.model.TimeOffRequest
-import com.gausslab.timeoffrequester.service.CalendarService
-import com.gausslab.timeoffrequester.service.FormSheetService
-import com.gausslab.timeoffrequester.service.GmailService
-import com.gausslab.timeoffrequester.service.GoogleAuthService
-import com.gausslab.timeoffrequester.service.UsageSheetService
-import com.google.api.client.util.DateTime
+import com.gausslab.timeoffrequester.model.TimeOffRequest2
+import com.gausslab.timeoffrequester.model.TimeOffRequestType
+import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
+import com.gausslab.timeoffrequester.model.toKorean
+import com.gausslab.timeoffrequester.remote.api.TorApi
+import com.gausslab.timeoffrequester.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class RequestFormViewModel @Inject constructor(
-    private val googleAuthService: GoogleAuthService,
-    private val formSheetService: FormSheetService,
-    private val usageSheetService: UsageSheetService,
-    private val gmailService: GmailService,
-    private val calendarService: CalendarService,
+    private val torApi: TorApi,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _selectedStartDate = MutableStateFlow<LocalDate>(LocalDate.now())
@@ -56,36 +51,24 @@ class RequestFormViewModel @Inject constructor(
             is RequestFormUiEvent.OnSelectedEndTimeChanged -> _selectedEndTime.value = event.endTime
             is RequestFormUiEvent.OnReasonChanged -> _reasonText.value = event.reason
             RequestFormUiEvent.OnSubmitPressed -> {
+
                 val toSubmit = generateTimeOffRequest()
                 viewModelScope.launch {
-                    formSheetService.addTimeOffRequest(toSubmit)
-                    usageSheetService.addTimeOffRequest(toSubmit)
-                    gmailService.sendEmail("baec23@gmail.com", toSubmit.username, "linkUrl")
-                    calendarService.createEvent(
-                        summary = "[연차] $toSubmit.username", startDateTime = DateTime(
-                            Date.from(
-                                _selectedStartDate.value.atStartOfDay().toInstant(ZoneOffset.UTC)
-                            )
-                        ), endDateTime = DateTime(
-                            Date.from(
-                                _selectedEndDate.value.atStartOfDay().toInstant(ZoneOffset.UTC)
-                            )
-                        ), description = ""
-                    )
+                    torApi.submitTimeOffRequest(toSubmit)
                 }
             }
         }
     }
 
-    private fun generateTimeOffRequest(): TimeOffRequest {
-        val signedInAccount = googleAuthService.signedInAccount.value ?: throw Exception()
-        return TimeOffRequest(
-            username = signedInAccount.displayName!!,
-            startDate = _selectedStartDate.value.toTorString(),
-            startTime = _selectedStartTime.value.toTorString(),
-            endDate = _selectedEndDate.value.toTorString(),
-            endTime = _selectedEndTime.value.toTorString(),
-            requestReason = _reasonText.value
+    private fun generateTimeOffRequest(): TimeOffRequest2 {
+        val userEmail = userRepository.currUser!!.email
+        return TimeOffRequest2(
+            userEmail = userEmail,
+            startDateTime = LocalDateTime.of(_selectedStartDate.value, _selectedStartTime.value),
+            endDateTime = LocalDateTime.of(_selectedEndDate.value, _selectedEndTime.value),
+            type = TimeOffRequestType.DAY_LEAVE.toKorean(),
+            detailedType = TimeOffRequestTypeDetail.OTHER.toKorean(),
+            reason = _reasonText.value,
         )
     }
 }

@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.gausslab.timeoffrequester.repository.DataStoreRepository
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBarItem
-import com.gausslab.timeoffrequester.ui.screen.login.navigateToLoginScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -16,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
     val navController: NavHostController
 ) : ViewModel() {
 
@@ -26,8 +23,6 @@ class AppViewModel @Inject constructor(
         when (event) {
             is AppUiEvent.BottomNavBarButtonPressed -> navController.navigate(event.pressedItem.route)
             AppUiEvent.LogoutPressed -> viewModelScope.launch {
-                dataStoreRepository.remove("savedUserId")
-                navController.navigateToLoginScreen()
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.gausslab.timeoffrequester.model
 
 enum class TimeOffRequestType {
-    ANNUAL_LEAVE,
+    DAY_LEAVE,
     HALF_LEAVE,
     SICK_LEAVE,
     MATERNITY_LEAVE,
@@ -14,7 +14,7 @@ enum class TimeOffRequestType {
 
 fun TimeOffRequestType.toKorean(): String {
     var returnValue: String = ""
-    if (this == TimeOffRequestType.ANNUAL_LEAVE) {
+    if (this == TimeOffRequestType.DAY_LEAVE) {
         returnValue = "연차"
     } else if (this == TimeOffRequestType.HALF_LEAVE) {
         returnValue = "반차"
