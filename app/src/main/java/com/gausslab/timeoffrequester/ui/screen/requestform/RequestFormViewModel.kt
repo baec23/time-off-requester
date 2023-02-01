@@ -9,9 +9,11 @@ import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -36,8 +38,14 @@ class RequestFormViewModel @Inject constructor(
         MutableStateFlow<LocalTime>(LocalDate.now().atStartOfDay().toLocalTime())
     val selectedEndTime = _selectedEndTime.asStateFlow()
 
-    private val _reasonText = MutableStateFlow<String>("개인사유")
+    private val _reasonText = MutableStateFlow("개인사유")
     val reasonText = _reasonText.asStateFlow()
+
+    private val _remainingTimeOffRequests = MutableStateFlow("N/A")
+    val remainingTimeOffRequests = _remainingTimeOffRequests.asStateFlow()
+
+    private val _isBusy = MutableStateFlow(false)
+    val isBusy = _isBusy.asStateFlow()
 
     fun onEvent(event: RequestFormUiEvent) {
         when (event) {
@@ -51,10 +59,12 @@ class RequestFormViewModel @Inject constructor(
             is RequestFormUiEvent.OnSelectedEndTimeChanged -> _selectedEndTime.value = event.endTime
             is RequestFormUiEvent.OnReasonChanged -> _reasonText.value = event.reason
             RequestFormUiEvent.OnSubmitPressed -> {
-
+                _isBusy.value = true
                 val toSubmit = generateTimeOffRequest()
                 viewModelScope.launch {
                     torApi.submitTimeOffRequest(toSubmit)
+                    updateRemainingTimeOffRequests()
+                    _isBusy.value = false
                 }
             }
         }
@@ -70,6 +80,18 @@ class RequestFormViewModel @Inject constructor(
             detailedType = TimeOffRequestTypeDetail.OTHER.toKorean(),
             reason = _reasonText.value,
         )
+    }
+    private fun updateRemainingTimeOffRequests() {
+        val userEmail = userRepository.currUser!!.email
+        viewModelScope.launch {
+            val response = torApi.getRemainingTimeOffRequests(userEmail)
+            if (response.isSuccessful) {
+                _remainingTimeOffRequests.value = response.body()!!
+            }
+        }
+    }
+    init{
+        updateRemainingTimeOffRequests()
     }
 }
 

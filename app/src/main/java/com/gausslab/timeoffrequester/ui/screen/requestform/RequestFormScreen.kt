@@ -78,7 +78,24 @@ fun RequestFormScreen(
     val labelFontSize = MaterialTheme.typography.labelMedium.fontSize
     val labelFontColor = Color.DarkGray
 
+    val remainingTimeOffRequests by viewModel.remainingTimeOffRequests.collectAsState()
+
+    val isBusy by viewModel.isBusy.collectAsState()
+
+    AnimatedVisibility(visible = isBusy) {
+        AlertDialog(onDismissRequest = { }) {
+            Card {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("작업중...", style = MaterialTheme.typography.titleLarge)
+                }
+            }
+        }
+    }
+
+
     DisplaySection(headerText = "연차 신청하기" ) {
+        Text("남은 연차 - $remainingTimeOffRequests", style = MaterialTheme.typography.displaySmall)
+        Spacer(modifier = Modifier.height(5.dp))
         DisplaySection(headerText = "신청 시간") {
             Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 LabelledValueButton(

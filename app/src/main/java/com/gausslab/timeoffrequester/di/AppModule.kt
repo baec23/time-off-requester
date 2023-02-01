@@ -29,9 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.inject.Singleton
-
-const val baseUrl = "http://10.0.2.2:8080/tor-api/v1/"
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -54,6 +51,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideTorApi(): TorApi {
+        val baseUrl = "http://10.0.2.2:8080/tor-api/v1/"
+
         val gson = GsonBuilder()
             .registerTypeAdapter(
                 LocalDate::class.java,
