@@ -25,6 +25,7 @@ class LandingViewModel @Inject constructor(
                 viewModelScope.launch {
                     userRepository.signIn(event.account)
                     navController.navigateToRequestFormScreen()
+//                    navController.navigateToNewUserFormScreen()
                 }
             }
         }

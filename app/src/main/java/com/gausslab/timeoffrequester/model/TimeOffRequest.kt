@@ -24,11 +24,12 @@ data class TimeOffRequest(
 )
 data class TimeOffRequest2(
     val id: String = "",
-    val status: String = "",
+    val status: String = "",    //Not used
     val startDateTime: LocalDateTime,
     val endDateTime: LocalDateTime,
     val type: String,
     val detailedType: String,
     val reason: String,
-    val userEmail: String,
+
+    val userEmail: String,  //TODO: Change to id
 )

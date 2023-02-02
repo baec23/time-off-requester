@@ -51,6 +51,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideTorApi(): TorApi {
+//        val baseUrl = "http://gausslab-hq.iptime.org:8083/tor-api/v1/"
         val baseUrl = "http://10.0.2.2:8080/tor-api/v1/"
 
         val gson = GsonBuilder()

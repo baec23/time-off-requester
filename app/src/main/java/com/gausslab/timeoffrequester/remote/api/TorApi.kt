@@ -11,6 +11,8 @@ import retrofit2.http.Query
 interface TorApi {
     @GET("user")
     suspend fun getUserByEmail(@Query("email") email: String): Response<User>
+    @POST("user")
+    suspend fun saveUser(@Body user: User): Response<User>
     @POST("sign-in")
     suspend fun signIn(@Query("email") email:String, @Query("auth-code") authCode: String): Response<User>
     @POST("tor")

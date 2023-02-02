@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreen
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.newuserform.newUserFormScreen
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +40,7 @@ fun App(
             ) {
                 landingScreen()
                 requestFormScreen()
+                newUserFormScreen()
             }
         }
     }

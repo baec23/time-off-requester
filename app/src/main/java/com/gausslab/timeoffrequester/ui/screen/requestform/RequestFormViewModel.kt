@@ -9,11 +9,9 @@ import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -67,6 +65,9 @@ class RequestFormViewModel @Inject constructor(
                     _isBusy.value = false
                 }
             }
+
+            RequestFormUiEvent.OnSubmitPressed -> {
+            }
         }
     }
 
@@ -81,6 +82,7 @@ class RequestFormViewModel @Inject constructor(
             reason = _reasonText.value,
         )
     }
+
     private fun updateRemainingTimeOffRequests() {
         val userEmail = userRepository.currUser!!.email
         viewModelScope.launch {
@@ -90,7 +92,8 @@ class RequestFormViewModel @Inject constructor(
             }
         }
     }
-    init{
+
+    init {
         updateRemainingTimeOffRequests()
     }
 }
