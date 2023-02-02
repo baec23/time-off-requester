@@ -1,5 +1,8 @@
 package com.gausslab.timeoffrequester.ui.screen.requestform
 
+import android.telephony.emergency.EmergencyNumber
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gausslab.timeoffrequester.model.TimeOffRequest2
@@ -9,11 +12,9 @@ import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -44,6 +45,18 @@ class RequestFormViewModel @Inject constructor(
     private val _remainingTimeOffRequests = MutableStateFlow("N/A")
     val remainingTimeOffRequests = _remainingTimeOffRequests.asStateFlow()
 
+    val timeOffRequestTypeDetailsExpanded: MutableState<Boolean> = mutableStateOf(false)
+
+    private val _timeOffRequestTypeDetails = MutableStateFlow(TimeOffRequestTypeDetail.OTHER)
+    val timeOffRequestTypeDetails = _timeOffRequestTypeDetails.asStateFlow()
+    val expandableSessionState: MutableState<Boolean> = mutableStateOf(false)
+
+    private val _agentName = MutableStateFlow("홍길동")
+    val agentName = _agentName.asStateFlow()
+
+    private val _emergencyNumber = MutableStateFlow("01012341234")
+    val emergencyNumber = _emergencyNumber.asStateFlow()
+
     private val _isBusy = MutableStateFlow(false)
     val isBusy = _isBusy.asStateFlow()
 
@@ -67,6 +80,18 @@ class RequestFormViewModel @Inject constructor(
                     _isBusy.value = false
                 }
             }
+
+            is RequestFormUiEvent.TimeOffRequestTypeDetailsExpanded ->{
+                timeOffRequestTypeDetailsExpanded.value = event.expanded
+            }
+
+            is RequestFormUiEvent.TimeOffRequestTypeDetails -> _timeOffRequestTypeDetails.value = event.type
+            RequestFormUiEvent.ExpandableSessionPressed -> {
+                expandableSessionState.value = !expandableSessionState.value
+            }
+
+            is RequestFormUiEvent.AgentNameChanged -> _agentName.value = event.agentName
+            is RequestFormUiEvent.EmergencyNumberChanged -> _emergencyNumber.value = event.emergencyNumber
         }
     }
 
@@ -92,6 +117,7 @@ class RequestFormViewModel @Inject constructor(
     }
     init{
         updateRemainingTimeOffRequests()
+        //여기서..추가세부입력정보 가져와야하나?
     }
 }
 
@@ -109,5 +135,10 @@ sealed class RequestFormUiEvent {
     data class OnSelectedEndDateChanged(val endDate: LocalDate) : RequestFormUiEvent()
     data class OnSelectedEndTimeChanged(val endTime: LocalTime) : RequestFormUiEvent()
     data class OnReasonChanged(val reason: String) : RequestFormUiEvent()
+    data class TimeOffRequestTypeDetailsExpanded(val expanded: Boolean) : RequestFormUiEvent()
+    data class TimeOffRequestTypeDetails(val type: TimeOffRequestTypeDetail) : RequestFormUiEvent()
+    data class AgentNameChanged(val agentName: String) : RequestFormUiEvent()
+    data class EmergencyNumberChanged(val emergencyNumber: String) : RequestFormUiEvent()
+    object ExpandableSessionPressed: RequestFormUiEvent()
     object OnSubmitPressed : RequestFormUiEvent()
 }

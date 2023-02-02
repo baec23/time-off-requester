@@ -2,15 +2,19 @@ package com.gausslab.timeoffrequester.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
+import com.baec23.ludwig.component.navbar.BottomNavigationBar
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreen
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreenRoute
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
@@ -26,6 +30,7 @@ fun App(
         modifier = Modifier.fillMaxSize(),
         topBar = { },
         bottomBar = {
+
         }
     ) {
         Column(
