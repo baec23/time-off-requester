@@ -2,6 +2,7 @@ package com.gausslab.timeoffrequester.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,8 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.baec23.ludwig.component.navbar.BottomNavigationBar
+import com.gausslab.timeoffrequester.ui.comp.BottomNavBar
+import com.gausslab.timeoffrequester.ui.comp.bottomNavBarItem
+import com.gausslab.timeoffrequester.ui.screen.mydetailsinfoedit.myDetailsInfoEditScreen
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreen
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreen
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +35,16 @@ fun App(
         modifier = Modifier.fillMaxSize(),
         topBar = { },
         bottomBar = {
-
+            BottomNavBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                items = bottomNavBarItem,
+                currNavScreenRoute = currNavScreenRoute,
+                onBottomNavBarButtonPressed ={
+                    viewModel.onEvent(AppUiEvent.BottomNavBarButtonPressed(it))
+                }
+            )
         }
     ) {
         Column(
@@ -44,6 +58,8 @@ fun App(
             ) {
                 landingScreen()
                 requestFormScreen()
+                myProfileScreen()
+                myDetailsInfoEditScreen()
             }
         }
     }

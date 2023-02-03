@@ -235,11 +235,11 @@ fun RequestFormScreen(
             }
             ExpandableDisplaySection(
                 isExpanded = isAdditionalInformationExpanded,
-                headerText = "추가 세부 입력",
+                headerText = "세부 추가 정보 입력",
                 onExpand = { viewModel.onEvent(RequestFormUiEvent.ExpandableSessionPressed) }
             ) {
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                    Text(modifier = Modifier, fontSize = 11.sp, text = "신청 사유", color = Color.DarkGray)
+                    Text(modifier = Modifier.fillMaxWidth(0.15f), fontSize = 11.sp, text = "신청 사유", color = Color.DarkGray)
                     Spacer(modifier = Modifier.width(10.dp))
                     InputField(
                         modifier = Modifier.fillMaxWidth(),
@@ -250,9 +250,32 @@ fun RequestFormScreen(
                         placeholder = "신청 사유를 적어주세요\n예) 개인사유"
                     )
                 }
-
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                    Text(modifier = Modifier, fontSize = 11.sp, text = "경조 구분", color = Color.DarkGray)
+                    Text(modifier =Modifier.fillMaxWidth(0.15f), fontSize = 11.sp, text = "대리업무자", color = Color.DarkGray)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    InputField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = agentName,
+                        onValueChange = { viewModel.onEvent(RequestFormUiEvent.AgentNameChanged(it)) },
+                        minLines = 1,
+                        maxLines = 1,
+                        placeholder = "휴가 중 대리업무자를 적어주세요\n예) 홍길동"
+                    )
+                }
+                Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(modifier = Modifier.fillMaxWidth(0.15f), fontSize = 11.sp, text = "비상연락망", color = Color.DarkGray)
+                    Spacer(modifier = Modifier.width(10.dp))
+                    InputField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = emergencyNumber,
+                        onValueChange = { viewModel.onEvent(RequestFormUiEvent.EmergencyNumberChanged(it)) },
+                        minLines = 1,
+                        maxLines = 1,
+                        placeholder = "휴가 중 비상연락망을 적어주세요\n예) 홍길동"
+                    )
+                }
+                Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(modifier = Modifier.fillMaxWidth(0.15f), fontSize = 11.sp, text = "경조 구분", color = Color.DarkGray)
                     Spacer(modifier = Modifier.width(10.dp))
                     Box(
                         modifier = Modifier
@@ -321,30 +344,6 @@ fun RequestFormScreen(
                             }
                         }
                     }
-                }
-                Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                    Text(modifier = Modifier, fontSize = 11.sp, text = "대리업무자", color = Color.DarkGray)
-                    Spacer(modifier = Modifier.width(10.dp))
-                    InputField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = agentName,
-                        onValueChange = { viewModel.onEvent(RequestFormUiEvent.AgentNameChanged(it)) },
-                        minLines = 1,
-                        maxLines = 1,
-                        placeholder = "휴가 중 대리업무자를 적어주세요\n예) 홍길동"
-                    )
-                }
-                Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                    Text(modifier = Modifier, fontSize = 11.sp, text = "비상연락망", color = Color.DarkGray)
-                    Spacer(modifier = Modifier.width(10.dp))
-                    InputField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = emergencyNumber,
-                        onValueChange = { viewModel.onEvent(RequestFormUiEvent.EmergencyNumberChanged(it)) },
-                        minLines = 1,
-                        maxLines = 1,
-                        placeholder = "휴가 중 비상연락망을 적어주세요\n예) 홍길동"
-                    )
                 }
             }
             StatefulButton(modifier = Modifier.fillMaxWidth(), text = "신청") {
