@@ -8,9 +8,11 @@ import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension
 import com.google.android.gms.common.api.Scope
 import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.gmail.GmailScopes
@@ -28,6 +30,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDate
 import java.time.LocalDateTime
+import javax.inject.Named
 import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
@@ -51,8 +54,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideTorApi(): TorApi {
-//        val baseUrl = "http://gausslab-hq.iptime.org:8083/tor-api/v1/"
-        val baseUrl = "http://10.0.2.2:8080/tor-api/v1/"
+        val baseUrl = "http://gausslab-hq.iptime.org:8083/tor-api/v1/"
+//        val baseUrl = "http://10.0.2.2:8080/tor-api/v1/"
 
         val gson = GsonBuilder()
             .registerTypeAdapter(
@@ -86,12 +89,35 @@ object AppModule {
 
     @Singleton
     @Provides
+    @Named("authCode")
     fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestId()
             .requestProfile()
-            .requestServerAuthCode("176428785805-3gmlp03f2sjjovk3apqeihbukcnacck7.apps.googleusercontent.com")
+            .requestServerAuthCode(
+                "176428785805-3gmlp03f2sjjovk3apqeihbukcnacck7.apps.googleusercontent.com",
+                true
+            )
+            .requestScopes(
+                Scope(SheetsScopes.SPREADSHEETS),
+                Scope(GmailScopes.GMAIL_SEND),
+                Scope(CalendarScopes.CALENDAR)
+            )
+            .build()
+        return GoogleSignIn.getClient(context, gso)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDefaultGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestId()
+            .requestProfile()
+            .requestServerAuthCode(
+                "176428785805-3gmlp03f2sjjovk3apqeihbukcnacck7.apps.googleusercontent.com",
+            )
             .requestScopes(
                 Scope(SheetsScopes.SPREADSHEETS),
                 Scope(GmailScopes.GMAIL_SEND),

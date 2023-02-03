@@ -13,11 +13,20 @@ class UserRepository @Inject constructor(
     var currUser: User? = null
         private set
 
-    suspend fun signIn(account: GoogleSignInAccount) {
-        val response = torApi.signIn(account.email!!, account.serverAuthCode!!)
-        if (response.isSuccessful) {
+    suspend fun trySilentSignIn(account: GoogleSignInAccount): Boolean {
+        val response = torApi.signIn(account.email!!)
+        return if (response.isSuccessful) {
             currUser = response.body()
-        }
+            true
+        } else false
+    }
+
+    suspend fun trySignIn(account: GoogleSignInAccount): Boolean {
+        val response = torApi.signIn(account.email!!, account.serverAuthCode)
+        return if (response.isSuccessful) {
+            currUser = response.body()
+            true
+        } else false
     }
 
     suspend fun getUserByEmail(email: String): User? {

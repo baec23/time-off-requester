@@ -14,9 +14,9 @@ interface TorApi {
     @POST("user")
     suspend fun saveUser(@Body user: User): Response<User>
     @POST("sign-in")
-    suspend fun signIn(@Query("email") email:String, @Query("auth-code") authCode: String): Response<User>
+    suspend fun signIn(@Query("email") email:String, @Query("auth-code") authCode: String? = null): Response<User>
     @POST("tor")
-    suspend fun submitTimeOffRequest(@Body toAdd: TimeOffRequest2)
+    suspend fun submitTimeOffRequest(@Body toAdd: TimeOffRequest2): Response<TimeOffRequest2>
     @GET("tor/user")
     suspend fun getRemainingTimeOffRequests(@Query("email") email: String): Response<String>
 }
