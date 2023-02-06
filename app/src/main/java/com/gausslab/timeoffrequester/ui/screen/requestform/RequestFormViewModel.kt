@@ -1,6 +1,5 @@
 package com.gausslab.timeoffrequester.ui.screen.requestform
 
-import android.telephony.emergency.EmergencyNumber
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -27,16 +26,26 @@ class RequestFormViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _selectedStartDate = MutableStateFlow<LocalDate>(LocalDate.now())
+    val startDateTimeExpanded: MutableState<Boolean> = mutableStateOf(false)
+    val endDateTimeExpanded: MutableState<Boolean> = mutableStateOf(false)
+
+    val dateExpanded: MutableState<Boolean> = mutableStateOf(false)
+    val timeExpanded: MutableState<Boolean> = mutableStateOf(false)
+
+    private val _selectedStartDate = MutableStateFlow<LocalDate>(LocalDate.now().plusDays(7))
     val selectedStartDate = _selectedStartDate.asStateFlow()
-    private val _selectedEndDate = MutableStateFlow<LocalDate>(LocalDate.now().plusDays(1))
+    private val _selectedEndDate = MutableStateFlow<LocalDate>(LocalDate.now().plusDays(7))
     val selectedEndDate = _selectedEndDate.asStateFlow()
 
     private val _selectedStartTime =
-        MutableStateFlow<LocalTime>(LocalDate.now().atStartOfDay().toLocalTime())
+        MutableStateFlow<LocalTime>(
+            LocalDate.now().atStartOfDay().toLocalTime().plusHours(9).plusMinutes(30)
+        )
     val selectedStartTime = _selectedStartTime.asStateFlow()
     private val _selectedEndTime =
-        MutableStateFlow<LocalTime>(LocalDate.now().atStartOfDay().toLocalTime())
+        MutableStateFlow<LocalTime>(
+            LocalDate.now().atStartOfDay().toLocalTime().plusHours(18).plusMinutes(30)
+        )
     val selectedEndTime = _selectedEndTime.asStateFlow()
 
     private val _reasonText = MutableStateFlow("개인사유")
@@ -44,6 +53,9 @@ class RequestFormViewModel @Inject constructor(
 
     private val _remainingTimeOffRequests = MutableStateFlow("N/A")
     val remainingTimeOffRequests = _remainingTimeOffRequests.asStateFlow()
+
+    private val _remainingTimeOffRequestValid = MutableStateFlow(false)
+    val remainingTimeOffRequestValid = _remainingTimeOffRequestValid.asStateFlow()
 
     val timeOffRequestTypeDetailsExpanded: MutableState<Boolean> = mutableStateOf(false)
 
@@ -74,24 +86,55 @@ class RequestFormViewModel @Inject constructor(
             RequestFormUiEvent.OnSubmitPressed -> {
                 _isBusy.value = true
                 val toSubmit = generateTimeOffRequest()
-                viewModelScope.launch {
-                    torApi.submitTimeOffRequest(toSubmit)
-                    updateRemainingTimeOffRequests()
-                    _isBusy.value = false
+                if (dateTimeValid(toSubmit)) {
+                    viewModelScope.launch {
+                        torApi.submitTimeOffRequest(toSubmit)
+                        updateRemainingTimeOffRequests()
+                        _isBusy.value = false
+                    }
                 }
             }
 
-            is RequestFormUiEvent.TimeOffRequestTypeDetailsExpanded ->{
+            is RequestFormUiEvent.TimeOffRequestTypeDetailsExpanded -> {
                 timeOffRequestTypeDetailsExpanded.value = event.expanded
             }
 
-            is RequestFormUiEvent.TimeOffRequestTypeDetails -> _timeOffRequestTypeDetails.value = event.type
+            is RequestFormUiEvent.TimeOffRequestTypeDetails -> _timeOffRequestTypeDetails.value =
+                event.type
+
             RequestFormUiEvent.ExpandableSessionPressed -> {
                 expandableSessionState.value = !expandableSessionState.value
             }
 
             is RequestFormUiEvent.AgentNameChanged -> _agentName.value = event.agentName
-            is RequestFormUiEvent.EmergencyNumberChanged -> _emergencyNumber.value = event.emergencyNumber
+            is RequestFormUiEvent.EmergencyNumberChanged -> _emergencyNumber.value =
+                event.emergencyNumber
+
+            is RequestFormUiEvent.StartDateTimeCardExpanded -> {
+                startDateTimeExpanded.value = event.expanded
+            }
+
+            is RequestFormUiEvent.EndDateTimeCardExpanded -> {
+                endDateTimeExpanded.value = event.expanded
+            }
+
+            is RequestFormUiEvent.IsDateExpanded -> {
+                dateExpanded.value = event.expanded
+            }
+
+            is RequestFormUiEvent.IsTimeExpanded -> {
+                timeExpanded.value = event.expanded
+            }
+        }
+    }
+
+    private fun dateTimeValid(timeOffRequestForm: TimeOffRequest2): Boolean {
+        return timeOffRequestForm.startDateTime < timeOffRequestForm.endDateTime
+    }
+
+    private fun remainingTimeOffRequestValid() {
+        if (!_remainingTimeOffRequests.value.equals(0)) {
+            _remainingTimeOffRequestValid.value = true
         }
     }
 
@@ -106,6 +149,7 @@ class RequestFormViewModel @Inject constructor(
             reason = _reasonText.value,
         )
     }
+
     private fun updateRemainingTimeOffRequests() {
         val userEmail = userRepository.currUser!!.email
         viewModelScope.launch {
@@ -114,8 +158,10 @@ class RequestFormViewModel @Inject constructor(
                 _remainingTimeOffRequests.value = response.body()!!
             }
         }
+        remainingTimeOffRequestValid()
     }
-    init{
+
+    init {
         updateRemainingTimeOffRequests()
         //여기서..추가세부입력정보 가져와야하나?
     }
@@ -139,6 +185,10 @@ sealed class RequestFormUiEvent {
     data class TimeOffRequestTypeDetails(val type: TimeOffRequestTypeDetail) : RequestFormUiEvent()
     data class AgentNameChanged(val agentName: String) : RequestFormUiEvent()
     data class EmergencyNumberChanged(val emergencyNumber: String) : RequestFormUiEvent()
-    object ExpandableSessionPressed: RequestFormUiEvent()
+    data class StartDateTimeCardExpanded(val expanded: Boolean) : RequestFormUiEvent()
+    data class EndDateTimeCardExpanded(val expanded: Boolean) : RequestFormUiEvent()
+    data class IsDateExpanded(val expanded: Boolean) : RequestFormUiEvent()
+    data class IsTimeExpanded(val expanded: Boolean) : RequestFormUiEvent()
+    object ExpandableSessionPressed : RequestFormUiEvent()
     object OnSubmitPressed : RequestFormUiEvent()
 }

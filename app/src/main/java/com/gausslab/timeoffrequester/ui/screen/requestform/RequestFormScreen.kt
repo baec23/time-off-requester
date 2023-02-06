@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.internal.enableLiveLiterals
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,6 +56,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import com.baec23.ludwig.component.button.ButtonState
 import com.baec23.ludwig.component.button.LabelledValueButton
 import com.baec23.ludwig.component.button.StatefulButton
 import com.baec23.ludwig.component.datepicker.DatePicker
@@ -83,14 +85,17 @@ fun NavController.navigateToRequestFormScreen(navOptions: NavOptions? = null) {
 fun RequestFormScreen(
     viewModel: RequestFormViewModel = hiltViewModel()
 ) {
+    val startDateTimeExpanded by viewModel.startDateTimeExpanded
+    val endDateTimeExpanded by viewModel.endDateTimeExpanded
+
+    val dateExpanded by viewModel.dateExpanded
+    val timeExpanded by viewModel.timeExpanded
+
     val startDate by viewModel.selectedStartDate.collectAsState()
     val startTime by viewModel.selectedStartTime.collectAsState()
     val endDate by viewModel.selectedEndDate.collectAsState()
     val endTime by viewModel.selectedEndTime.collectAsState()
     val reason by viewModel.reasonText.collectAsState()
-
-    var isStartDialogShowing by remember { mutableStateOf(false) }
-    var isEndDialogShowing by remember { mutableStateOf(false) }
 
     val valueFontSize = MaterialTheme.typography.titleMedium.fontSize
     val valueFontColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -99,6 +104,7 @@ fun RequestFormScreen(
     val labelFontColor = Color.DarkGray
 
     val remainingTimeOffRequests by viewModel.remainingTimeOffRequests.collectAsState()
+    val remainingTimeOffRequestValid by viewModel.remainingTimeOffRequestValid.collectAsState()
 
     val isBusy by viewModel.isBusy.collectAsState()
 
@@ -130,7 +136,7 @@ fun RequestFormScreen(
             .verticalScroll(rememberScrollState())
     ) {
         DisplaySection(headerText = "연차 신청하기") {
-            Text("남은 연차 - $remainingTimeOffRequests", style = MaterialTheme.typography.displaySmall)
+            Text("남은 연차 - $remainingTimeOffRequests", style = MaterialTheme.typography.headlineMedium)
             Spacer(modifier = Modifier.height(5.dp))
             DisplaySection(headerText = "신청 시간") {
                 Column(
@@ -138,7 +144,9 @@ fun RequestFormScreen(
                 ) {
                     LabelledValueButton(
                         onClick = {
-                            isStartDialogShowing = true
+                            viewModel.onEvent(RequestFormUiEvent.StartDateTimeCardExpanded(true))
+                            viewModel.onEvent(RequestFormUiEvent.IsDateExpanded(true))
+                            viewModel.onEvent(RequestFormUiEvent.IsTimeExpanded(true))
                         }, label = { Text("시작시간") },
                         value = {
                             Column(
@@ -165,10 +173,13 @@ fun RequestFormScreen(
                             }
                         })
                     DateTimePickerDialog(
-                        isShowing = isStartDialogShowing,
-                        onCancel = { isStartDialogShowing = false },
+                        isShowing = startDateTimeExpanded,
+                        onCancel = { viewModel.onEvent(RequestFormUiEvent.StartDateTimeCardExpanded(false))},
                         initialDate = startDate,
                         initialTime = startTime,
+                        dateExpanded = dateExpanded,
+                        timeExpanded = timeExpanded,
+                        onUiEvent = {viewModel.onEvent(it)},
                         onDateTimeSelected = { selectedDate, selectedTime ->
                             viewModel.onEvent(
                                 RequestFormUiEvent.OnSelectedStartDateChanged(
@@ -180,13 +191,15 @@ fun RequestFormScreen(
                                     selectedTime
                                 )
                             )
-                            isStartDialogShowing = false
+                            viewModel.onEvent(RequestFormUiEvent.StartDateTimeCardExpanded(false))
                         }
                     )
 
                     LabelledValueButton(
                         onClick = {
-                            isEndDialogShowing = true
+                            viewModel.onEvent(RequestFormUiEvent.EndDateTimeCardExpanded(true))
+                            viewModel.onEvent(RequestFormUiEvent.IsDateExpanded(true))
+                            viewModel.onEvent(RequestFormUiEvent.IsTimeExpanded(true))
                         }, label = { Text("종료시간") },
                         value = {
                             Column(
@@ -213,10 +226,13 @@ fun RequestFormScreen(
                             }
                         })
                     DateTimePickerDialog(
-                        isShowing = isEndDialogShowing,
-                        onCancel = { isEndDialogShowing = false },
+                        isShowing = endDateTimeExpanded,
+                        onCancel = { viewModel.onEvent(RequestFormUiEvent.EndDateTimeCardExpanded(false)) },
                         initialDate = endDate,
                         initialTime = endTime,
+                        dateExpanded = dateExpanded,
+                        timeExpanded = timeExpanded,
+                        onUiEvent = {viewModel.onEvent(it)},
                         onDateTimeSelected = { selectedDate, selectedTime ->
                             viewModel.onEvent(
                                 RequestFormUiEvent.OnSelectedEndDateChanged(
@@ -228,7 +244,7 @@ fun RequestFormScreen(
                                     selectedTime
                                 )
                             )
-                            isEndDialogShowing = false
+                            viewModel.onEvent(RequestFormUiEvent.EndDateTimeCardExpanded(false))
                         }
                     )
                 }
@@ -346,7 +362,15 @@ fun RequestFormScreen(
                     }
                 }
             }
-            StatefulButton(modifier = Modifier.fillMaxWidth(), text = "신청") {
+            StatefulButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = "신청",
+                state = if (remainingTimeOffRequestValid){
+                    ButtonState.Enabled
+                }else{
+                    ButtonState.Disabled
+                }
+            ) {
                 viewModel.onEvent(RequestFormUiEvent.OnSubmitPressed)
             }
         }
@@ -427,18 +451,18 @@ fun DateTimePickerDialog(
     onCancel: () -> Unit,
     initialDate: LocalDate,
     initialTime: LocalTime,
-    onDateTimeSelected: (LocalDate, LocalTime) -> Unit
+    dateExpanded : Boolean,
+    timeExpanded : Boolean,
+    onDateTimeSelected: (LocalDate, LocalTime) -> Unit,
+    onUiEvent : (RequestFormUiEvent)->Unit
 ) {
-    var isDateSelected by remember { mutableStateOf(false) }
-    var isTimeSelected by remember { mutableStateOf(false) }
-
     var selectedDate by remember { mutableStateOf(initialDate) }
     var selectedTime by remember { mutableStateOf(initialTime) }
 
     AnimatedVisibility(visible = isShowing) {
-        AlertDialog(onDismissRequest = { onCancel() }) {
+        AlertDialog(onDismissRequest = { }) {
             AnimatedVisibility(
-                visible = !isDateSelected,
+                visible = dateExpanded, //t
                 enter = scaleIn(),
                 exit = fadeOut()
             ) {
@@ -446,13 +470,14 @@ fun DateTimePickerDialog(
                     onCancelled = onCancel,
                     onDateSelectionFinalized = {
                         selectedDate = it
-                        isDateSelected = true
+                        onUiEvent(RequestFormUiEvent.IsDateExpanded(false))
                     },
-                    shouldFinalizeOnSelect = true
+                    shouldFinalizeOnSelect = true,
+                    initialDate = initialDate
                 )
             }
             AnimatedVisibility(
-                visible = isDateSelected && !isTimeSelected,
+                visible = !dateExpanded && timeExpanded, //f t
                 enter = scaleIn(),
                 exit = fadeOut()
             ) {
@@ -475,10 +500,11 @@ fun DateTimePickerDialog(
                             ) {
                                 StatefulButton(text = "완료") {
                                     onDateTimeSelected(selectedDate, selectedTime)
-                                    isTimeSelected = true
+                                    onUiEvent(RequestFormUiEvent.IsTimeExpanded(false))
                                 }
                                 StatefulButton(text = "취소") {
-                                    isDateSelected = false
+                                    onUiEvent(RequestFormUiEvent.IsDateExpanded(true))
+                                    onUiEvent(RequestFormUiEvent.IsTimeExpanded(true))
                                 }
                             }
                         }

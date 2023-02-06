@@ -1,6 +1,10 @@
 package com.gausslab.timeoffrequester.ui.screen.mydetailsinfoedit
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
@@ -31,7 +35,6 @@ fun MyDetailsInfoEditScreen(
 
     DetailsScreen {
         DisplaySection(headerText = "내 추가 정보 수정") {
-
         }
     }
 }

@@ -22,6 +22,7 @@ import com.gausslab.timeoffrequester.ui.screen.mydetailsinfoedit.myDetailsInfoEd
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreen
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreenRoute
 import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreen
+import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +60,7 @@ fun App(
                 landingScreen()
                 requestFormScreen()
                 myProfileScreen()
+                myProfileDetailsScreen()
                 myDetailsInfoEditScreen()
             }
         }

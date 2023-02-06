@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
@@ -21,6 +22,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.baec23.ludwig.component.section.DisplaySection
+import com.gausslab.timeoffrequester.ui.screen.DetailsScreen
 
 
 const val myProfileDetailsScreenRoute = "myProfileDetails_screen_route"
@@ -40,35 +42,34 @@ fun MyProfileDetailsScreen(
     viewModel: MyProfileDetailsViewModel = hiltViewModel(),
 ) {
     val currUser = viewModel.currUser
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp)
-    ) {
-        DisplaySection(headerText = "내 정보 확인") {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-
-                ShowTextField(
-                    title = "이름",
-                    content = currUser.displayName
-                )
-                ShowTextField(
-                    title = "id",
-                    content = currUser.email
-                )
-                ShowTextField(
-                    title = "입사날짜",
-                    content = currUser.hiredDate.toString()
-                )
-                ShowTextField(
-                    title = "부서",
-                    content = currUser.team
-                )
-                ShowTextField(
-                    title = "직급",
-                    content = currUser.position
-                )
+    DetailsScreen {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            DisplaySection(headerText = "내 정보 확인") {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    ShowTextField(
+                        title = "이름",
+                        content = currUser.displayName
+                    )
+                    ShowTextField(
+                        title = "id",
+                        content = currUser.email
+                    )
+                    ShowTextField(
+                        title = "입사날짜",
+                        content = currUser.hiredDate.toString()
+                    )
+                    ShowTextField(
+                        title = "부서",
+                        content = currUser.team
+                    )
+                    ShowTextField(
+                        title = "직급",
+                        content = currUser.position
+                    )
+                }
             }
         }
     }
