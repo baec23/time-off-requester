@@ -24,6 +24,8 @@ import com.gausslab.timeoffrequester.ui.screen.landing.landingScreenRoute
 import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreen
 import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetailsScreen
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
+import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreen
+import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreenRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +61,7 @@ fun App(
             ) {
                 landingScreen()
                 requestFormScreen()
+                requestListScreen()
                 myProfileScreen()
                 myProfileDetailsScreen()
                 myDetailsInfoEditScreen()

@@ -163,7 +163,7 @@ class RequestFormViewModel @Inject constructor(
 
     init {
         updateRemainingTimeOffRequests()
-        //여기서..추가세부입력정보 가져와야하나?
+        //TODO: 세부정보도 불러오기
     }
 }
 

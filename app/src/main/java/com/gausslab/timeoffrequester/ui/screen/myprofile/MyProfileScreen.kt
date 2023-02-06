@@ -42,7 +42,6 @@ import coil.compose.SubcomposeAsyncImage
 import com.baec23.ludwig.component.button.StatefulButton
 import com.baec23.ludwig.component.section.DisplaySection
 
-
 const val myProfileScreenRoute = "my_profile_screen_route"
 
 fun NavGraphBuilder.myProfileScreen() {
@@ -85,12 +84,6 @@ fun MyProfileScreen(
                 StatefulButton(modifier = Modifier.fillMaxWidth(), text = "내 추가 정보 수정") {
                     viewModel.onEvent(MyProfileUiEvent.MyDetailsInfoEditPressed)
                 }
-//                Button(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    onClick = { /*TODO*/ }
-//                ) {
-//                    Text(text = "내 추가 정보 수정")
-//                }
             }
         }
     }

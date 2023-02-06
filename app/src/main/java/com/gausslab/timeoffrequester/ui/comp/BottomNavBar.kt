@@ -2,6 +2,7 @@ package com.gausslab.timeoffrequester.ui.comp
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.NavigationBar
@@ -11,6 +12,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.baec23.ludwig.component.toggleable.ToggleableIcon
 import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreenRoute
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreenRoute
+import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreenRoute
 
 val bottomNavBarItem = listOf(
     BottomNavBarItem(
@@ -19,10 +21,15 @@ val bottomNavBarItem = listOf(
         label = "Home"
     ),
     BottomNavBarItem(
+        route = requestListScreenRoute,
+        iconImageVector = Icons.Default.Menu,
+        label = "RequestList"
+    ),
+    BottomNavBarItem(
         route = myProfileScreenRoute,
         iconImageVector = Icons.Default.Person,
         label = "MyProfile"
-    )
+    ),
 )
 
 @Composable
