@@ -23,18 +23,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.baec23.ludwig.component.section.DisplaySection
 import com.gausslab.timeoffrequester.ui.screen.DetailsScreen
+import com.gausslab.timeoffrequester.util.DetailsScreenRoute
+import com.gausslab.timeoffrequester.util.toKorean
 
-
-const val myProfileDetailsScreenRoute = "myProfileDetails_screen_route"
+val myProfileDetailsScreenRoute = DetailsScreenRoute.myProfileDetails_screen_route
 
 fun NavGraphBuilder.myProfileDetailsScreen() {
-    composable(route = myProfileDetailsScreenRoute) {
+    composable(route = myProfileDetailsScreenRoute.toKorean()) {
         MyProfileDetailsScreen()
     }
 }
 
 fun NavController.navigateToMyProfileDetailsScreen(navOptions: NavOptions? = null) {
-    this.navigate(route = myProfileDetailsScreenRoute, navOptions = navOptions)
+    this.navigate(route = myProfileDetailsScreenRoute.toKorean(), navOptions = navOptions)
 }
 
 @Composable

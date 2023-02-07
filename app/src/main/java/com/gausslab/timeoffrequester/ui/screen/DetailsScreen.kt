@@ -43,7 +43,7 @@ fun DetailsScreen(
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             content()
         }
     }
@@ -75,7 +75,9 @@ fun DetailsTopBar(
     }
 }
 
+
 @HiltViewModel
 class DetailsScreenViewModel @Inject constructor(
     val navController: NavHostController
 ) : ViewModel()
+

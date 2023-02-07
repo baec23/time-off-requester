@@ -48,17 +48,19 @@ import com.baec23.ludwig.component.section.DisplaySection
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.ui.screen.DetailsScreen
+import com.gausslab.timeoffrequester.util.DetailsScreenRoute
+import com.gausslab.timeoffrequester.util.toKorean
 
-const val myDetailsInfoEditScreenRoute = "my_details_info_edit_screen_route"
+val myDetailsInfoEditScreenRoute = DetailsScreenRoute.my_details_info_edit_screen_route
 
 fun NavGraphBuilder.myDetailsInfoEditScreen() {
-    composable(route = "$myDetailsInfoEditScreenRoute") {
+    composable(route = myDetailsInfoEditScreenRoute.toKorean()) {
         MyDetailsInfoEditScreen()
     }
 }
 
 fun NavController.navigateToMyDetailsInfoEditeScreen(navOptions: NavOptions? =null){
-    this.navigate(route = myDetailsInfoEditScreenRoute, navOptions = navOptions)
+    this.navigate(route = myDetailsInfoEditScreenRoute.toKorean(), navOptions = navOptions)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.gausslab.timeoffrequester.model.AdditionalInformation
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
+import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.ui.screen.requestform.RequestFormUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,10 +72,11 @@ class MyDetailsInfoEditViewModel @Inject constructor(
     private fun additionalInfo(): AdditionalInformation{
         val userEmail = userRepository.currUser!!.email
         return AdditionalInformation(
-            id = userEmail,
+            userEmail = userEmail,
             reason = _reasonText.value,
             agentName = _agentName.value,
-            emergencyNumber = _emergencyNumber.value
+            emergencyNumber = _emergencyNumber.value,
+            typeDetail = _timeOffRequestTypeDetails.value.toKorean()
         )
     }
 
