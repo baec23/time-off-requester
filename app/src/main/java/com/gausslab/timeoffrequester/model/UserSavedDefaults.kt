@@ -1,9 +1,9 @@
 package com.gausslab.timeoffrequester.model
 
-data class AdditionalInformation(
+data class UserSavedDefaults(
     val userEmail:String ="",
     val reason:String="",
     val agentName:String ="",
     val emergencyNumber:String ="",
-    val typeDetail: String=""
+    val typeDetail: TimeOffRequestTypeDetail
 )

@@ -63,10 +63,10 @@ class RequestFormViewModel @Inject constructor(
     val timeOffRequestTypeDetails = _timeOffRequestTypeDetails.asStateFlow()
     val expandableSessionState: MutableState<Boolean> = mutableStateOf(false)
 
-    private val _agentName = MutableStateFlow("홍길동")
+    private val _agentName = MutableStateFlow("")
     val agentName = _agentName.asStateFlow()
 
-    private val _emergencyNumber = MutableStateFlow("01012341234")
+    private val _emergencyNumber = MutableStateFlow("")
     val emergencyNumber = _emergencyNumber.asStateFlow()
 
     private val _isBusy = MutableStateFlow(false)
@@ -86,13 +86,12 @@ class RequestFormViewModel @Inject constructor(
             RequestFormUiEvent.OnSubmitPressed -> {
                 _isBusy.value = true
                 val toSubmit = generateTimeOffRequest()
-                if (dateTimeValid(toSubmit)) {
-                    viewModelScope.launch {
-                        torApi.submitTimeOffRequest(toSubmit)
-                        updateRemainingTimeOffRequests()
-                        _isBusy.value = false
-                    }
+                viewModelScope.launch {
+                    torApi.submitTimeOffRequest(toSubmit)
+                    updateRemainingTimeOffRequests()
+                    _isBusy.value = false
                 }
+
             }
 
             is RequestFormUiEvent.TimeOffRequestTypeDetailsExpanded -> {
@@ -128,8 +127,8 @@ class RequestFormViewModel @Inject constructor(
         }
     }
 
-    private fun dateTimeValid(timeOffRequestForm: TimeOffRequest2): Boolean {
-        return timeOffRequestForm.startDateTime < timeOffRequestForm.endDateTime
+    private fun dateTimeValid(timeOffRequest: TimeOffRequest2):Boolean{
+        return timeOffRequest.startDateTime <= timeOffRequest.endDateTime
     }
 
     private fun remainingTimeOffRequestValid() {
@@ -161,9 +160,22 @@ class RequestFormViewModel @Inject constructor(
         remainingTimeOffRequestValid()
     }
 
+    private fun getUserSavedDefaults() {
+        val userEmail = userRepository.currUser!!.email
+        viewModelScope.launch {
+            val response = torApi.getUserSavedDefaults(userEmail)
+            if (response.isSuccessful) {
+                _reasonText.value = response.body()!!.reason
+                _agentName.value = response.body()!!.agentName
+                _emergencyNumber.value = response.body()!!.emergencyNumber
+                _timeOffRequestTypeDetails.value = response.body()!!.typeDetail
+            }
+        }
+    }
+
     init {
         updateRemainingTimeOffRequests()
-        //TODO: 세부정보도 불러오기
+        getUserSavedDefaults()
     }
 }
 

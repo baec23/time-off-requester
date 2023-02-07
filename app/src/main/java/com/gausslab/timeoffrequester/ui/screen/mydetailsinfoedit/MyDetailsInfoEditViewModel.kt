@@ -4,12 +4,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import com.gausslab.timeoffrequester.model.AdditionalInformation
+import androidx.navigation.NavHostController
+import com.gausslab.timeoffrequester.model.UserSavedDefaults
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
+import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
-import com.gausslab.timeoffrequester.ui.screen.requestform.RequestFormUiEvent
+import com.gausslab.timeoffrequester.ui.screen.myprofile.navigateToMyProfileScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyDetailsInfoEditViewModel @Inject constructor(
+    private val torApi: TorApi,
     private val userRepository: UserRepository,
+    private val navController: NavHostController
 ) : ViewModel() {
     val currUser = userRepository.currUser!!
 
@@ -62,26 +65,40 @@ class MyDetailsInfoEditViewModel @Inject constructor(
                 _isBusy.value = true
                 val toSubmit = additionalInfo()
                 viewModelScope.launch{
-                    //TODO: 저장시켜줘
+                    torApi.saveUserSavedDefaults(toSubmit)
                     _isBusy.value = false
+                    navController.navigateToMyProfileScreen()
                 }
             }
         }
     }
 
-    private fun additionalInfo(): AdditionalInformation{
+    private fun additionalInfo(): UserSavedDefaults{
         val userEmail = userRepository.currUser!!.email
-        return AdditionalInformation(
+        return UserSavedDefaults(
             userEmail = userEmail,
             reason = _reasonText.value,
             agentName = _agentName.value,
             emergencyNumber = _emergencyNumber.value,
-            typeDetail = _timeOffRequestTypeDetails.value.toKorean()
+            typeDetail = _timeOffRequestTypeDetails.value
         )
     }
 
+    private fun getUserSavedDefaults(){
+        val userEmail = userRepository.currUser!!.email
+        viewModelScope.launch {
+            val response = torApi.getUserSavedDefaults(userEmail)
+            if (response.isSuccessful){
+                _reasonText.value=response.body()!!.reason
+                _agentName.value = response.body()!!.agentName
+                _emergencyNumber.value = response.body()!!.emergencyNumber
+                _timeOffRequestTypeDetails.value = response.body()!!.typeDetail
+            }
+        }
+    }
+
     init{
-        //TODO: 세부정보 불러오기
+        getUserSavedDefaults()
     }
 }
 

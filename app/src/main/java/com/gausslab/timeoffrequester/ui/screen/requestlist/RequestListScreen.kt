@@ -97,11 +97,38 @@ fun RequestListScreen(
                                 .fillMaxWidth()
                                 .padding(5.dp)
                         ) {
-                            Text(text = timeOffRequest.startDateTime.toString(), fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                            Row(modifier = Modifier) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = "${timeOffRequest.startDateTime.year}년 ${timeOffRequest.startDateTime.monthValue}월 ${timeOffRequest.startDateTime.dayOfMonth}일",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp
+                                )
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = "${timeOffRequest.startDateTime.hour}시 ${timeOffRequest.startDateTime.minute}분",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp
+                                )
+                            }
                             Spacer(modifier = Modifier.height(10.dp))
-                            Text(text = timeOffRequest.endDateTime.toString(), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                            Row(modifier = Modifier) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = "${timeOffRequest.endDateTime.year}년 ${timeOffRequest.endDateTime.monthValue}월 ${timeOffRequest.endDateTime.dayOfMonth}일",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp
+                                )
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = "${timeOffRequest.endDateTime.hour}시 ${timeOffRequest.endDateTime.minute}분",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp
+                                )
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }

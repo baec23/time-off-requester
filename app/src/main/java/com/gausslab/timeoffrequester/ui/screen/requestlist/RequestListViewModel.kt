@@ -23,19 +23,6 @@ class RequestListViewModel @Inject constructor(
     private val _myTimeOffRequestList = MutableStateFlow<List<TimeOffRequest2>>(listOf())
     val myTimeOffRequestList = _myTimeOffRequestList.asStateFlow()
 
-    val testList = TimeOffRequest2(
-        id = "dawn@gausslab.co.kr",
-        status = "승인대기",
-        startDateTime = LocalDateTime.now(),
-        endDateTime = LocalDateTime.now(),
-        type = "반차",
-        detailedType = "",
-        reason = "개인사유",
-        userEmail = "dawn@gausslab.co.kr",
-    )
-
-
-
     fun onEvent(event: RequestListUiEvent) {
         when (event) {
             is RequestListUiEvent.RequestDetailClicked -> {
@@ -44,11 +31,18 @@ class RequestListViewModel @Inject constructor(
         }
     }
 
-    init {
+    private fun getTimeOffRequestListByUser(){
+        val userEmail = userRepository.currUser!!.email
         viewModelScope.launch {
-            //TODO: 리스트 불러오기
-            _myTimeOffRequestList.value= listOf(testList)
+            val response = torApi.getTimeOffRequestsByUser(userEmail)
+            if(response.isSuccessful){
+                _myTimeOffRequestList.value = response.body()!!
+            }
         }
+    }
+
+    init {
+        getTimeOffRequestListByUser()
     }
 }
 
