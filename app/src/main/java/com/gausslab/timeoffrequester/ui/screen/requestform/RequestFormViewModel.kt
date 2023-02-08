@@ -1,14 +1,12 @@
 package com.gausslab.timeoffrequester.ui.screen.requestform
 
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.gausslab.timeoffrequester.model.TimeOffRequest2
+import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
@@ -16,7 +14,6 @@ import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.service.SnackbarService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -144,7 +141,7 @@ class RequestFormViewModel @Inject constructor(
         }
     }
 
-    private fun dateTimeValid(timeOffRequest: TimeOffRequest2):Boolean {
+    private fun dateTimeValid(timeOffRequest: TimeOffRequest):Boolean {
         return timeOffRequest.startDateTime <= timeOffRequest.endDateTime
     }
 
@@ -154,9 +151,9 @@ class RequestFormViewModel @Inject constructor(
         }
     }
 
-    private fun generateTimeOffRequest(): TimeOffRequest2 {
+    private fun generateTimeOffRequest(): TimeOffRequest {
         val userEmail = userRepository.currUser!!.email
-        return TimeOffRequest2(
+        return TimeOffRequest(
             userEmail = userEmail,
             startDateTime = LocalDateTime.of(_selectedStartDate.value, _selectedStartTime.value),
             endDateTime = LocalDateTime.of(_selectedEndDate.value, _selectedEndTime.value),

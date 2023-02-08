@@ -1,6 +1,6 @@
 package com.gausslab.timeoffrequester.remote.api
 
-import com.gausslab.timeoffrequester.model.TimeOffRequest2
+import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.model.UserSavedDefaults
 import com.gausslab.timeoffrequester.remote.model.User
 import retrofit2.Response
@@ -17,11 +17,11 @@ interface TorApi {
     @POST("sign-in")
     suspend fun signIn(@Query("email") email:String, @Query("auth-code") authCode: String? = null): Response<User>
     @POST("tor")
-    suspend fun submitTimeOffRequest(@Body toAdd: TimeOffRequest2): Response<TimeOffRequest2>
+    suspend fun submitTimeOffRequest(@Body toAdd: TimeOffRequest): Response<TimeOffRequest>
     @GET("tor/user")
     suspend fun getRemainingTimeOffRequests(@Query("email") email: String): Response<String>
     @GET("tor")
-    suspend fun getTimeOffRequestsByUser(@Query("email")email: String): Response<List<TimeOffRequest2>>
+    suspend fun getTimeOffRequestsByUser(@Query("email")email: String): Response<List<TimeOffRequest>>
     @GET("user/defaults")
     suspend fun getUserSavedDefaults(@Query("email")email: String):Response<UserSavedDefaults>
     @POST("user/defaults")

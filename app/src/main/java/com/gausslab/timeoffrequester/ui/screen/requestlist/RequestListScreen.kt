@@ -21,11 +21,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,9 +32,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.section.DisplaySection
 import com.baec23.ludwig.core.fadingLazy.FadingLazyColumn
-import com.gausslab.timeoffrequester.model.TimeOffRequest2
-import com.gausslab.timeoffrequester.ui.screen.myprofile.MyProfileUiEvent
-import com.google.type.DateTime
 
 const val requestListScreenRoute = "request_list_screen_route"
 
@@ -73,7 +67,9 @@ fun RequestListScreen(
                 items(
                     myTimeOFfRequestList.size
                 ) {
-                    val timeOffRequest = myTimeOFfRequestList.sortedBy { timeOffRequest2 -> timeOffRequest2.startDateTime }.reversed()[it]
+                    val timeOffRequest =
+                        myTimeOFfRequestList.sortedBy { timeOffRequest2 -> timeOffRequest2.startDateTime }
+                            .reversed()[it]
                     Card(
                         modifier = Modifier
                             .height(110.dp),
@@ -108,9 +104,9 @@ fun RequestListScreen(
                                 )
                                 Text(
                                     modifier = Modifier.weight(1f),
-                                    text = if (timeOffRequest.startDateTime.minute==0){
+                                    text = if (timeOffRequest.startDateTime.minute == 0) {
                                         "${timeOffRequest.startDateTime.hour}시 0${timeOffRequest.startDateTime.minute}분"
-                                    }else{
+                                    } else {
                                         "${timeOffRequest.startDateTime.hour}시 ${timeOffRequest.startDateTime.minute}분"
                                     },
                                     fontWeight = FontWeight.SemiBold,
@@ -127,9 +123,9 @@ fun RequestListScreen(
                                 )
                                 Text(
                                     modifier = Modifier.weight(1f),
-                                    text = if (timeOffRequest.endDateTime.minute==0){
+                                    text = if (timeOffRequest.endDateTime.minute == 0) {
                                         "${timeOffRequest.endDateTime.hour}시 0${timeOffRequest.endDateTime.minute}분"
-                                    }else{
+                                    } else {
                                         "${timeOffRequest.endDateTime.hour}시 ${timeOffRequest.endDateTime.minute}분"
                                     },
                                     fontWeight = FontWeight.SemiBold,

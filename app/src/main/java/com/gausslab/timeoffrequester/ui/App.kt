@@ -24,6 +24,7 @@ import com.gausslab.timeoffrequester.ui.screen.landing.landingScreen
 import com.gausslab.timeoffrequester.ui.screen.landing.landingScreenRoute
 import com.gausslab.timeoffrequester.ui.screen.myprofile.myProfileScreen
 import com.gausslab.timeoffrequester.ui.screen.myprofiledetails.myProfileDetailsScreen
+import com.gausslab.timeoffrequester.ui.screen.requestdetails.requestDetailsScreen
 import com.gausslab.timeoffrequester.ui.screen.requestform.requestFormScreen
 import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreen
 import com.gausslab.timeoffrequester.ui.screen.requestlist.requestListScreenRoute
@@ -64,6 +65,7 @@ fun App(
                 landingScreen()
                 requestFormScreen()
                 requestListScreen()
+                requestDetailsScreen()
                 myProfileScreen()
                 myProfileDetailsScreen()
                 myDetailsInfoEditScreen()

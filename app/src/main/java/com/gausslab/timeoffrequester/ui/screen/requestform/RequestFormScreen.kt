@@ -286,7 +286,7 @@ fun RequestFormScreen(
                         onValueChange = { viewModel.onEvent(RequestFormUiEvent.EmergencyNumberChanged(it)) },
                         minLines = 1,
                         maxLines = 1,
-                        placeholder = "비상연락망을 적어주세요 예) 01012341234"
+                        placeholder = "비상연락망을 적어주세요 예) 01012341234 "
                     )
                 }
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
