@@ -106,7 +106,11 @@ fun RequestListScreen(
                                 )
                                 Text(
                                     modifier = Modifier.weight(1f),
-                                    text = "${timeOffRequest.startDateTime.hour}시 ${timeOffRequest.startDateTime.minute}분",
+                                    text = if (timeOffRequest.startDateTime.minute==0){
+                                        "${timeOffRequest.startDateTime.hour}시 0${timeOffRequest.startDateTime.minute}분"
+                                    }else{
+                                        "${timeOffRequest.startDateTime.hour}시 ${timeOffRequest.startDateTime.minute}분"
+                                    },
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 15.sp
                                 )
@@ -121,7 +125,11 @@ fun RequestListScreen(
                                 )
                                 Text(
                                     modifier = Modifier.weight(1f),
-                                    text = "${timeOffRequest.endDateTime.hour}시 ${timeOffRequest.endDateTime.minute}분",
+                                    text = if (timeOffRequest.endDateTime.minute==0){
+                                        "${timeOffRequest.endDateTime.hour}시 0${timeOffRequest.endDateTime.minute}분"
+                                    }else{
+                                        "${timeOffRequest.endDateTime.hour}시 ${timeOffRequest.endDateTime.minute}분"
+                                    },
                                     fontWeight = FontWeight.SemiBold,
                                     fontSize = 15.sp
                                 )

@@ -99,13 +99,15 @@ class RequestFormViewModel @Inject constructor(
                         torApi.submitTimeOffRequest(toSubmit)
                         updateRemainingTimeOffRequests()
                         _isBusy.value = false
+                        snackbarService.showSnackbar("연차 신청 성공")
+                        navController.navigateToRequestFormScreen()
                     }
                 }else{
                     _isBusy.value = false
-                    snackbarService.showSnackbar("dateTimeValid is wrong")
+                    snackbarService.showSnackbar("날짜시간이 잘못 되었습니다")
+                    navController.navigateToRequestFormScreen()
                     Log.d("DEBUG", "onEvent: dateTimeValid is wrong")
                 }
-                navController.navigateToRequestFormScreen()
 
             }
 

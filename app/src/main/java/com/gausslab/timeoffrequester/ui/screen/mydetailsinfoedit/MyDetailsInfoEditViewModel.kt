@@ -70,6 +70,7 @@ class MyDetailsInfoEditViewModel @Inject constructor(
                 viewModelScope.launch{
                     torApi.saveUserSavedDefaults(toSubmit)
                     _isBusy.value = false
+                    snackbarService.showSnackbar("추가 정보 저장 성공")
                     navController.navigateToMyProfileScreen()
                 }
             }
