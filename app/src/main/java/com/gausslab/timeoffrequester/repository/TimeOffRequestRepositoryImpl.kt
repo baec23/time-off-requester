@@ -22,8 +22,7 @@ class TimeOffRequestRepositoryImpl : TimeOffRequestRepository {
             val currKey = transaction.get(docRef).getLong("key")!!
             transaction.update(docRef, "key", currKey + 1)
             currKey
-        }.addOnSuccessListener { updatedKey ->
-            collectionRef.add(timeOffRequest.copy(timeOffRequestId = updatedKey.toInt()))
+        }.addOnSuccessListener {
         }
     }
 

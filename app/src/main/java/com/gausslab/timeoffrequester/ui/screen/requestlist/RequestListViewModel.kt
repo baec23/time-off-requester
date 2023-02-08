@@ -8,7 +8,6 @@ import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.service.SnackbarService
-import com.gausslab.timeoffrequester.ui.screen.requestdetails.navigateToRequestDetailsScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +29,6 @@ class RequestListViewModel @Inject constructor(
     fun onEvent(event: RequestListUiEvent) {
         when (event) {
             is RequestListUiEvent.RequestDetailClicked -> {
-                navController.navigateToRequestDetailsScreen(timeOffRequestId = event.timeOffRequest.id)
             }
         }
     }
