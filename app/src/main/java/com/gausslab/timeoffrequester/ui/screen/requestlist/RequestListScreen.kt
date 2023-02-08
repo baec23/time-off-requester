@@ -35,7 +35,9 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.baec23.ludwig.component.section.DisplaySection
 import com.baec23.ludwig.core.fadingLazy.FadingLazyColumn
+import com.gausslab.timeoffrequester.model.TimeOffRequest2
 import com.gausslab.timeoffrequester.ui.screen.myprofile.MyProfileUiEvent
+import com.google.type.DateTime
 
 const val requestListScreenRoute = "request_list_screen_route"
 
@@ -71,7 +73,7 @@ fun RequestListScreen(
                 items(
                     myTimeOFfRequestList.size
                 ) {
-                    val timeOffRequest = myTimeOFfRequestList[it]
+                    val timeOffRequest = myTimeOFfRequestList.sortedBy { timeOffRequest2 -> timeOffRequest2.startDateTime }.reversed()[it]
                     Card(
                         modifier = Modifier
                             .height(110.dp),
