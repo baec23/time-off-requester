@@ -1,11 +1,13 @@
 package com.gausslab.timeoffrequester.ui.screen.requestlist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.gausslab.timeoffrequester.model.TimeOffRequest2
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.service.SnackbarService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RequestListViewModel @Inject constructor(
     private val torApi: TorApi,
+    private val snackbarService: SnackbarService,
     private val userRepository: UserRepository,
 ) : ViewModel() {
     val currUser = userRepository.currUser!!
@@ -37,6 +40,9 @@ class RequestListViewModel @Inject constructor(
             val response = torApi.getTimeOffRequestsByUser(userEmail)
             if(response.isSuccessful){
                 _myTimeOffRequestList.value = response.body()!!
+            }else{
+                snackbarService.showSnackbar("getTimeOffRequestListByUser torApi response error")
+                Log.d("DEBUG", "getTimeOffRequestListByUser: torApi response error")
             }
         }
     }

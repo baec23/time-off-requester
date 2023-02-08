@@ -8,6 +8,7 @@ import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.TimeOffRequestRepositoryImpl
 import com.gausslab.timeoffrequester.repository.UserRepository
 import com.gausslab.timeoffrequester.repository.datainterface.TimeOffRequestRepository
+import com.gausslab.timeoffrequester.service.SnackbarService
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -46,6 +47,10 @@ object AppModule {
             navigatorProvider.addNavigator(ComposeNavigator())
             navigatorProvider.addNavigator(DialogNavigator())
         }
+
+    @Singleton
+    @Provides
+    fun provideSnackbarService() = SnackbarService()
 
     @Singleton
     @Provides

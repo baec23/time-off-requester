@@ -1,16 +1,22 @@
 package com.gausslab.timeoffrequester.ui.screen.requestform
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.model.TimeOffRequest2
 import com.gausslab.timeoffrequester.model.TimeOffRequestType
 import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.service.SnackbarService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +29,9 @@ import javax.inject.Inject
 @HiltViewModel
 class RequestFormViewModel @Inject constructor(
     private val torApi: TorApi,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val snackbarService: SnackbarService,
+    private val navController: NavHostController,
 ) : ViewModel() {
 
     val startDateTimeExpanded: MutableState<Boolean> = mutableStateOf(false)
@@ -86,11 +94,18 @@ class RequestFormViewModel @Inject constructor(
             RequestFormUiEvent.OnSubmitPressed -> {
                 _isBusy.value = true
                 val toSubmit = generateTimeOffRequest()
-                viewModelScope.launch {
-                    torApi.submitTimeOffRequest(toSubmit)
-                    updateRemainingTimeOffRequests()
+                if (dateTimeValid(toSubmit)){
+                    viewModelScope.launch {
+                        torApi.submitTimeOffRequest(toSubmit)
+                        updateRemainingTimeOffRequests()
+                        _isBusy.value = false
+                    }
+                }else{
                     _isBusy.value = false
+                    snackbarService.showSnackbar("dateTimeValid is wrong")
+                    Log.d("DEBUG", "onEvent: dateTimeValid is wrong")
                 }
+                navController.navigateToRequestFormScreen()
 
             }
 
@@ -127,7 +142,7 @@ class RequestFormViewModel @Inject constructor(
         }
     }
 
-    private fun dateTimeValid(timeOffRequest: TimeOffRequest2):Boolean{
+    private fun dateTimeValid(timeOffRequest: TimeOffRequest2):Boolean {
         return timeOffRequest.startDateTime <= timeOffRequest.endDateTime
     }
 
@@ -155,6 +170,9 @@ class RequestFormViewModel @Inject constructor(
             val response = torApi.getRemainingTimeOffRequests(userEmail)
             if (response.isSuccessful) {
                 _remainingTimeOffRequests.value = response.body()!!
+            }else{
+                snackbarService.showSnackbar("updateRemainingTimeOffRequests torApi response error")
+                Log.d("DEBUG", "updateRemainingTimeOffRequests: torApi response error")
             }
         }
         remainingTimeOffRequestValid()

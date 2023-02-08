@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ fun App(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { },
+        snackbarHost = { SnackbarHost(hostState = viewModel.snackbarService.snackbarState) },
         bottomBar = {
             BottomNavBar(
                 modifier = Modifier

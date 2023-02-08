@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.gausslab.timeoffrequester.service.SnackbarService
 import com.gausslab.timeoffrequester.ui.comp.BottomNavBarItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.MainScope
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    val navController: NavHostController
+    val navController: NavHostController,
+    val snackbarService: SnackbarService
 ) : ViewModel() {
 
     private val _currNavScreenRoute: MutableState<String?> = mutableStateOf(null)

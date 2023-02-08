@@ -1,5 +1,6 @@
 package com.gausslab.timeoffrequester.ui.screen.mydetailsinfoedit
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import com.gausslab.timeoffrequester.model.TimeOffRequestTypeDetail
 import com.gausslab.timeoffrequester.model.toKorean
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
+import com.gausslab.timeoffrequester.service.SnackbarService
 import com.gausslab.timeoffrequester.ui.screen.myprofile.navigateToMyProfileScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class MyDetailsInfoEditViewModel @Inject constructor(
     private val torApi: TorApi,
     private val userRepository: UserRepository,
+    private val snackbarService: SnackbarService,
     private val navController: NavHostController
 ) : ViewModel() {
     val currUser = userRepository.currUser!!
@@ -93,6 +96,9 @@ class MyDetailsInfoEditViewModel @Inject constructor(
                 _agentName.value = response.body()!!.agentName
                 _emergencyNumber.value = response.body()!!.emergencyNumber
                 _timeOffRequestTypeDetails.value = response.body()!!.typeDetail
+            }else{
+                snackbarService.showSnackbar("getUserSavedDefaults torApi response error")
+                Log.d("DEBUG", "getUserSavedDefaults: torApi response error")
             }
         }
     }

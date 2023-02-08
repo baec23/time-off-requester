@@ -262,7 +262,7 @@ fun RequestFormScreen(
                         onValueChange = { viewModel.onEvent(RequestFormUiEvent.OnReasonChanged(it)) },
                         minLines = 1,
                         maxLines = 1,
-                        placeholder = "신청 사유를 적어주세요\n예) 개인사유"
+                        placeholder = "신청 사유를 적어주세요 예) 개인사유"
                     )
                 }
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -274,7 +274,7 @@ fun RequestFormScreen(
                         onValueChange = { viewModel.onEvent(RequestFormUiEvent.AgentNameChanged(it)) },
                         minLines = 1,
                         maxLines = 1,
-                        placeholder = "휴가 중 대리업무자를 적어주세요\n예) 홍길동"
+                        placeholder = "대리업무자를 적어주세요 예) 홍길동"
                     )
                 }
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -286,7 +286,7 @@ fun RequestFormScreen(
                         onValueChange = { viewModel.onEvent(RequestFormUiEvent.EmergencyNumberChanged(it)) },
                         minLines = 1,
                         maxLines = 1,
-                        placeholder = "휴가 중 비상연락망을 적어주세요\n예) 홍길동"
+                        placeholder = "비상연락망을 적어주세요 예) 01012341234"
                     )
                 }
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
