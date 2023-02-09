@@ -1,9 +1,13 @@
 package com.gausslab.timeoffrequester.ui.screen.requestlist
 
+import android.app.Application
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.gausslab.timeoffrequester.model.TimeOffRequest
 import com.gausslab.timeoffrequester.remote.api.TorApi
 import com.gausslab.timeoffrequester.repository.UserRepository
@@ -19,7 +23,7 @@ class RequestListViewModel @Inject constructor(
     private val torApi: TorApi,
     private val snackbarService: SnackbarService,
     private val userRepository: UserRepository,
-    private val navController: NavHostController,
+    private val application: Application,
 ) : ViewModel() {
     val currUser = userRepository.currUser!!
 
@@ -29,10 +33,12 @@ class RequestListViewModel @Inject constructor(
     fun onEvent(event: RequestListUiEvent) {
         when (event) {
             is RequestListUiEvent.RequestDetailClicked -> {
+                val url = "https://docs.google.com/spreadsheets/d/1Wvf1fghbNdjiHkI_m_jQbwF58bMbf1OX4tdWKOXUQhE/edit#gid=${event.timeOffRequest.id}"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(application.applicationContext, intent.addFlags(FLAG_ACTIVITY_NEW_TASK),null)
             }
         }
     }
-
     private fun getTimeOffRequestListByUser(){
         val userEmail = userRepository.currUser!!.email
         viewModelScope.launch {
